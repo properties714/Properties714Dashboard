@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Properties714</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/acquisitions.css" />
+  <link rel="stylesheet" href="/css/nav.css" />
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="p714-nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-mark">P7</div>
+    <span class="nav-brand-name">Properties<span>714</span></span>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="/"              class="nav-link active"><span class="nav-link-icon">⬡</span> Dashboard</a>
+    <a href="/acquisitions/" class="nav-link"><span class="nav-link-icon">🎯</span> Acquisitions</a>
+    <a href="/leads/"        class="nav-link"><span class="nav-link-icon">👥</span> Leads</a>
+    <a href="/deals/"        class="nav-link"><span class="nav-link-icon">📋</span> Deals</a>
+    <a href="/reports/"      class="nav-link"><span class="nav-link-icon">📊</span> Reports</a>
+    <a href="/settings/"     class="nav-link"><span class="nav-link-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status" id="nav-status">
+      <div class="nav-status-dot"></div>
+      <span>Properties714</span>
+    </div>
+    <div class="nav-avatar" title="Eduardo">EG</div>
+  </div>
+</nav>
+
+<!-- ── PAGE ── -->
+<div class="p714-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title">Good morning, Eduardo 👋</h1>
+        <p class="page-subtitle">Here's what's happening across your portfolio today.</p>
+      </div>
+      <div class="page-actions">
+        <span class="dash-date" id="dash-date"></span>
+      </div>
+    </div>
+
+    <!-- KPI Stats -->
+    <div class="stat-grid">
+      <div class="stat-card green">
+        <span class="stat-icon">🎯</span>
+        <div class="stat-label">Active Leads</div>
+        <div class="stat-value" id="stat-leads">—</div>
+        <div class="stat-sub">In acquisitions pipeline</div>
+      </div>
+      <div class="stat-card amber">
+        <span class="stat-icon">🔥</span>
+        <div class="stat-label">Hot Deals</div>
+        <div class="stat-value" id="stat-hot">—</div>
+        <div class="stat-sub">Score ≥ 80</div>
+      </div>
+      <div class="stat-card blue">
+        <span class="stat-icon">📋</span>
+        <div class="stat-label">Under Contract</div>
+        <div class="stat-value" id="stat-contract">—</div>
+        <div class="stat-sub">Active closings</div>
+      </div>
+      <div class="stat-card purple">
+        <span class="stat-icon">💰</span>
+        <div class="stat-label">Pipeline Profit</div>
+        <div class="stat-value" id="stat-profit">—</div>
+        <div class="stat-sub">Estimated total</div>
+      </div>
+      <div class="stat-card teal">
+        <span class="stat-icon">⚠️</span>
+        <div class="stat-label">Overdue Follow-Ups</div>
+        <div class="stat-value" id="stat-overdue">—</div>
+        <div class="stat-sub">Action required</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="page-content">
+    <div class="dash-grid">
+
+      <!-- Quick Access Modules -->
+      <div class="dash-section">
+        <div class="dash-section-title">Modules</div>
+        <div class="module-cards">
+
+          <a href="/acquisitions/" class="module-card">
+            <div class="module-card-icon" style="background:var(--accent-dim);color:var(--accent)">🎯</div>
+            <div class="module-card-body">
+              <div class="module-card-name">Acquisitions</div>
+              <div class="module-card-desc">Lead pipeline, deal scoring, offers</div>
+            </div>
+            <div class="module-card-arrow">→</div>
+          </a>
+
+          <a href="/leads/" class="module-card module-card--soon">
+            <div class="module-card-icon" style="background:var(--info-dim);color:var(--info)">👥</div>
+            <div class="module-card-body">
+              <div class="module-card-name">Leads / CRM</div>
+              <div class="module-card-desc">Contact management, follow-ups</div>
+            </div>
+            <span class="module-card-tag">Coming soon</span>
+          </a>
+
+          <a href="/deals/" class="module-card module-card--soon">
+            <div class="module-card-icon" style="background:var(--purple-dim);color:var(--purple)">📋</div>
+            <div class="module-card-body">
+              <div class="module-card-name">Deals</div>
+              <div class="module-card-desc">Contracts, closing tracker</div>
+            </div>
+            <span class="module-card-tag">Coming soon</span>
+          </a>
+
+          <a href="/reports/" class="module-card module-card--soon">
+            <div class="module-card-icon" style="background:var(--teal-dim);color:var(--teal)">📊</div>
+            <div class="module-card-body">
+              <div class="module-card-name">Reports</div>
+              <div class="module-card-desc">Analytics, performance metrics</div>
+            </div>
+            <span class="module-card-tag">Coming soon</span>
+          </a>
+
+          <a href="/settings/" class="module-card module-card--soon">
+            <div class="module-card-icon" style="background:var(--bg-overlay);color:var(--text-secondary)">⚙️</div>
+            <div class="module-card-body">
+              <div class="module-card-name">Settings</div>
+              <div class="module-card-desc">Team, automation rules, config</div>
+            </div>
+            <span class="module-card-tag">Coming soon</span>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="dash-section">
+        <div class="dash-section-title">Recent Activity</div>
+        <div class="dash-activity" id="dash-activity">
+          <div class="dash-activity-empty">No recent activity.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /.p714-page -->
+
+<style>
+  .dash-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    padding: 6px 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius);
+  }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-6);
+  }
+
+  @media (max-width: 960px) {
+    .dash-grid { grid-template-columns: 1fr; }
+  }
+
+  .dash-section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-bottom: var(--space-3);
+  }
+
+  .module-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .module-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 180ms;
+  }
+
+  .module-card:hover {
+    border-color: var(--border-soft);
+    background: var(--bg-overlay);
+    transform: translateX(4px);
+  }
+
+  .module-card--soon { opacity: 0.6; cursor: default; }
+  .module-card--soon:hover { transform: none; }
+
+  .module-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .module-card-body { flex: 1; }
+
+  .module-card-name {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.88rem;
+  }
+
+  .module-card-desc {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+  }
+
+  .module-card-arrow {
+    color: var(--text-dim);
+    font-size: 1rem;
+    transition: transform 180ms;
+  }
+
+  .module-card:hover .module-card-arrow { transform: translateX(4px); color: var(--accent); }
+
+  .module-card-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 99px;
+    padding: 3px 8px;
+    white-space: nowrap;
+  }
+
+  .dash-activity {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: var(--space-4);
+    min-height: 200px;
+  }
+
+  .dash-activity-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 160px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+</style>
+
+<script>
+  // Date
+  document.getElementById('dash-date').textContent =
+    new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+
+  // Load KPIs from acquisitions mock data (quick read)
+  // These will be replaced by real Supabase data when connected
+  const MOCK_STATS = { leads: 8, hot: 2, contract: 1, profit: '$287K', overdue: 3 };
+  document.getElementById('stat-leads').textContent    = MOCK_STATS.leads;
+  document.getElementById('stat-hot').textContent      = MOCK_STATS.hot;
+  document.getElementById('stat-contract').textContent = MOCK_STATS.contract;
+  document.getElementById('stat-profit').textContent   = MOCK_STATS.profit;
+  document.getElementById('stat-overdue').textContent  = MOCK_STATS.overdue;
+</script>
+
+</body>
+</html>
