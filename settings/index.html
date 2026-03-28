@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Properties714</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/acquisitions.css" />
+  <link rel="stylesheet" href="/css/nav.css" />
+</head>
+<body>
+<nav class="p714-nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-mark">P7</div>
+    <span class="nav-brand-name">Properties<span>714</span></span>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="/"              class="nav-link"><span class="nav-link-icon">⬡</span> Dashboard</a>
+    <a href="/acquisitions/" class="nav-link"><span class="nav-link-icon">🎯</span> Acquisitions</a>
+    <a href="/leads/"        class="nav-link" id="nl"><span class="nav-link-icon">👥</span> Leads</a>
+    <a href="/deals/"        class="nav-link" id="nd"><span class="nav-link-icon">📋</span> Deals</a>
+    <a href="/reports/"      class="nav-link" id="nr"><span class="nav-link-icon">📊</span> Reports</a>
+    <a href="/settings/"     class="nav-link" id="ns"><span class="nav-link-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-avatar" title="Eduardo">EG</div>
+  </div>
+</nav>
+<div class="p714-page">
+  <div class="page-header">
+    <div class="page-title-row">
+      <div>
+        <h1 class="page-title" id="ptitle">Module</h1>
+        <p class="page-subtitle" id="psub"></p>
+      </div>
+    </div>
+  </div>
+  <div class="module-coming-soon">
+    <div class="module-coming-soon-icon" id="picon"></div>
+    <div class="module-coming-soon-title" id="pname"></div>
+    <div class="module-coming-soon-sub">This module is currently in development. <a href="/" style="color:var(--accent)">Return to Dashboard</a>.</div>
+  </div>
+</div>
+<script>
+  const pages = {
+    leads:    { title:'Leads / CRM',   sub:'Contact management and follow-up tracking', icon:'👥', nav:'nl' },
+    deals:    { title:'Deals',          sub:'Contract management and closing tracker',   icon:'📋', nav:'nd' },
+    reports:  { title:'Reports',        sub:'Analytics, performance metrics and insights',icon:'📊', nav:'nr' },
+    settings: { title:'Settings',       sub:'Team, automation rules and configuration',  icon:'⚙️', nav:'ns' },
+  };
+  const p = location.pathname.replace(/\//g,'') || 'leads';
+  const d = pages[p] || pages.leads;
+  document.title = d.title + ' — Properties714';
+  document.getElementById('ptitle').textContent = d.title;
+  document.getElementById('psub').textContent   = d.sub;
+  document.getElementById('picon').textContent  = d.icon;
+  document.getElementById('pname').textContent  = d.title + ' — Coming Soon';
+  document.getElementById(d.nav)?.classList.add('active');
+</script>
+</body>
+</html>
