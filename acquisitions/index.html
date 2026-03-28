@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acquisitions — Properties714</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/acquisitions.css" />
+  <link rel="stylesheet" href="/css/nav.css" />
+  <link rel="stylesheet" href="/css/table.css" />
+  <link rel="stylesheet" href="/css/badges.css" />
+  <link rel="stylesheet" href="/css/sidebar.css" />
+
+  <script>
+    window.__P714_CONFIG__ = {
+      supabaseUrl: '',
+      supabaseKey: '',
+    };
+  </script>
+</head>
+
+<body>
+
+<!-- ── NAV ── -->
+<nav class="p714-nav">
+  <a href="/" class="nav-brand">
+    <div class="nav-brand-mark">P7</div>
+    <span class="nav-brand-name">Properties<span>714</span></span>
+  </a>
+  <div class="nav-divider"></div>
+  <div class="nav-links">
+    <a href="/"              class="nav-link"><span class="nav-link-icon">⬡</span> Dashboard</a>
+    <a href="/acquisitions/" class="nav-link active"><span class="nav-link-icon">🎯</span> Acquisitions</a>
+    <a href="/leads/"        class="nav-link"><span class="nav-link-icon">👥</span> Leads</a>
+    <a href="/deals/"        class="nav-link"><span class="nav-link-icon">📋</span> Deals</a>
+    <a href="/reports/"      class="nav-link"><span class="nav-link-icon">📊</span> Reports</a>
+    <a href="/settings/"     class="nav-link"><span class="nav-link-icon">⚙️</span> Settings</a>
+  </div>
+  <div class="nav-right">
+    <div class="nav-status" id="connection-status">
+      <div class="nav-status-dot"></div>
+      <span class="status-label">Connecting…</span>
+    </div>
+    <div class="nav-avatar" title="Eduardo">EG</div>
+  </div>
+</nav>
+
+<!-- ── ACQ APP ── -->
+<div class="acq-app" id="acq-app">
+
+  <!-- Page Header -->
+  <section class="acq-page-header">
+    <div class="acq-page-title-block">
+      <h1 class="acq-page-title">Acquisitions</h1>
+      <p class="acq-page-sub">Lead pipeline · Deal intelligence · Offer management</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Leads</div>
+        <div class="kpi-value" id="kpi-total-leads">—</div>
+        <div class="kpi-sub">All stages</div>
+      </div>
+      <div class="kpi-card kpi-hot">
+        <div class="kpi-label">🔥 Hot Deals</div>
+        <div class="kpi-value" id="kpi-hot-deals">—</div>
+        <div class="kpi-sub">Score ≥ 80</div>
+      </div>
+      <div class="kpi-card kpi-contract">
+        <div class="kpi-label">Under Contract</div>
+        <div class="kpi-value" id="kpi-under-contract">—</div>
+        <div class="kpi-sub">Active</div>
+      </div>
+      <div class="kpi-card kpi-roi">
+        <div class="kpi-label">Pipeline Profit</div>
+        <div class="kpi-value" id="kpi-potential-roi">—</div>
+        <div class="kpi-sub">Estimated</div>
+      </div>
+    </div>
+
+    <!-- Global Actions -->
+    <div class="acq-global-actions">
+      <button class="btn btn-ghost btn-sm" id="btn-export">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="btn btn-ghost btn-sm" id="btn-automate">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93"/></svg>
+        Automate
+      </button>
+      <button class="btn btn-secondary btn-sm" id="btn-run-analyzer">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        Analyzer
+      </button>
+      <button class="btn btn-primary" id="btn-add-lead">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Lead
+      </button>
+    </div>
+  </section>
+
+  <!-- Pipeline Tabs -->
+  <div id="pipeline-container" class="pipeline-wrapper"></div>
+
+  <!-- Filters -->
+  <div id="filters-container" class="filters-wrapper"></div>
+
+  <!-- Table -->
+  <div id="table-container" class="table-wrapper">
+    <div class="table-loading" id="table-loading">
+      <div class="loading-spinner"></div>
+      <span>Loading leads…</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── SIDEBAR ── -->
+<div id="sidebar-backdrop" class="sidebar-backdrop">
+  <aside id="lead-sidebar" class="lead-sidebar" role="dialog" aria-modal="true"></aside>
+</div>
+
+<!-- ── MODAL: Add Lead ── -->
+<div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h2 class="modal-title">Add New Lead</h2>
+      <button class="modal-close">✕</button>
+    </div>
+    <form id="add-lead-form" class="modal-form" novalidate>
+      <div class="modal-steps">
+        <button type="button" class="modal-step active" data-step="1">1 · Contact</button>
+        <button type="button" class="modal-step" data-step="2">2 · Property</button>
+        <button type="button" class="modal-step" data-step="3">3 · Financials</button>
+      </div>
+
+      <!-- Step 1 -->
+      <div class="modal-step-panel active" data-step-panel="1">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="John Smith" required />
+          </div>
+          <div class="form-field">
+            <label>Phone</label>
+            <input type="tel" name="phone" placeholder="+1 (404) 555-0000" />
+          </div>
+          <div class="form-field">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="owner@email.com" />
+          </div>
+          <div class="form-field">
+            <label>Lead Source</label>
+            <select name="source">
+              <option value="">Select source…</option>
+              <option>Driving for Dollars</option>
+              <option>Direct Mail</option>
+              <option>Cold Call</option>
+              <option>PPC / Google</option>
+              <option>Facebook Ads</option>
+              <option>Referral</option>
+              <option>MLS / Zillow</option>
+              <option>Probate</option>
+              <option>Wholesale</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Assign To</label>
+            <select name="assigned_to">
+              <option value="">Unassigned</option>
+              <option>Eduardo</option>
+              <option>Junior</option>
+              <option>Yeimy</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="modal-step-panel" data-step-panel="2">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Property Address <span class="required">*</span></label>
+            <input type="text" name="property_address" placeholder="1234 Peachtree Blvd NE" required />
+          </div>
+          <div class="form-field">
+            <label>City</label>
+            <input type="text" name="city" placeholder="Atlanta" />
+          </div>
+          <div class="form-field">
+            <label>State</label>
+            <input type="text" name="state" placeholder="GA" maxlength="2" />
+          </div>
+          <div class="form-field">
+            <label>ZIP</label>
+            <input type="text" name="zip" placeholder="30309" maxlength="5" />
+          </div>
+          <div class="form-field">
+            <label>Property Type</label>
+            <select name="property_type">
+              <option>SFR</option><option>Duplex</option>
+              <option>Multi-Family</option><option>Commercial</option>
+              <option>Land</option><option>Mobile</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Condition</label>
+            <select name="condition">
+              <option value="">Select…</option>
+              <option>Excellent</option><option>Good</option>
+              <option>Fair</option><option>Distressed</option><option>Tear-Down</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Occupancy</label>
+            <select name="occupancy">
+              <option value="">Select…</option>
+              <option>Owner-Occupied</option><option>Tenant-Occupied</option>
+              <option>Vacant</option><option>Unknown</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="modal-step-panel" data-step-panel="3">
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Asking Price ($)</label>
+            <input type="number" name="asking_price" placeholder="180000" min="0" />
+          </div>
+          <div class="form-field">
+            <label>ARV ($)</label>
+            <input type="number" id="f-arv" name="arv" placeholder="320000" min="0" />
+          </div>
+          <div class="form-field">
+            <label>Repairs Est. ($)</label>
+            <input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" />
+          </div>
+          <div class="form-field mao-preview-field">
+            <label>MAO (Auto)</label>
+            <div class="mao-preview">
+              <span class="mao-preview-val" id="mao-preview-val">—</span>
+              <span class="mao-preview-formula">(ARV × 0.70) − Repairs</span>
+            </div>
+          </div>
+          <div class="form-field">
+            <label>Motivation (1–10)</label>
+            <input type="number" name="motivation_score" min="1" max="10" placeholder="7" />
+          </div>
+          <div class="form-field">
+            <label>Urgency</label>
+            <select name="urgency_level">
+              <option value="">Select…</option>
+              <option>High</option><option>Medium</option><option>Low</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Risk Level</label>
+            <select name="risk_level">
+              <option value="">Select…</option>
+              <option>Low</option><option>Medium</option><option>High</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Initial Status</label>
+            <select name="status">
+              <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Back</button>
+        <button type="button" class="btn btn-secondary" id="modal-next-btn">Next →</button>
+        <button type="submit" class="btn btn-primary" id="modal-submit-btn" style="display:none">✓ Add Lead</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ── MODAL: Analyzer ── -->
+<div id="analyzer-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">⚡ Deal Analyzer</h2>
+      <button class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="analyzer-lead-name" class="analyzer-target"></div>
+      <div id="analyzer-output" class="analyzer-output">
+        <div class="analyzer-placeholder">
+          <div class="analyzer-icon">🤖</div>
+          <p>AI analysis will appear here.</p>
+          <p class="text-dim">Configure <code>Assistant.configure()</code> with your API key to enable.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost modal-close">Close</button>
+      <button class="btn btn-primary" id="analyzer-run-btn">Run Analysis</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOASTS ── -->
+<div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/acquisitions/scoring.js"></script>
+<script src="/js/acquisitions/automation.js"></script>
+<script src="/js/acquisitions/assistant.js"></script>
+<script src="/js/acquisitions/pipeline.js"></script>
+<script src="/js/acquisitions/filters.js"></script>
+<script src="/js/acquisitions/table.js"></script>
+<script src="/js/acquisitions/sidebar.js"></script>
+<script src="/js/acquisitions/acquisitions.js"></script>
+
+<script>
+(function () {
+  let _step = 1;
+  const TOTAL = 3;
+  const prev   = document.getElementById('modal-prev-btn');
+  const next   = document.getElementById('modal-next-btn');
+  const submit = document.getElementById('modal-submit-btn');
+  const arv    = document.getElementById('f-arv');
+  const rep    = document.getElementById('f-repairs');
+  const mao    = document.getElementById('mao-preview-val');
+
+  function goTo(s) {
+    document.querySelectorAll('.modal-step-panel').forEach(p =>
+      p.classList.toggle('active', +p.dataset.stepPanel === s));
+    document.querySelectorAll('.modal-step').forEach(b =>
+      b.classList.toggle('active', +b.dataset.step === s));
+    prev.style.display   = s > 1 ? '' : 'none';
+    next.style.display   = s < TOTAL ? '' : 'none';
+    submit.style.display = s === TOTAL ? '' : 'none';
+    _step = s;
+  }
+
+  next?.addEventListener('click', () => goTo(Math.min(_step + 1, TOTAL)));
+  prev?.addEventListener('click', () => goTo(Math.max(_step - 1, 1)));
+  document.querySelectorAll('.modal-step').forEach(b =>
+    b.addEventListener('click', () => goTo(+b.dataset.step)));
+
+  function updateMAO() {
+    const a = parseFloat(arv?.value) || 0;
+    const r = parseFloat(rep?.value) || 0;
+    mao.textContent = a && r ? '$' + (Math.floor(a * 0.7) - r).toLocaleString() : '—';
+  }
+  arv?.addEventListener('input', updateMAO);
+  rep?.addEventListener('input', updateMAO);
+})();
+</script>
+
+</body>
+</html>
