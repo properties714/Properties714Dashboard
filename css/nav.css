@@ -1,0 +1,366 @@
+/* ============================================================
+   Properties714 — Shared Top Navigation
+   nav.css
+   ============================================================ */
+
+/* ============================================================
+   TOP NAV SHELL
+   ============================================================ */
+
+.p714-nav {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  height: 56px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0 var(--space-6);
+  gap: var(--space-8);
+  backdrop-filter: blur(12px);
+}
+
+/* ── Brand ── */
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: #000;
+  letter-spacing: 0.04em;
+}
+
+.nav-brand-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.nav-brand-name span {
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+/* ── Nav Divider ── */
+.nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-soft);
+  flex-shrink: 0;
+}
+
+/* ── Nav Links ── */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  transition: all var(--duration-sm, 150ms);
+  white-space: nowrap;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+}
+
+.nav-link.active {
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -7px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px 2px 0 0;
+}
+
+.nav-link-icon {
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.nav-link-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  background: var(--accent-dim);
+  border-radius: 99px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+/* ── Nav Right ── */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.nav-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  padding: 4px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+}
+
+.nav-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.nav-status.connected .nav-status-dot  { background: var(--accent); }
+.nav-status.error .nav-status-dot      { background: var(--danger); }
+.nav-status.connected                  { color: var(--accent); border-color: var(--accent-dim); }
+
+.nav-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  color: var(--accent);
+  cursor: pointer;
+  transition: border-color var(--duration-sm, 150ms);
+}
+
+.nav-avatar:hover { border-color: var(--accent); }
+
+/* ============================================================
+   PAGE SHELL (used by every page)
+   ============================================================ */
+
+.p714-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 56px);
+}
+
+.page-header {
+  padding: var(--space-6) var(--space-8);
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+.page-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.page-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.page-content {
+  flex: 1;
+  padding: var(--space-6) var(--space-8);
+}
+
+/* ============================================================
+   STAT GRID (dashboard / module headers)
+   ============================================================ */
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+}
+
+.stat-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 180ms, transform 180ms;
+}
+
+.stat-card:hover {
+  border-color: var(--border-soft);
+  transform: translateY(-1px);
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 180ms;
+}
+
+.stat-card.green::before  { background: linear-gradient(135deg, var(--accent-dim), transparent 60%); }
+.stat-card.amber::before  { background: linear-gradient(135deg, var(--hot-dim), transparent 60%); }
+.stat-card.blue::before   { background: linear-gradient(135deg, var(--info-dim), transparent 60%); }
+.stat-card.purple::before { background: linear-gradient(135deg, var(--purple-dim), transparent 60%); }
+.stat-card.teal::before   { background: linear-gradient(135deg, var(--teal-dim), transparent 60%); }
+
+.stat-card:hover::before  { opacity: 1; }
+
+.stat-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  position: relative;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-top: 6px;
+  position: relative;
+}
+
+.stat-card.green  .stat-value { color: var(--accent); }
+.stat-card.amber  .stat-value { color: var(--hot); }
+.stat-card.blue   .stat-value { color: var(--info); }
+.stat-card.purple .stat-value { color: var(--purple); }
+.stat-card.teal   .stat-value { color: var(--teal); }
+
+.stat-sub {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 4px;
+  position: relative;
+}
+
+.stat-icon {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  font-size: 1.4rem;
+  opacity: 0.25;
+}
+
+/* ============================================================
+   COMING SOON / PLACEHOLDER
+   ============================================================ */
+
+.module-coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-16) var(--space-8);
+  text-align: center;
+  flex: 1;
+}
+
+.module-coming-soon-icon {
+  font-size: 3rem;
+  opacity: 0.4;
+}
+
+.module-coming-soon-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.module-coming-soon-sub {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  max-width: 360px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .nav-link-icon { display: none; }
+  .p714-nav      { gap: var(--space-4); padding: 0 var(--space-4); }
+  .page-content  { padding: var(--space-4); }
+  .page-header   { padding: var(--space-4); }
+}
+
+@media (max-width: 640px) {
+  .nav-brand-name { display: none; }
+  .nav-link       { padding: 6px 8px; font-size: 0.75rem; }
+  .stat-grid      { grid-template-columns: 1fr 1fr; }
+}
