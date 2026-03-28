@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Acquisitions — Properties714</title>
+
+  <!-- ============================================================
+       FONTS
+  ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- ============================================================
+       CSS
+  ============================================================ -->
+  <link rel="stylesheet" href="../css/acquisitions.css" />
+  <link rel="stylesheet" href="../css/table.css" />
+  <link rel="stylesheet" href="../css/badges.css" />
+  <link rel="stylesheet" href="../css/sidebar.css" />
+
+  <!-- ============================================================
+       CONFIG (set before Supabase loads)
+       Replace with actual keys. Never commit real keys to Git.
+  ============================================================ -->
+  <script>
+    window.__P714_CONFIG__ = {
+      supabaseUrl: '',  // e.g. 'https://xyzabc.supabase.co'
+      supabaseKey: '',  // anon/public key
+    };
+  </script>
+</head>
+
+<body class="acq-body">
+
+  <!-- ============================================================
+       APP SHELL
+  ============================================================ -->
+  <div class="acq-app" id="acq-app">
+
+    <!-- ============================================================
+         TOP NAV (breadcrumb + module title)
+    ============================================================ -->
+    <header class="acq-topnav">
+      <div class="acq-topnav-left">
+        <span class="topnav-logo">P714</span>
+        <span class="topnav-sep">/</span>
+        <span class="topnav-module">Acquisitions</span>
+      </div>
+      <div class="acq-topnav-right">
+        <span class="topnav-status" id="connection-status" title="Database status">
+          <span class="status-dot"></span>
+          <span class="status-label">Connecting…</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         PAGE HEADER — KPIs + Global Actions
+    ============================================================ -->
+    <section class="acq-page-header">
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card" id="kpi-total">
+          <div class="kpi-label">Total Leads</div>
+          <div class="kpi-value" id="kpi-total-leads">—</div>
+          <div class="kpi-sub">All pipeline stages</div>
+        </div>
+        <div class="kpi-card kpi-hot" id="kpi-hot">
+          <div class="kpi-label">🔥 Hot Deals</div>
+          <div class="kpi-value" id="kpi-hot-deals">—</div>
+          <div class="kpi-sub">Score ≥ 80</div>
+        </div>
+        <div class="kpi-card kpi-contract" id="kpi-contract">
+          <div class="kpi-label">Under Contract</div>
+          <div class="kpi-value" id="kpi-under-contract">—</div>
+          <div class="kpi-sub">Active deals</div>
+        </div>
+        <div class="kpi-card kpi-roi" id="kpi-roi">
+          <div class="kpi-label">Potential Profit</div>
+          <div class="kpi-value" id="kpi-potential-roi">—</div>
+          <div class="kpi-sub">Pipeline total</div>
+        </div>
+      </div>
+
+      <!-- Global Actions -->
+      <div class="acq-global-actions">
+        <button class="btn btn-ghost btn-sm" id="btn-export">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
+        </button>
+        <button class="btn btn-ghost btn-sm" id="btn-automate">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93"/><circle cx="12" cy="12" r="9"/></svg>
+          Automate
+        </button>
+        <button class="btn btn-secondary btn-sm" id="btn-run-analyzer">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Run Analyzer
+        </button>
+        <button class="btn btn-primary" id="btn-add-lead">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Lead
+        </button>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         PIPELINE TABS
+    ============================================================ -->
+    <div id="pipeline-container" class="pipeline-wrapper"></div>
+
+    <!-- ============================================================
+         FILTERS BAR
+    ============================================================ -->
+    <div id="filters-container" class="filters-wrapper"></div>
+
+    <!-- ============================================================
+         DATA TABLE
+    ============================================================ -->
+    <div id="table-container" class="table-wrapper">
+      <!-- Table is dynamically rendered by Table.render() -->
+      <div class="table-loading" id="table-loading">
+        <div class="loading-spinner"></div>
+        <span>Loading leads…</span>
+      </div>
+    </div>
+
+  </div><!-- /.acq-app -->
+
+  <!-- ============================================================
+       SIDEBAR — Lead Detail Panel
+  ============================================================ -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true">
+    <aside id="lead-sidebar" class="lead-sidebar" role="dialog" aria-modal="true" aria-label="Lead Detail">
+      <!-- Rendered dynamically by Sidebar.open() -->
+    </aside>
+  </div>
+
+  <!-- ============================================================
+       MODAL — Add Lead
+  ============================================================ -->
+  <div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Add New Lead">
+    <div class="modal modal-lg">
+
+      <div class="modal-header">
+        <h2 class="modal-title">Add New Lead</h2>
+        <button class="modal-close" aria-label="Close modal">✕</button>
+      </div>
+
+      <form id="add-lead-form" class="modal-form" novalidate>
+
+        <!-- Step tabs -->
+        <div class="modal-steps">
+          <button type="button" class="modal-step active" data-step="1">1 · Contact</button>
+          <button type="button" class="modal-step" data-step="2">2 · Property</button>
+          <button type="button" class="modal-step" data-step="3">3 · Financials</button>
+        </div>
+
+        <!-- ── STEP 1: Contact Info ── -->
+        <div class="modal-step-panel active" data-step-panel="1">
+          <div class="form-grid">
+            <div class="form-field full">
+              <label for="f-name">Full Name <span class="required">*</span></label>
+              <input type="text" id="f-name" name="name" placeholder="John Smith" required />
+            </div>
+            <div class="form-field">
+              <label for="f-phone">Phone</label>
+              <input type="tel" id="f-phone" name="phone" placeholder="+1 (404) 555-0000" />
+            </div>
+            <div class="form-field">
+              <label for="f-email">Email</label>
+              <input type="email" id="f-email" name="email" placeholder="owner@email.com" />
+            </div>
+            <div class="form-field">
+              <label for="f-source">Lead Source</label>
+              <select id="f-source" name="source">
+                <option value="">Select source…</option>
+                <option value="Driving for Dollars">Driving for Dollars</option>
+                <option value="Direct Mail">Direct Mail</option>
+                <option value="Cold Call">Cold Call</option>
+                <option value="PPC / Google">PPC / Google</option>
+                <option value="Facebook Ads">Facebook Ads</option>
+                <option value="Referral">Referral</option>
+                <option value="MLS / Zillow">MLS / Zillow</option>
+                <option value="Probate">Probate</option>
+                <option value="Wholesale">Wholesale</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-assigned">Assign To</label>
+              <select id="f-assigned" name="assigned_to">
+                <option value="">Unassigned</option>
+                <option value="Eduardo">Eduardo</option>
+                <option value="Junior">Junior</option>
+                <option value="Yeimy">Yeimy</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 2: Property ── -->
+        <div class="modal-step-panel" data-step-panel="2">
+          <div class="form-grid">
+            <div class="form-field full">
+              <label for="f-address">Property Address <span class="required">*</span></label>
+              <input type="text" id="f-address" name="property_address" placeholder="1234 Peachtree Blvd NE" required />
+            </div>
+            <div class="form-field">
+              <label for="f-city">City</label>
+              <input type="text" id="f-city" name="city" placeholder="Atlanta" />
+            </div>
+            <div class="form-field">
+              <label for="f-state">State</label>
+              <input type="text" id="f-state" name="state" placeholder="GA" maxlength="2" />
+            </div>
+            <div class="form-field">
+              <label for="f-zip">ZIP Code</label>
+              <input type="text" id="f-zip" name="zip" placeholder="30309" maxlength="5" />
+            </div>
+            <div class="form-field">
+              <label for="f-type">Property Type</label>
+              <select id="f-type" name="property_type">
+                <option value="SFR">SFR</option>
+                <option value="Duplex">Duplex</option>
+                <option value="Multi-Family">Multi-Family</option>
+                <option value="Commercial">Commercial</option>
+                <option value="Land">Land</option>
+                <option value="Mobile">Mobile</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-condition">Condition</label>
+              <select id="f-condition" name="condition">
+                <option value="">Select…</option>
+                <option value="Excellent">Excellent</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+                <option value="Distressed">Distressed</option>
+                <option value="Tear-Down">Tear-Down</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-occupancy">Occupancy</label>
+              <select id="f-occupancy" name="occupancy">
+                <option value="">Select…</option>
+                <option value="Owner-Occupied">Owner-Occupied</option>
+                <option value="Tenant-Occupied">Tenant-Occupied</option>
+                <option value="Vacant">Vacant</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STEP 3: Financials ── -->
+        <div class="modal-step-panel" data-step-panel="3">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="f-asking">Asking Price ($)</label>
+              <input type="number" id="f-asking" name="asking_price" placeholder="180000" min="0" />
+            </div>
+            <div class="form-field">
+              <label for="f-arv">ARV ($)</label>
+              <input type="number" id="f-arv" name="arv" placeholder="320000" min="0" />
+            </div>
+            <div class="form-field">
+              <label for="f-repairs">Repairs Est. ($)</label>
+              <input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" />
+            </div>
+            <div class="form-field mao-preview-field">
+              <label>MAO (Auto)</label>
+              <div class="mao-preview" id="mao-preview">
+                <span class="mao-preview-val" id="mao-preview-val">—</span>
+                <span class="mao-preview-formula">(ARV × 0.70) − Repairs</span>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="f-motivation">Motivation (1–10)</label>
+              <input type="number" id="f-motivation" name="motivation_score" min="1" max="10" placeholder="7" />
+            </div>
+            <div class="form-field">
+              <label for="f-urgency">Urgency</label>
+              <select id="f-urgency" name="urgency_level">
+                <option value="">Select…</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-risk">Risk Level</label>
+              <select id="f-risk" name="risk_level">
+                <option value="">Select…</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="f-status">Initial Status</label>
+              <select id="f-status" name="status">
+                <option value="New Lead">New Lead</option>
+                <option value="Contacted">Contacted</option>
+                <option value="Follow-Up">Follow-Up</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Back</button>
+          <button type="button" class="btn btn-secondary" id="modal-next-btn">Next →</button>
+          <button type="submit" class="btn btn-primary" id="modal-submit-btn" style="display:none">
+            ✓ Add Lead
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MODAL — Run Analyzer (AI)
+  ============================================================ -->
+  <div id="analyzer-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Deal Analyzer">
+    <div class="modal">
+
+      <div class="modal-header">
+        <h2 class="modal-title">⚡ Deal Analyzer</h2>
+        <button class="modal-close" aria-label="Close modal">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div id="analyzer-lead-name" class="analyzer-target"></div>
+        <div id="analyzer-output" class="analyzer-output">
+          <div class="analyzer-placeholder">
+            <div class="analyzer-icon">🤖</div>
+            <p>AI analysis will appear here.</p>
+            <p class="text-dim">Configure <code>Assistant.configure()</code> with your API key to enable.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost modal-close">Close</button>
+        <button class="btn btn-primary" id="analyzer-run-btn">Run Analysis</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       TOAST CONTAINER
+  ============================================================ -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- ============================================================
+       SCRIPTS — load order matters
+  ============================================================ -->
+
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <!-- Core modules (no cross-deps) -->
+  <script src="../js/acquisitions/scoring.js"></script>
+  <script src="../js/acquisitions/automation.js"></script>
+  <script src="../js/acquisitions/assistant.js"></script>
+
+  <!-- UI modules (depend on core) -->
+  <script src="../js/acquisitions/pipeline.js"></script>
+  <script src="../js/acquisitions/filters.js"></script>
+  <script src="../js/acquisitions/table.js"></script>
+  <script src="../js/acquisitions/sidebar.js"></script>
+
+  <!-- Main controller — boots everything on DOMContentLoaded -->
+  <script src="../js/acquisitions/acquisitions.js"></script>
+
+  <!-- ============================================================
+       ADD LEAD MODAL — multi-step logic
+  ============================================================ -->
+  <script>
+    (function () {
+      let _step = 1;
+      const TOTAL_STEPS = 3;
+
+      const prevBtn   = document.getElementById('modal-prev-btn');
+      const nextBtn   = document.getElementById('modal-next-btn');
+      const submitBtn = document.getElementById('modal-submit-btn');
+      const arvInput  = document.getElementById('f-arv');
+      const repairsInput = document.getElementById('f-repairs');
+      const maoVal    = document.getElementById('mao-preview-val');
+
+      function goTo(step) {
+        document.querySelectorAll('.modal-step-panel').forEach(p => {
+          p.classList.toggle('active', parseInt(p.dataset.stepPanel) === step);
+        });
+        document.querySelectorAll('.modal-step').forEach(b => {
+          b.classList.toggle('active', parseInt(b.dataset.step) === step);
+        });
+        prevBtn.style.display   = step > 1 ? '' : 'none';
+        nextBtn.style.display   = step < TOTAL_STEPS ? '' : 'none';
+        submitBtn.style.display = step === TOTAL_STEPS ? '' : 'none';
+        _step = step;
+      }
+
+      nextBtn?.addEventListener('click', () => goTo(Math.min(_step + 1, TOTAL_STEPS)));
+      prevBtn?.addEventListener('click', () => goTo(Math.max(_step - 1, 1)));
+
+      document.querySelectorAll('.modal-step').forEach(btn => {
+        btn.addEventListener('click', () => goTo(parseInt(btn.dataset.step)));
+      });
+
+      // Live MAO preview
+      function updateMAO() {
+        const arv     = parseFloat(arvInput?.value) || 0;
+        const repairs = parseFloat(repairsInput?.value) || 0;
+        const mao     = arv && repairs ? Math.floor(arv * 0.7) - repairs : null;
+        if (maoVal) maoVal.textContent = mao != null ? '$' + mao.toLocaleString() : '—';
+      }
+
+      arvInput?.addEventListener('input', updateMAO);
+      repairsInput?.addEventListener('input', updateMAO);
+    })();
+  </script>
+
+</body>
+</html>
