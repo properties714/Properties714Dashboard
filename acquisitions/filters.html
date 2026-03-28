@@ -1,0 +1,162 @@
+<!--
+  filters.html — Advanced Filters Bar (Partial)
+  Properties714 · Acquisitions Module
+
+  This file documents the HTML structure rendered by Filters.renderBar().
+  The JS module generates this markup from the FILTER_DEFS config array.
+  Use as a reference, server-side include, or template partial.
+
+  Container target: <div id="filters-container"></div>
+-->
+
+<div class="filters-bar" id="filters-bar">
+
+  <!-- ── Search ── -->
+  <div class="filters-search">
+    <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input
+      type="search"
+      class="search-input"
+      id="search-input"
+      placeholder="Search leads…"
+      aria-label="Search leads"
+      autocomplete="off"
+    />
+    <span class="search-shortcut">⌘K</span>
+  </div>
+
+  <!-- ── Quick Filters ── -->
+  <div class="filters-quick">
+
+    <!-- Urgency -->
+    <div class="filter-group" data-filter="urgency_level">
+      <button class="filter-btn" data-filter="urgency_level">
+        Urgency
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="filter-dropdown" hidden>
+        <label class="filter-option">
+          <input type="checkbox" value="High" /> High
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" value="Medium" /> Medium
+        </label>
+        <label class="filter-option">
+          <input type="checkbox" value="Low" /> Low
+        </label>
+      </div>
+    </div>
+
+    <!-- Deal Score -->
+    <div class="filter-group" data-filter="deal_score">
+      <button class="filter-btn" data-filter="deal_score">
+        Score
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="filter-dropdown filter-dropdown--range" hidden>
+        <div class="range-row">
+          <label>Min</label>
+          <input type="number" class="range-input" data-range-min="deal_score" min="0" max="100" placeholder="0" />
+        </div>
+        <div class="range-row">
+          <label>Max</label>
+          <input type="number" class="range-input" data-range-max="deal_score" min="0" max="100" placeholder="100" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Property Type -->
+    <div class="filter-group" data-filter="property_type">
+      <button class="filter-btn" data-filter="property_type">
+        Type
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="filter-dropdown" hidden>
+        <label class="filter-option"><input type="checkbox" value="SFR" /> SFR</label>
+        <label class="filter-option"><input type="checkbox" value="Duplex" /> Duplex</label>
+        <label class="filter-option"><input type="checkbox" value="Multi-Family" /> Multi-Family</label>
+        <label class="filter-option"><input type="checkbox" value="Commercial" /> Commercial</label>
+        <label class="filter-option"><input type="checkbox" value="Land" /> Land</label>
+      </div>
+    </div>
+
+    <!-- Assigned To -->
+    <div class="filter-group" data-filter="assigned_to">
+      <button class="filter-btn" data-filter="assigned_to">
+        Assigned
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="filter-dropdown" hidden>
+        <label class="filter-option"><input type="checkbox" value="Eduardo" /> Eduardo</label>
+        <label class="filter-option"><input type="checkbox" value="Junior" /> Junior</label>
+        <label class="filter-option"><input type="checkbox" value="Yeimy" /> Yeimy</label>
+        <label class="filter-option"><input type="checkbox" value="" /> Unassigned</label>
+      </div>
+    </div>
+
+    <!-- Source -->
+    <div class="filter-group" data-filter="source">
+      <button class="filter-btn" data-filter="source">
+        Source
+        <svg class="chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+      <div class="filter-dropdown" hidden>
+        <label class="filter-option"><input type="checkbox" value="Driving for Dollars" /> Driving for Dollars</label>
+        <label class="filter-option"><input type="checkbox" value="Direct Mail" /> Direct Mail</label>
+        <label class="filter-option"><input type="checkbox" value="Cold Call" /> Cold Call</label>
+        <label class="filter-option"><input type="checkbox" value="PPC / Google" /> PPC / Google</label>
+        <label class="filter-option"><input type="checkbox" value="Facebook Ads" /> Facebook Ads</label>
+        <label class="filter-option"><input type="checkbox" value="Referral" /> Referral</label>
+      </div>
+    </div>
+
+    <!-- Toggle: Hot Deals only -->
+    <button class="filter-toggle" data-toggle="hot_deal" aria-pressed="false">
+      🔥 Hot Only
+    </button>
+
+    <!-- Toggle: Overdue only -->
+    <button class="filter-toggle" data-toggle="overdue" aria-pressed="false">
+      ⚠️ Overdue
+    </button>
+
+  </div><!-- /.filters-quick -->
+
+  <!-- ── Active Filter Chips ── -->
+  <div class="filter-chips" id="filter-chips" aria-label="Active filters">
+    <!-- Populated dynamically by Filters._renderFilterChips() -->
+  </div>
+
+  <!-- ── Filter Stats ── -->
+  <div class="filters-meta">
+    <span class="filter-count" id="filter-count">Showing — leads</span>
+    <button class="btn-link" id="clear-filters-btn" style="display:none">Clear all</button>
+  </div>
+
+</div>
+
+<!--
+  NOTE: Filter state and logic live entirely in filters.js.
+  This HTML is only a reference — Filters.renderBar() generates it.
+
+  Filter application flow:
+    User interacts with filters
+    → Filters._setFilter(key, value)
+    → Filters._triggerChange()
+    → Filters.onChange callback fires
+    → _onFiltersChange(activeFilters) in acquisitions.js
+    → Filters.apply(leads, pipelineFilter)
+    → Table.render(container, filteredLeads)
+-->
