@@ -1,0 +1,342 @@
+/* ============================================================
+   Properties714 — Acquisitions Module
+   badges.css — Status badges, tags, condition indicators
+   ============================================================ */
+
+/* ============================================================
+   STATUS BADGES — Pipeline Stages
+   ============================================================ */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 100px;
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+
+.status-badge .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* New Lead */
+.status-new-lead {
+  background: var(--bg-elevated);
+  border-color: var(--border-soft);
+  color: var(--text-secondary);
+}
+.status-new-lead .dot { background: var(--text-secondary); }
+
+/* Contacted */
+.status-contacted {
+  background: var(--info-dim);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--info);
+}
+.status-contacted .dot {
+  background: var(--info);
+  box-shadow: 0 0 4px var(--info);
+}
+
+/* Follow-Up */
+.status-follow-up {
+  background: var(--hot-dim);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--hot);
+}
+.status-follow-up .dot {
+  background: var(--hot);
+  box-shadow: 0 0 4px var(--hot);
+}
+
+/* Negotiation */
+.status-negotiation {
+  background: var(--purple-dim);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: var(--purple);
+}
+.status-negotiation .dot {
+  background: var(--purple);
+  box-shadow: 0 0 4px var(--purple);
+}
+
+/* Offer Sent */
+.status-offer-sent {
+  background: rgba(20, 184, 166, 0.1);
+  border-color: rgba(20, 184, 166, 0.3);
+  color: var(--teal);
+}
+.status-offer-sent .dot {
+  background: var(--teal);
+  box-shadow: 0 0 4px var(--teal);
+}
+
+/* Under Contract */
+.status-under-contract {
+  background: var(--accent-dim);
+  border-color: rgba(0, 200, 117, 0.4);
+  color: var(--accent);
+}
+.status-under-contract .dot {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+  animation: blink-dot 1.8s ease-in-out infinite;
+}
+
+/* Dead */
+.status-dead {
+  background: var(--danger-dim);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #EF4444;
+  opacity: 0.7;
+}
+.status-dead .dot { background: var(--danger); }
+
+@keyframes blink-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ============================================================
+   URGENCY BADGES
+   ============================================================ */
+
+.urgency-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.urgency-low      { background: var(--bg-elevated);   color: var(--text-dim);       border: 1px solid var(--border-subtle); }
+.urgency-medium   { background: var(--info-dim);      color: var(--info);           border: 1px solid rgba(59,130,246,0.25); }
+.urgency-high     { background: var(--hot-dim);       color: var(--hot);            border: 1px solid rgba(245,158,11,0.3); }
+.urgency-critical { background: var(--danger-dim);    color: var(--danger);         border: 1px solid rgba(239,68,68,0.35);
+                    animation: pulse-danger 1.5s ease-in-out infinite; }
+
+@keyframes pulse-danger {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.3); }
+  50%       { box-shadow: 0 0 0 4px rgba(239,68,68,0); }
+}
+
+/* ============================================================
+   RISK BADGES
+   ============================================================ */
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.risk-low    { background: var(--accent-dim);  color: var(--accent); border: 1px solid rgba(0,200,117,0.25); }
+.risk-medium { background: var(--hot-dim);     color: var(--hot);    border: 1px solid rgba(245,158,11,0.25); }
+.risk-high   { background: var(--danger-dim);  color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+/* ============================================================
+   PROPERTY TYPE BADGES
+   ============================================================ */
+
+.prop-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.prop-type-sfr    { color: var(--info);   border-color: rgba(59,130,246,0.25);   background: var(--info-dim); }
+.prop-type-mf     { color: var(--purple); border-color: rgba(168,85,247,0.25);   background: var(--purple-dim); }
+.prop-type-condo  { color: var(--teal);   border-color: rgba(20,184,166,0.25);   background: var(--teal-dim); }
+.prop-type-comm   { color: var(--hot);    border-color: rgba(245,158,11,0.25);   background: var(--hot-dim); }
+
+/* ============================================================
+   CONDITION BADGES
+   ============================================================ */
+
+.condition-badge {
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.condition-excellent { background: var(--accent-dim);  color: var(--accent); border: 1px solid rgba(0,200,117,0.25); }
+.condition-good      { background: var(--teal-dim);    color: var(--teal);   border: 1px solid rgba(20,184,166,0.25); }
+.condition-fair      { background: var(--info-dim);    color: var(--info);   border: 1px solid rgba(59,130,246,0.25); }
+.condition-distressed{ background: var(--hot-dim);     color: var(--hot);    border: 1px solid rgba(245,158,11,0.25); }
+.condition-teardown  { background: var(--danger-dim);  color: var(--danger); border: 1px solid rgba(239,68,68,0.25); }
+
+/* ============================================================
+   OCCUPANCY BADGE
+   ============================================================ */
+
+.occupancy-badge {
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.occupancy-vacant        { background: var(--accent-dim);   color: var(--accent); border: 1px solid rgba(0,200,117,0.25); }
+.occupancy-owner-occupied{ background: var(--info-dim);     color: var(--info);   border: 1px solid rgba(59,130,246,0.25); }
+.occupancy-tenant        { background: var(--warning-dim);  color: var(--warning); border: 1px solid rgba(249,115,22,0.25); }
+.occupancy-unknown       { background: var(--bg-elevated);  color: var(--text-dim); border: 1px solid var(--border-soft); }
+
+/* ============================================================
+   SOURCE BADGES
+   ============================================================ */
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  font-size: 0.67rem;
+  font-weight: 600;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   HOT DEAL FLAME INDICATOR
+   ============================================================ */
+
+.hot-deal-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 100px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(249,115,22,0.15));
+  border: 1px solid rgba(245,158,11,0.4);
+  color: var(--hot);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ============================================================
+   MOTIVATION SCORE METER
+   ============================================================ */
+
+.motivation-meter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.motivation-dots {
+  display: flex;
+  gap: 2px;
+}
+
+.motivation-dot {
+  width: 5px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  transition: background var(--duration) var(--ease);
+}
+
+.motivation-dot.filled-1,
+.motivation-dot.filled-2,
+.motivation-dot.filled-3 { background: var(--info); border-color: transparent; }
+.motivation-dot.filled-4,
+.motivation-dot.filled-5,
+.motivation-dot.filled-6 { background: var(--hot);  border-color: transparent; }
+.motivation-dot.filled-7,
+.motivation-dot.filled-8,
+.motivation-dot.filled-9,
+.motivation-dot.filled-10{ background: var(--accent); border-color: transparent; }
+
+.motivation-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  min-width: 18px;
+  color: var(--text-secondary);
+}
+
+/* ============================================================
+   PROFIT INDICATOR
+   ============================================================ */
+
+.profit-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.profit-value {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.profit-roi {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-tertiary);
+}
+
+/* ============================================================
+   ACTIVITY TYPE ICONS
+   ============================================================ */
+
+.activity-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  flex-shrink: 0;
+}
+
+.activity-call   { background: var(--info-dim);   color: var(--info); }
+.activity-sms    { background: var(--accent-dim);  color: var(--accent); }
+.activity-email  { background: var(--purple-dim);  color: var(--purple); }
+.activity-offer  { background: var(--hot-dim);     color: var(--hot); }
+.activity-note   { background: var(--bg-elevated); color: var(--text-secondary); }
+.activity-status { background: var(--teal-dim);    color: var(--teal); }
+.activity-task   { background: var(--warning-dim); color: var(--warning); }
+.activity-auto   { background: var(--purple-dim);  color: var(--purple); }
