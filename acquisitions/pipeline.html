@@ -1,0 +1,119 @@
+<!--
+  pipeline.html — Pipeline Stage Tabs (Partial)
+  Properties714 · Acquisitions Module
+
+  This file documents the HTML structure rendered by Pipeline.render().
+  The JS module generates this markup dynamically from the STAGES config.
+  You can also use this as a server-side include or template partial.
+
+  Container target: <div id="pipeline-container"></div>
+-->
+
+<div class="pipeline-tabs" id="pipeline-tabs" role="tablist" aria-label="Pipeline stages">
+
+  <!-- ALL (default active) -->
+  <button
+    class="pipeline-tab active"
+    data-stage="all"
+    role="tab"
+    aria-selected="true"
+  >
+    <span class="tab-label">All Leads</span>
+    <span class="tab-count" id="tab-count-all">0</span>
+  </button>
+
+  <!-- NEW LEAD -->
+  <button
+    class="pipeline-tab"
+    data-stage="new-lead"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">
+      New Lead
+      <span class="tab-hot-dot" id="hot-dot-new-lead" hidden></span>
+    </span>
+    <span class="tab-count" id="tab-count-new-lead">0</span>
+  </button>
+
+  <!-- CONTACTED -->
+  <button
+    class="pipeline-tab"
+    data-stage="contacted"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Contacted</span>
+    <span class="tab-count" id="tab-count-contacted">0</span>
+  </button>
+
+  <!-- FOLLOW-UP -->
+  <button
+    class="pipeline-tab"
+    data-stage="follow-up"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Follow-Up</span>
+    <span class="tab-count" id="tab-count-follow-up">0</span>
+  </button>
+
+  <!-- NEGOTIATION -->
+  <button
+    class="pipeline-tab"
+    data-stage="negotiation"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Negotiation</span>
+    <span class="tab-count" id="tab-count-negotiation">0</span>
+  </button>
+
+  <!-- OFFER SENT -->
+  <button
+    class="pipeline-tab"
+    data-stage="offer-sent"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Offer Sent</span>
+    <span class="tab-count" id="tab-count-offer-sent">0</span>
+  </button>
+
+  <!-- UNDER CONTRACT -->
+  <button
+    class="pipeline-tab pipeline-tab--contract"
+    data-stage="under-contract"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Under Contract</span>
+    <span class="tab-count" id="tab-count-under-contract">0</span>
+  </button>
+
+  <!-- DEAD -->
+  <button
+    class="pipeline-tab pipeline-tab--dead"
+    data-stage="dead"
+    role="tab"
+    aria-selected="false"
+  >
+    <span class="tab-label">Dead</span>
+    <span class="tab-count" id="tab-count-dead">0</span>
+  </button>
+
+</div>
+
+<!--
+  NOTE: Tab counts and hot-dot indicators are updated by:
+    Pipeline.updateCounts(leads)
+
+  Active tab filtering is handled by:
+    Pipeline.onChange(callback)
+    → fires _onPipelineChange(stageId) in acquisitions.js
+    → which calls Filters.apply(leads, stageId)
+    → and re-renders the table
+
+  Stage definitions live in pipeline.js → STAGES array.
+  Do not add stages here without updating STAGES in pipeline.js.
+-->
