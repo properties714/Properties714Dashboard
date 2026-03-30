@@ -6,13 +6,381 @@
   <title>Dashboard — Properties714</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/acquisitions.css" />
   <link rel="stylesheet" href="/css/nav.css" />
+
+  <style>
+    /* ── Dashboard page shell ── */
+    .dash-page {
+      min-height: calc(100vh - 52px);
+      background: var(--bg-void);
+      padding: var(--space-8) var(--space-8) var(--space-12);
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* ── Page header ── */
+    .dash-header {
+      margin-bottom: var(--space-8);
+    }
+
+    .dash-greeting {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      line-height: 1.1;
+    }
+
+    .dash-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+    }
+
+    .dash-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .dash-date-chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 5px 12px;
+    }
+
+    /* ── Section label ── */
+    .section-header {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .section-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* ── KPI Grid ── */
+    .kpi-section {
+      margin-bottom: var(--space-10);
+    }
+
+    .kpi-grid-dash {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--space-4);
+    }
+
+    @media (max-width: 1100px) { .kpi-grid-dash { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px)  { .kpi-grid-dash { grid-template-columns: repeat(2, 1fr); } }
+
+    .kpi-dash-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 180ms, transform 180ms;
+    }
+
+    .kpi-dash-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .kpi-dash-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .kpi-dash-card.green  { border-color: rgba(0,200,117,0.2); }
+    .kpi-dash-card.green::before  { background: var(--accent); }
+    .kpi-dash-card.green:hover  { border-color: rgba(0,200,117,0.45); }
+
+    .kpi-dash-card.amber  { border-color: rgba(245,158,11,0.2); }
+    .kpi-dash-card.amber::before  { background: var(--hot); }
+    .kpi-dash-card.amber:hover  { border-color: rgba(245,158,11,0.45); }
+
+    .kpi-dash-card.blue   { border-color: rgba(59,130,246,0.2); }
+    .kpi-dash-card.blue::before   { background: var(--info); }
+    .kpi-dash-card.blue:hover   { border-color: rgba(59,130,246,0.45); }
+
+    .kpi-dash-card.purple { border-color: rgba(168,85,247,0.2); }
+    .kpi-dash-card.purple::before { background: var(--purple); }
+    .kpi-dash-card.purple:hover { border-color: rgba(168,85,247,0.45); }
+
+    .kpi-dash-card.teal   { border-color: rgba(20,184,166,0.2); }
+    .kpi-dash-card.teal::before   { background: var(--teal); }
+    .kpi-dash-card.teal:hover   { border-color: rgba(20,184,166,0.45); }
+
+    .kpi-dash-icon {
+      font-size: 1.1rem;
+      margin-bottom: var(--space-3);
+      display: block;
+    }
+
+    .kpi-dash-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-2);
+    }
+
+    .kpi-dash-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+
+    .kpi-dash-card.green  .kpi-dash-value { color: var(--accent); }
+    .kpi-dash-card.amber  .kpi-dash-value { color: var(--hot); }
+    .kpi-dash-card.blue   .kpi-dash-value { color: var(--info); }
+    .kpi-dash-card.purple .kpi-dash-value { color: var(--purple); }
+    .kpi-dash-card.teal   .kpi-dash-value { color: var(--teal); }
+
+    .kpi-dash-sub {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: var(--space-2);
+    }
+
+    /* ── Main content area ── */
+    .dash-body {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: var(--space-8);
+    }
+
+    @media (max-width: 960px) { .dash-body { grid-template-columns: 1fr; } }
+
+    /* ── Module grid ── */
+    .modules-section {
+      margin-bottom: var(--space-8);
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-3);
+    }
+
+    @media (max-width: 600px) { .module-grid { grid-template-columns: 1fr; } }
+
+    .module-tile {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-4) var(--space-5);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: border-color 180ms, background 180ms, transform 180ms;
+    }
+
+    .module-tile:hover {
+      background: var(--bg-overlay);
+      border-color: var(--border-soft);
+      transform: translateY(-1px);
+    }
+
+    .module-tile--soon {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .module-tile-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .module-tile-text { flex: 1; min-width: 0; }
+
+    .module-tile-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .module-tile-desc {
+      font-size: 0.73rem;
+      color: var(--text-tertiary);
+      margin-top: 2px;
+    }
+
+    .module-tile-arrow {
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      transition: transform 180ms, color 180ms;
+      flex-shrink: 0;
+    }
+
+    .module-tile:hover .module-tile-arrow {
+      transform: translateX(3px);
+      color: var(--accent);
+    }
+
+    .module-tile-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 99px;
+      padding: 2px 8px;
+      flex-shrink: 0;
+    }
+
+    /* ── Activity feed ── */
+    .activity-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .activity-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      padding: var(--space-10) var(--space-6);
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .activity-empty-icon {
+      font-size: 1.6rem;
+      opacity: 0.4;
+    }
+
+    .activity-empty-text {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar-col {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-6);
+    }
+
+    .quick-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .quick-card-header {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .quick-list {
+      list-style: none;
+      padding: var(--space-2) 0;
+    }
+
+    .quick-list-item a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-5);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: background 150ms, color 150ms;
+    }
+
+    .quick-list-item a:hover {
+      background: var(--bg-overlay);
+      color: var(--text-primary);
+    }
+
+    .quick-list-icon {
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    /* ── Status card ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-3) var(--space-5);
+      font-size: 0.78rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .status-row:last-child { border-bottom: none; }
+    .status-label-text { color: var(--text-tertiary); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .status-dot-sm {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+    }
+    .status-badge.online  .status-dot-sm { background: var(--accent); }
+    .status-badge.pending .status-dot-sm { background: var(--hot); }
+    .status-badge.offline .status-dot-sm { background: var(--danger); }
+    .status-badge.online  { color: var(--accent); }
+    .status-badge.pending { color: var(--hot); }
+    .status-badge.offline { color: var(--danger); }
+  </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav class="p714-nav">
   <a href="/" class="nav-brand">
     <div class="nav-brand-mark">P7</div>
@@ -36,261 +404,193 @@
   </div>
 </nav>
 
-<!-- ── PAGE ── -->
-<div class="p714-page">
+<!-- PAGE -->
+<div class="dash-page">
 
   <!-- Header -->
-  <div class="page-header">
-    <div class="page-title-row">
+  <div class="dash-header">
+    <div class="dash-meta">
       <div>
-        <h1 class="page-title">Good morning, Eduardo 👋</h1>
-        <p class="page-subtitle">Here's what's happening across your portfolio today.</p>
+        <h1 class="dash-greeting">Good morning, Eduardo 👋</h1>
+        <p class="dash-subtitle">Here's what's happening across your portfolio today.</p>
       </div>
-      <div class="page-actions">
-        <span class="dash-date" id="dash-date"></span>
-      </div>
-    </div>
-
-    <!-- KPI Stats -->
-    <div class="stat-grid">
-      <div class="stat-card green">
-        <span class="stat-icon">🎯</span>
-        <div class="stat-label">Active Leads</div>
-        <div class="stat-value" id="stat-leads">—</div>
-        <div class="stat-sub">In acquisitions pipeline</div>
-      </div>
-      <div class="stat-card amber">
-        <span class="stat-icon">🔥</span>
-        <div class="stat-label">Hot Deals</div>
-        <div class="stat-value" id="stat-hot">—</div>
-        <div class="stat-sub">Score ≥ 80</div>
-      </div>
-      <div class="stat-card blue">
-        <span class="stat-icon">📋</span>
-        <div class="stat-label">Under Contract</div>
-        <div class="stat-value" id="stat-contract">—</div>
-        <div class="stat-sub">Active closings</div>
-      </div>
-      <div class="stat-card purple">
-        <span class="stat-icon">💰</span>
-        <div class="stat-label">Pipeline Profit</div>
-        <div class="stat-value" id="stat-profit">—</div>
-        <div class="stat-sub">Estimated total</div>
-      </div>
-      <div class="stat-card teal">
-        <span class="stat-icon">⚠️</span>
-        <div class="stat-label">Overdue Follow-Ups</div>
-        <div class="stat-value" id="stat-overdue">—</div>
-        <div class="stat-sub">Action required</div>
-      </div>
+      <div class="dash-date-chip" id="dash-date"></div>
     </div>
   </div>
 
-  <!-- Content -->
-  <div class="page-content">
-    <div class="dash-grid">
+  <!-- KPIs -->
+  <div class="kpi-section">
+    <div class="section-header">Portfolio Overview</div>
+    <div class="kpi-grid-dash">
 
-      <!-- Quick Access Modules -->
-      <div class="dash-section">
-        <div class="dash-section-title">Modules</div>
-        <div class="module-cards">
+      <div class="kpi-dash-card green">
+        <span class="kpi-dash-icon">🎯</span>
+        <div class="kpi-dash-label">Active Leads</div>
+        <div class="kpi-dash-value" id="stat-leads">—</div>
+        <div class="kpi-dash-sub">In acquisitions pipeline</div>
+      </div>
 
-          <a href="/acquisitions/" class="module-card">
-            <div class="module-card-icon" style="background:var(--accent-dim);color:var(--accent)">🎯</div>
-            <div class="module-card-body">
-              <div class="module-card-name">Acquisitions</div>
-              <div class="module-card-desc">Lead pipeline, deal scoring, offers</div>
+      <div class="kpi-dash-card amber">
+        <span class="kpi-dash-icon">🔥</span>
+        <div class="kpi-dash-label">Hot Deals</div>
+        <div class="kpi-dash-value" id="stat-hot">—</div>
+        <div class="kpi-dash-sub">Score ≥ 80</div>
+      </div>
+
+      <div class="kpi-dash-card blue">
+        <span class="kpi-dash-icon">📋</span>
+        <div class="kpi-dash-label">Under Contract</div>
+        <div class="kpi-dash-value" id="stat-contract">—</div>
+        <div class="kpi-dash-sub">Active closings</div>
+      </div>
+
+      <div class="kpi-dash-card purple">
+        <span class="kpi-dash-icon">💰</span>
+        <div class="kpi-dash-label">Pipeline Profit</div>
+        <div class="kpi-dash-value" id="stat-profit">—</div>
+        <div class="kpi-dash-sub">Estimated total</div>
+      </div>
+
+      <div class="kpi-dash-card teal">
+        <span class="kpi-dash-icon">⚠️</span>
+        <div class="kpi-dash-label">Overdue Follow-Ups</div>
+        <div class="kpi-dash-value" id="stat-overdue">—</div>
+        <div class="kpi-dash-sub">Action required</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="dash-body">
+
+    <!-- Left column -->
+    <div>
+
+      <!-- Modules -->
+      <div class="modules-section">
+        <div class="section-header">Modules</div>
+        <div class="module-grid">
+
+          <a href="/acquisitions/" class="module-tile">
+            <div class="module-tile-icon" style="background:var(--accent-dim);color:var(--accent)">🎯</div>
+            <div class="module-tile-text">
+              <div class="module-tile-name">Acquisitions</div>
+              <div class="module-tile-desc">Lead pipeline, deal scoring, offers</div>
             </div>
-            <div class="module-card-arrow">→</div>
+            <div class="module-tile-arrow">→</div>
           </a>
 
-          <a href="/leads/" class="module-card module-card--soon">
-            <div class="module-card-icon" style="background:var(--info-dim);color:var(--info)">👥</div>
-            <div class="module-card-body">
-              <div class="module-card-name">Leads / CRM</div>
-              <div class="module-card-desc">Contact management, follow-ups</div>
+          <a href="/leads/" class="module-tile module-tile--soon">
+            <div class="module-tile-icon" style="background:var(--info-dim);color:var(--info)">👥</div>
+            <div class="module-tile-text">
+              <div class="module-tile-name">Leads / CRM</div>
+              <div class="module-tile-desc">Contact management, follow-ups</div>
             </div>
-            <span class="module-card-tag">Coming soon</span>
+            <span class="module-tile-badge">Soon</span>
           </a>
 
-          <a href="/deals/" class="module-card module-card--soon">
-            <div class="module-card-icon" style="background:var(--purple-dim);color:var(--purple)">📋</div>
-            <div class="module-card-body">
-              <div class="module-card-name">Deals</div>
-              <div class="module-card-desc">Contracts, closing tracker</div>
+          <a href="/deals/" class="module-tile module-tile--soon">
+            <div class="module-tile-icon" style="background:var(--purple-dim);color:var(--purple)">📋</div>
+            <div class="module-tile-text">
+              <div class="module-tile-name">Deals</div>
+              <div class="module-tile-desc">Contracts, closing tracker</div>
             </div>
-            <span class="module-card-tag">Coming soon</span>
+            <span class="module-tile-badge">Soon</span>
           </a>
 
-          <a href="/reports/" class="module-card module-card--soon">
-            <div class="module-card-icon" style="background:var(--teal-dim);color:var(--teal)">📊</div>
-            <div class="module-card-body">
-              <div class="module-card-name">Reports</div>
-              <div class="module-card-desc">Analytics, performance metrics</div>
+          <a href="/reports/" class="module-tile module-tile--soon">
+            <div class="module-tile-icon" style="background:var(--teal-dim);color:var(--teal)">📊</div>
+            <div class="module-tile-text">
+              <div class="module-tile-name">Reports</div>
+              <div class="module-tile-desc">Analytics, performance metrics</div>
             </div>
-            <span class="module-card-tag">Coming soon</span>
+            <span class="module-tile-badge">Soon</span>
           </a>
 
-          <a href="/settings/" class="module-card module-card--soon">
-            <div class="module-card-icon" style="background:var(--bg-overlay);color:var(--text-secondary)">⚙️</div>
-            <div class="module-card-body">
-              <div class="module-card-name">Settings</div>
-              <div class="module-card-desc">Team, automation rules, config</div>
+          <a href="/settings/" class="module-tile module-tile--soon">
+            <div class="module-tile-icon" style="background:var(--bg-overlay);color:var(--text-secondary)">⚙️</div>
+            <div class="module-tile-text">
+              <div class="module-tile-name">Settings</div>
+              <div class="module-tile-desc">Team, automation rules, config</div>
             </div>
-            <span class="module-card-tag">Coming soon</span>
+            <span class="module-tile-badge">Soon</span>
           </a>
 
         </div>
       </div>
 
       <!-- Recent Activity -->
-      <div class="dash-section">
-        <div class="dash-section-title">Recent Activity</div>
-        <div class="dash-activity" id="dash-activity">
-          <div class="dash-activity-empty">No recent activity.</div>
+      <div>
+        <div class="section-header">Recent Activity</div>
+        <div class="activity-card">
+          <div id="dash-activity">
+            <div class="activity-empty">
+              <div class="activity-empty-icon">📭</div>
+              <div class="activity-empty-text">No recent activity yet.<br>Actions across your pipeline will show up here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right: Sidebar -->
+    <div class="sidebar-col">
+
+      <div class="quick-card">
+        <div class="quick-card-header">Quick Access</div>
+        <ul class="quick-list">
+          <li class="quick-list-item"><a href="/acquisitions/"><span class="quick-list-icon">🎯</span> View Acquisitions</a></li>
+          <li class="quick-list-item"><a href="/acquisitions/#add"><span class="quick-list-icon">➕</span> Add New Lead</a></li>
+          <li class="quick-list-item"><a href="/leads/"><span class="quick-list-icon">👥</span> Open CRM</a></li>
+          <li class="quick-list-item"><a href="/reports/"><span class="quick-list-icon">📊</span> View Reports</a></li>
+          <li class="quick-list-item"><a href="/settings/"><span class="quick-list-icon">⚙️</span> Settings</a></li>
+        </ul>
+      </div>
+
+      <div class="quick-card">
+        <div class="quick-card-header">System Status</div>
+        <div class="status-row">
+          <span class="status-label-text">Dashboard</span>
+          <span class="status-badge online"><span class="status-dot-sm"></span>Online</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label-text">Database</span>
+          <span class="status-badge pending"><span class="status-dot-sm"></span>Pending</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label-text">Automations</span>
+          <span class="status-badge pending"><span class="status-dot-sm"></span>Pending</span>
+        </div>
+        <div class="status-row">
+          <span class="status-label-text">Last sync</span>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-dim)" id="dash-sync">—</span>
         </div>
       </div>
 
     </div>
   </div>
 
-</div><!-- /.p714-page -->
-
-<style>
-  .dash-date {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    padding: 6px 12px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius);
-  }
-
-  .dash-grid {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: var(--space-6);
-  }
-
-  @media (max-width: 960px) {
-    .dash-grid { grid-template-columns: 1fr; }
-  }
-
-  .dash-section-title {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-bottom: var(--space-3);
-  }
-
-  .module-cards {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-
-  .module-card {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4) var(--space-5);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: all 180ms;
-  }
-
-  .module-card:hover {
-    border-color: var(--border-soft);
-    background: var(--bg-overlay);
-    transform: translateX(4px);
-  }
-
-  .module-card--soon { opacity: 0.6; cursor: default; }
-  .module-card--soon:hover { transform: none; }
-
-  .module-card-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-  }
-
-  .module-card-body { flex: 1; }
-
-  .module-card-name {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: 0.88rem;
-  }
-
-  .module-card-desc {
-    font-size: 0.75rem;
-    color: var(--text-tertiary);
-    margin-top: 2px;
-  }
-
-  .module-card-arrow {
-    color: var(--text-dim);
-    font-size: 1rem;
-    transition: transform 180ms;
-  }
-
-  .module-card:hover .module-card-arrow { transform: translateX(4px); color: var(--accent); }
-
-  .module-card-tag {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-subtle);
-    border-radius: 99px;
-    padding: 3px 8px;
-    white-space: nowrap;
-  }
-
-  .dash-activity {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
-    padding: var(--space-4);
-    min-height: 200px;
-  }
-
-  .dash-activity-empty {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 160px;
-    color: var(--text-dim);
-    font-size: 0.8rem;
-  }
-</style>
+</div>
 
 <script>
-  // Date
+  const now = new Date();
   document.getElementById('dash-date').textContent =
-    new Date().toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  document.getElementById('dash-sync').textContent =
+    now.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
 
-  // Load KPIs from acquisitions mock data (quick read)
-  // These will be replaced by real Supabase data when connected
-  const MOCK_STATS = { leads: 8, hot: 2, contract: 1, profit: '$287K', overdue: 3 };
-  document.getElementById('stat-leads').textContent    = MOCK_STATS.leads;
-  document.getElementById('stat-hot').textContent      = MOCK_STATS.hot;
-  document.getElementById('stat-contract').textContent = MOCK_STATS.contract;
-  document.getElementById('stat-profit').textContent   = MOCK_STATS.profit;
-  document.getElementById('stat-overdue').textContent  = MOCK_STATS.overdue;
+  const hour = now.getHours();
+  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  document.querySelector('.dash-greeting').textContent = greeting + ', Eduardo 👋';
+
+  const MOCK = { leads: 8, hot: 2, contract: 1, profit: '$287K', overdue: 3 };
+  document.getElementById('stat-leads').textContent    = MOCK.leads;
+  document.getElementById('stat-hot').textContent      = MOCK.hot;
+  document.getElementById('stat-contract').textContent = MOCK.contract;
+  document.getElementById('stat-profit').textContent   = MOCK.profit;
+  document.getElementById('stat-overdue').textContent  = MOCK.overdue;
 </script>
 
 </body>
