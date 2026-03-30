@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Properties714</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/acquisitions.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
+  <style>
+    .login-shell {
+      min-height: 100vh;
+      background: var(--bg-void);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+    }
+
+    .login-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: var(--space-8);
+    }
+
+    .login-brand-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+
+    .login-brand-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .login-brand-name span { color: var(--accent); }
+
+    .login-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .login-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-7);
+    }
+
+    .form-group { margin-bottom: var(--space-5); }
+
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-2);
+    }
+
+    .form-input {
+      width: 100%;
+      background: var(--bg-overlay);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 180ms;
+      box-sizing: border-box;
+    }
+
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: var(--text-dim); }
+
+    .btn-login {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 11px;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: opacity 180ms, transform 120ms;
+      margin-top: var(--space-6);
+    }
+
+    .btn-login:hover   { opacity: 0.88; }
+    .btn-login:active  { transform: scale(0.98); }
+    .btn-login:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    .login-error {
+      display: none;
+      background: rgba(239,68,68,0.09);
+      border: 1px solid rgba(239,68,68,0.28);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: var(--danger);
+      margin-top: var(--space-4);
+      line-height: 1.4;
+    }
+
+    .login-error.show { display: block; }
+
+    .login-footer {
+      margin-top: var(--space-7);
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-shell">
+  <div class="login-card">
+
+    <div class="login-brand">
+      <div class="login-brand-mark">P7</div>
+      <span class="login-brand-name">Properties<span>714</span></span>
+    </div>
+
+    <h1 class="login-title">Welcome back</h1>
+    <p class="login-subtitle">Sign in to your acquisitions dashboard</p>
+
+    <div class="form-group">
+      <label class="form-label" for="email">Email</label>
+      <input class="form-input" type="email" id="email"
+        placeholder="you@properties714.com"
+        autocomplete="email" />
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="password">Password</label>
+      <input class="form-input" type="password" id="password"
+        placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
+        autocomplete="current-password" />
+    </div>
+
+    <button class="btn-login" id="btn-login">Sign In</button>
+
+    <div class="login-error" id="login-error"></div>
+
+    <div class="login-footer">Properties 714 LLC &mdash; Internal System</div>
+
+  </div>
+</div>
+
+<script>
+  // If already authenticated, skip login page
+  (async () => {
+    try {
+      const session = await P714Auth.init();
+      if (session) {
+        const params = new URLSearchParams(window.location.search);
+        window.location.href = params.get('next') || '/';
+      }
+    } catch (e) {
+      // Supabase not configured yet — stay on page
+      console.warn('[Login] Auth not configured:', e.message);
+    }
+  })();
+
+  const btnLogin = document.getElementById('btn-login');
+  const emailEl  = document.getElementById('email');
+  const passEl   = document.getElementById('password');
+  const errorEl  = document.getElementById('login-error');
+
+  function showError(msg) {
+    errorEl.textContent = msg;
+    errorEl.classList.add('show');
+  }
+
+  function hideError() {
+    errorEl.classList.remove('show');
+  }
+
+  async function handleLogin() {
+    hideError();
+    const email    = emailEl.value.trim();
+    const password = passEl.value;
+
+    if (!email || !password) {
+      showError('Por favor ingresa tu email y contraseña.');
+      return;
+    }
+
+    btnLogin.disabled   = true;
+    btnLogin.textContent = 'Signing in...';
+
+    try {
+      await P714Auth.login(email, password);
+      const params = new URLSearchParams(window.location.search);
+      window.location.href = params.get('next') || '/';
+    } catch (err) {
+      showError(err.message === 'Invalid login credentials'
+        ? 'Email o contraseña incorrectos.'
+        : err.message || 'Error al iniciar sesión.');
+      btnLogin.disabled   = false;
+      btnLogin.textContent = 'Sign In';
+    }
+  }
+
+  btnLogin.addEventListener('click', handleLogin);
+  passEl.addEventListener('keydown',  (e) => { if (e.key === 'Enter') handleLogin(); });
+  emailEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') passEl.focus(); });
+</script>
+
+</body>
+</html>
