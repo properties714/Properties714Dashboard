@@ -11,7 +11,7 @@
 const AcquisitionsApp = (() => {
 
   // ============================================================
-  // SUPABASE CONFIG (replace with your actual keys)
+  // SUPABASE CONFIG (fallback — prefers P714Auth client)
   // ============================================================
 
   const SUPABASE_URL = window.__P714_CONFIG__?.supabaseUrl || 'https://YOUR_PROJECT.supabase.co';
@@ -315,11 +315,9 @@ const AcquisitionsApp = (() => {
   // ============================================================
 
   function _renderStaticUI() {
-    // Pipeline tabs
     const pipelineEl = document.getElementById('pipeline-container');
     if (pipelineEl) Pipeline.render(pipelineEl, []);
 
-    // Filter bar
     const filtersEl = document.getElementById('filters-container');
     if (filtersEl) Filters.renderBar(filtersEl);
   }
@@ -329,19 +327,36 @@ const AcquisitionsApp = (() => {
   // ============================================================
 
   async function _connectSupabase() {
+    // Prefer the shared P714Auth client (already authenticated)
+    if (window.P714Auth?.isLoggedIn()) {
+      _supabase    = window.P714Auth.getClient();
+      _isConnected = true;
+      console.info('[Properties714] Using P714Auth Supabase client.');
+
+      // Real-time subscription
+      _supabase
+        .channel('acquisitions_leads_changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'acquisitions_leads',
+        }, _handleRealtimeUpdate)
+        .subscribe();
+      return;
+    }
+
+    // Fallback: own client (dev / not-auth mode)
     if (!window.supabase) throw new Error('Supabase client not loaded');
     if (SUPABASE_URL.includes('YOUR_PROJECT')) throw new Error('Supabase not configured');
 
     _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Verify connection
     const { error } = await _supabase.from('acquisitions_leads').select('count').limit(1);
     if (error) throw error;
 
     _isConnected = true;
-    console.info('[Properties714] Supabase connected.');
+    console.info('[Properties714] Supabase connected (own client).');
 
-    // Set up real-time subscription
     _supabase
       .channel('acquisitions_leads_changes')
       .on('postgres_changes', {
@@ -361,12 +376,7 @@ const AcquisitionsApp = (() => {
       try {
         const { data, error } = await _supabase
           .from('acquisitions_leads')
-          .select(`
-            *,
-            assigned_to:team_members(id, full_name),
-            lead_notes(*),
-            lead_activity(*)
-          `)
+          .select('*, lead_notes(*), lead_activity(*)')
           .order('deal_score', { ascending: false });
 
         if (error) throw error;
@@ -393,13 +403,9 @@ const AcquisitionsApp = (() => {
     const filtersEl  = document.getElementById('filters-container');
     const tableEl    = document.getElementById('table-container');
 
-    // Re-render pipeline with updated counts
     if (pipelineEl) Pipeline.render(pipelineEl, _leads);
+    if (filtersEl)  Filters.renderBar(filtersEl);
 
-    // Re-render filter bar (preserves active filters)
-    if (filtersEl) Filters.renderBar(filtersEl);
-
-    // Apply pipeline + filter, then render table
     const pipelineFilter = Pipeline.getFilter();
     const filtered = Filters.apply(_leads, pipelineFilter);
 
@@ -412,15 +418,15 @@ const AcquisitionsApp = (() => {
   // ============================================================
 
   function _updateKPIs() {
-    const total       = _leads.filter(l => l.status !== 'Dead').length;
-    const hot         = _leads.filter(l => l.hot_deal).length;
-    const contract    = _leads.filter(l => l.status === 'Under Contract').length;
-    const totalROI    = _leads.reduce((sum, l) => sum + (Number(l.estimated_profit) || 0), 0);
+    const total    = _leads.filter(l => l.status !== 'Dead').length;
+    const hot      = _leads.filter(l => l.hot_deal).length;
+    const contract = _leads.filter(l => l.status === 'Under Contract').length;
+    const totalROI = _leads.reduce((sum, l) => sum + (Number(l.estimated_profit) || 0), 0);
 
-    _setKPI('kpi-total-leads', total);
-    _setKPI('kpi-hot-deals',   hot);
+    _setKPI('kpi-total-leads',    total);
+    _setKPI('kpi-hot-deals',      hot);
     _setKPI('kpi-under-contract', contract);
-    _setKPI('kpi-potential-roi', Scoring.Financial.formatCurrency(totalROI, true));
+    _setKPI('kpi-potential-roi',  Scoring.Financial.formatCurrency(totalROI, true));
   }
 
   function _setKPI(id, value) {
@@ -433,31 +439,21 @@ const AcquisitionsApp = (() => {
   }
 
   // ============================================================
-  // PIPELINE CHANGE HANDLER
+  // PIPELINE / FILTER CHANGE HANDLERS
   // ============================================================
 
-  function _onPipelineChange(stageId) {
+  function _onPipelineChange() {
     const tableEl = document.getElementById('table-container');
     if (!tableEl) return;
-
-    const pipelineFilter = Pipeline.getFilter();
-    const filtered = Filters.apply(_leads, pipelineFilter);
-
+    const filtered = Filters.apply(_leads, Pipeline.getFilter());
     Table.setData(_leads);
     Table.refresh(tableEl, filtered);
   }
 
-  // ============================================================
-  // FILTER CHANGE HANDLER
-  // ============================================================
-
-  function _onFiltersChange(activeFilters) {
+  function _onFiltersChange() {
     const tableEl = document.getElementById('table-container');
     if (!tableEl) return;
-
-    const pipelineFilter = Pipeline.getFilter();
-    const filtered = Filters.apply(_leads, pipelineFilter);
-
+    const filtered = Filters.apply(_leads, Pipeline.getFilter());
     Table.setData(_leads);
     Table.refresh(tableEl, filtered);
   }
@@ -484,47 +480,33 @@ const AcquisitionsApp = (() => {
           _logActivity(lead, 'call', 'Initiated call from acquisitions table');
         }
         break;
-
       case 'sms':
-        if (lead?.phone) {
-          window.open(`sms:${lead.phone}`, '_blank');
-        }
+        if (lead?.phone) window.open(`sms:${lead.phone}`, '_blank');
         break;
-
       case 'email':
-        if (lead?.email) {
-          window.open(`mailto:${lead.email}`, '_blank');
-        }
+        if (lead?.email) window.open(`mailto:${lead.email}`, '_blank');
         break;
-
       case 'note':
         Sidebar.open(lead, 'notes');
         break;
-
       case 'task':
         _showAddTaskModal(lead);
         break;
-
       case 'analyzer':
         _runAnalyzer(lead);
         break;
-
       case 'offer':
         _showSendOfferModal(lead);
         break;
-
       case 'bulk:status':
         _showBulkStatusModal(payload.ids);
         break;
-
       case 'bulk:assign':
         _showBulkAssignModal(payload.ids);
         break;
-
       case 'bulk:export':
         _exportLeads(payload.ids);
         break;
-
       default:
         console.info('[Properties714] Unhandled action:', action, payload);
     }
@@ -560,22 +542,24 @@ const AcquisitionsApp = (() => {
   // ============================================================
 
   async function _addLead(leadData) {
-    // Calculate derived values
-    const mao   = Scoring.Financial.calculateMAO(leadData.arv, leadData.repairs);
+    const mao    = Scoring.Financial.calculateMAO(leadData.arv, leadData.repairs);
     const profit = Scoring.Financial.calculateProfit(leadData.arv, leadData.asking_price, leadData.repairs);
-    const roi   = Scoring.Financial.calculateROI(leadData.arv, leadData.asking_price, leadData.repairs);
+    const roi    = Scoring.Financial.calculateROI(leadData.arv, leadData.asking_price, leadData.repairs);
 
     const newLead = {
       ...leadData,
+      // Attach the current user's id (required by RLS)
+      user_id:          window.P714Auth?.getUser()?.id || leadData.user_id,
+      assigned_to:      leadData.assigned_to || window.P714Auth?.getProfile()?.full_name || 'Unknown',
       mao,
       estimated_profit: profit,
       roi,
-      status: leadData.status || 'New Lead',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      status:           leadData.status || 'New Lead',
+      created_at:       new Date().toISOString(),
+      updated_at:       new Date().toISOString(),
     };
 
-    newLead.deal_score = Scoring.calculate(newLead);
+    newLead.deal_score       = Scoring.calculate(newLead);
     newLead.suggested_action = Scoring.getSuggestedAction(newLead);
 
     if (_isConnected) {
@@ -617,17 +601,13 @@ const AcquisitionsApp = (() => {
       updated_at: new Date().toISOString(),
     };
 
-    const oldScore       = oldLead.deal_score;
-    updated.deal_score   = Scoring.calculate(updated);
+    const oldScore           = oldLead.deal_score;
+    updated.deal_score       = Scoring.calculate(updated);
     updated.suggested_action = Scoring.getSuggestedAction(updated);
 
     _leads[idx] = updated;
 
-    // Fire automation events
-    if (updated.status !== oldLead.status) {
-      Automation.onStatusChanged(updated);
-    }
-
+    if (updated.status !== oldLead.status) Automation.onStatusChanged(updated);
     if (updated.deal_score !== oldScore) {
       Automation.onScoreUpdated(updated);
       Assistant.onScoreChanged(updated, oldScore, updated.deal_score);
@@ -644,7 +624,6 @@ const AcquisitionsApp = (() => {
 
     _renderAll();
     _updateKPIs();
-
     return updated;
   }
 
@@ -670,7 +649,8 @@ const AcquisitionsApp = (() => {
 
   async function _logActivity(lead, type, description) {
     const entry = {
-      lead_id:     lead.id,
+      lead_id:    lead.id,
+      user_id:    window.P714Auth?.getUser()?.id || lead.user_id,
       type,
       description,
       created_at: new Date().toISOString(),
@@ -680,7 +660,6 @@ const AcquisitionsApp = (() => {
       await _supabase.from('lead_activity').insert(entry);
     }
 
-    // Update lead's last_contact
     if (['call', 'sms', 'email'].includes(type)) {
       await _updateLead({ ...lead, last_contact: new Date().toISOString(), attempts: (lead.attempts || 0) + 1 });
     }
@@ -697,20 +676,19 @@ const AcquisitionsApp = (() => {
 
     _showToast({ level: 'info', title: '⚡ Running Analyzer', message: `Analyzing ${lead.name}...` });
 
-    const breakdown = Scoring.getBreakdown(lead);
-    const mao       = Scoring.Financial.calculateMAO(lead.arv, lead.repairs);
-    const roi       = Scoring.Financial.calculateROI(lead.arv, lead.asking_price, lead.repairs);
-    const equity    = Scoring.Financial.calculateEquityPct(lead.arv, lead.asking_price);
+    const mao    = Scoring.Financial.calculateMAO(lead.arv, lead.repairs);
+    const roi    = Scoring.Financial.calculateROI(lead.arv, lead.asking_price, lead.repairs);
+    const equity = Scoring.Financial.calculateEquityPct(lead.arv, lead.asking_price);
 
     const modal = document.getElementById('analyzer-modal');
     if (modal) {
       document.getElementById('analyzer-lead-name').textContent = lead.name;
-      document.getElementById('analyzer-address').textContent = lead.property_address;
-      document.getElementById('analyzer-score').textContent = lead.deal_score;
-      document.getElementById('analyzer-mao').textContent = Scoring.Financial.formatCurrency(mao);
-      document.getElementById('analyzer-roi').textContent = Scoring.Financial.formatPct(roi);
-      document.getElementById('analyzer-equity').textContent = Scoring.Financial.formatPct(equity);
-      document.getElementById('analyzer-action').textContent = lead.suggested_action;
+      document.getElementById('analyzer-address').textContent   = lead.property_address;
+      document.getElementById('analyzer-score').textContent     = lead.deal_score;
+      document.getElementById('analyzer-mao').textContent       = Scoring.Financial.formatCurrency(mao);
+      document.getElementById('analyzer-roi').textContent       = Scoring.Financial.formatPct(roi);
+      document.getElementById('analyzer-equity').textContent    = Scoring.Financial.formatPct(equity);
+      document.getElementById('analyzer-action').textContent    = lead.suggested_action;
       modal.classList.add('open');
     }
   }
@@ -724,28 +702,23 @@ const AcquisitionsApp = (() => {
     if (modal) modal.classList.add('open');
   }
 
-  function _showAddTaskModal(lead) {
-    Sidebar.open(lead, 'tasks');
-  }
-
+  function _showAddTaskModal(lead)   { Sidebar.open(lead, 'tasks'); }
   function _showSendOfferModal(lead) {
     _showToast({ level: 'info', title: '📄 Preparing Offer', message: `Generating offer for ${lead?.name}...` });
-    // Future: integrate with offer generator
   }
-
   function _showBulkStatusModal(ids) {
     _showToast({ level: 'info', title: 'Bulk Status Change', message: `${ids.length} leads selected` });
   }
-
   function _showBulkAssignModal(ids) {
     _showToast({ level: 'info', title: 'Bulk Assign', message: `Assigning ${ids.length} leads...` });
   }
 
-  function _exportLeads(ids) {
-    const toExport = ids
-      ? _leads.filter(l => ids.includes(l.id))
-      : _leads;
+  // ============================================================
+  // EXPORT
+  // ============================================================
 
+  function _exportLeads(ids) {
+    const toExport = ids ? _leads.filter(l => ids.includes(l.id)) : _leads;
     const csv = _leadsToCSV(toExport);
     _downloadCSV(csv, `p714_leads_${Date.now()}.csv`);
     _showToast({ level: 'success', title: 'Exported', message: `${toExport.length} leads exported` });
@@ -778,12 +751,7 @@ const AcquisitionsApp = (() => {
     const container = document.getElementById('toast-container');
     if (!container) return;
 
-    const icons = {
-      success: '✓',
-      error:   '✕',
-      warning: '⚠',
-      info:    'ℹ',
-    };
+    const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
 
     const toast = document.createElement('div');
     toast.className = `toast ${level}`;
@@ -810,7 +778,7 @@ const AcquisitionsApp = (() => {
   }
 
   // ============================================================
-  // LISTEN FOR AUTOMATION EVENTS FROM DOM
+  // AUTOMATION EVENT LISTENERS
   // ============================================================
 
   window.addEventListener('automation:create_task', (e) => {
@@ -849,7 +817,6 @@ const AcquisitionsApp = (() => {
       e.target.reset();
     });
 
-    // Modal backdrop clicks
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
       backdrop.addEventListener('click', (e) => {
         if (e.target === backdrop) backdrop.classList.remove('open');
@@ -880,8 +847,22 @@ const AcquisitionsApp = (() => {
 
 })();
 
-// Boot on DOM ready
-document.addEventListener('DOMContentLoaded', () => {
+// ============================================================
+// BOOT — Auth guard + init
+// ============================================================
+document.addEventListener('DOMContentLoaded', async () => {
+  // If P714Auth is available, enforce authentication
+  if (window.P714Auth) {
+    try {
+      const session = await P714Auth.init();
+      if (!session) return; // auth.js will redirect to /login/
+      P714Auth.injectUserNav();
+    } catch (err) {
+      console.warn('[Properties714] Auth init error:', err.message);
+      // Continue anyway (dev mode without config)
+    }
+  }
+
   AcquisitionsApp.init();
   AcquisitionsApp.bindGlobalActions();
 });
