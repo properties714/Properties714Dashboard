@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="/css/app.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/js/config.js"></script>
+<script src="/js/admin-config.js"></script>
 <script src="/js/auth.js"></script>
 <script src="/js/admin.js"></script>
 </head>
@@ -49,17 +50,12 @@
 
         <!-- TEAM TAB -->
         <div id="tab-team">
-          <div class="card" id="admin-notice" style="margin-bottom:16px;border-color:rgba(245,158,11,0.3)">
+          <div class="card" id="admin-notice" style="margin-bottom:16px;border-color:rgba(245,158,11,0.3);display:none">
             <div class="card-body" style="display:flex;gap:14px;align-items:flex-start">
               <span style="font-size:22px;flex-shrink:0">🔑</span>
               <div>
-                <div style="font-weight:600;font-size:13px;margin-bottom:6px">Para crear usuarios desde aquí necesitas la Service Role Key</div>
-                <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">Crea el archivo <code style="background:var(--bg-input);padding:2px 6px;border-radius:4px">js/admin-config.js</code> en tu repo:</div>
-                <pre style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-2);overflow-x:auto">// js/admin-config.js
-window.__P714_ADMIN_CONFIG__ = {
-  serviceRoleKey: 'eyJ...' // Supabase → Settings → API → service_role
-};</pre>
-                <div style="font-size:11px;color:var(--text-3);margin-top:8px">⚠ Si tu repo es público, agrega este archivo a .gitignore</div>
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px">Service Role Key not configured</div>
+                <div style="font-size:12px;color:var(--text-2)">Add js/admin-config.js to your repo with your service_role key to enable user management.</div>
               </div>
             </div>
           </div>
@@ -173,9 +169,10 @@ let _team = [], _resetId = null, _isOwner = false;
     document.getElementById('sys-url').textContent = window.__P714_CONFIG__?.supabaseUrl || '—';
     const hasKey = !!window.__P714_ADMIN_CONFIG__?.serviceRoleKey;
     if (hasKey) {
-      document.getElementById('admin-notice').style.display = 'none';
       document.getElementById('sys-admin').innerHTML = '<span class="badge-dot"></span>Configured';
       document.getElementById('sys-admin').className = 'badge badge-closed';
+    } else {
+      document.getElementById('admin-notice').style.display = '';
     }
     if (!_isOwner) document.getElementById('btn-add').style.display = 'none';
     await loadTeam();
@@ -228,8 +225,7 @@ async function createUser() {
     toast('success', 'Account created', `${name} can now sign in at /login/`);
     await loadTeam();
   } catch (e) {
-    if (e.message.includes('service_role')) toast('error', 'Admin key needed', 'Add js/admin-config.js with your service_role key.');
-    else toast('error', 'Error', e.message);
+    toast('error', 'Error', e.message);
   }
 }
 
@@ -250,10 +246,7 @@ async function doReset() {
     await P714Admin.setPassword(_resetId, pw);
     closeModal('reset-modal');
     toast('success', 'Password updated', 'User can now sign in with the new password.');
-  } catch (e) {
-    if (e.message.includes('service_role')) toast('error', 'Admin key needed', 'Add js/admin-config.js with your service_role key.');
-    else toast('error', 'Error', e.message);
-  }
+  } catch (e) { toast('error', 'Error', e.message); }
 }
 
 async function removeUser(id, name) {
