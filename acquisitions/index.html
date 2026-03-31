@@ -3,129 +3,226 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acquisitions — Properties714</title>
+  <title>Acquisitions — Properties 714</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- New design system -->
+  <link rel="stylesheet" href="/css/app.css" />
+  <!-- Legacy acquisition-specific styles (table, sidebar, badges) -->
   <link rel="stylesheet" href="/css/acquisitions.css" />
-  <link rel="stylesheet" href="/css/nav.css" />
   <link rel="stylesheet" href="/css/table.css" />
   <link rel="stylesheet" href="/css/badges.css" />
   <link rel="stylesheet" href="/css/sidebar.css" />
 
-  <script>
-    window.__P714_CONFIG__ = {
-      supabaseUrl: '',
-      supabaseKey: '',
-    };
-  </script>
-</head>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Load real config FIRST — no override here -->
+  <script src="/js/config.js"></script>
+  <script src="/js/auth.js"></script>
 
+  <style>
+    /* Override legacy nav styles so sidebar layout works */
+    .p714-nav { display: none !important; }
+    body { background: var(--bg-app); }
+
+    /* Acquisitions content inside app-main */
+    .acq-app {
+      padding: 0;
+      background: transparent;
+    }
+    .acq-page-header {
+      padding: 0 0 20px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .acq-page-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text-1);
+    }
+    .acq-page-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 3px;
+    }
+
+    /* KPI row override */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin: 18px 0;
+    }
+    @media(max-width:900px){ .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 16px 18px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 180ms, transform 180ms;
+    }
+    .kpi-card:hover { border-color: var(--border-soft); transform: translateY(-2px); }
+    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
+    .kpi-card.kpi-hot::before { background: var(--amber); }
+    .kpi-card.kpi-contract::before { background: var(--green); }
+    .kpi-card.kpi-roi::before { background: var(--purple); }
+    .kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-2); margin-bottom: 6px; position: relative; }
+    .kpi-value { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--accent); position: relative; }
+    .kpi-card.kpi-hot .kpi-value { color: var(--amber); }
+    .kpi-card.kpi-contract .kpi-value { color: var(--green); }
+    .kpi-card.kpi-roi .kpi-value { color: var(--purple); }
+    .kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; position: relative; }
+
+    /* Actions bar */
+    .acq-global-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .acq-global-actions .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .acq-global-actions .btn-primary:hover { opacity: 0.88; }
+
+    /* Pipeline wrapper */
+    .pipeline-wrapper, .filters-wrapper { margin-bottom: 12px; }
+    .table-wrapper { border-radius: var(--radius-lg); overflow: hidden; }
+
+    /* Connection badge in topbar */
+    .conn-badge {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--text-3);
+      font-family: var(--font-mono);
+    }
+    .conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+    .conn-dot.online { background: var(--green); }
+  </style>
+</head>
 <body>
 
-<!-- ── NAV ── -->
-<nav class="p714-nav">
-  <a href="/" class="nav-brand">
-    <div class="nav-brand-mark">P7</div>
-    <span class="nav-brand-name">Properties<span>714</span></span>
-  </a>
-  <div class="nav-divider"></div>
-  <div class="nav-links">
-    <a href="/"              class="nav-link"><span class="nav-link-icon">⬡</span> Dashboard</a>
-    <a href="/acquisitions/" class="nav-link active"><span class="nav-link-icon">🎯</span> Acquisitions</a>
-    <a href="/leads/"        class="nav-link"><span class="nav-link-icon">👥</span> Leads</a>
-    <a href="/deals/"        class="nav-link"><span class="nav-link-icon">📋</span> Deals</a>
-    <a href="/reports/"      class="nav-link"><span class="nav-link-icon">📊</span> Reports</a>
-    <a href="/settings/"     class="nav-link"><span class="nav-link-icon">⚙️</span> Settings</a>
-  </div>
-  <div class="nav-right">
-    <div class="nav-status" id="connection-status">
-      <div class="nav-status-dot"></div>
-      <span class="status-label">Connecting…</span>
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">P7</div>
+      <span class="sidebar-brand-name">Properties 714</span>
     </div>
-    <div class="nav-avatar" title="Eduardo">EG</div>
-  </div>
-</nav>
-
-<!-- ── ACQ APP ── -->
-<div class="acq-app" id="acq-app">
-
-  <!-- Page Header -->
-  <section class="acq-page-header">
-    <div class="acq-page-title-block">
-      <h1 class="acq-page-title">Acquisitions</h1>
-      <p class="acq-page-sub">Lead pipeline · Deal intelligence · Offer management</p>
+    <nav class="sidebar-nav">
+      <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
+      <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Acquisitions</a>
+      <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
+      <a href="/deals/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📋</span>Deals<span class="nav-badge">Soon</span></a>
+      <span class="nav-section-label">Analytics</span>
+      <a href="/reports/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📊</span>Reports<span class="nav-badge">Soon</span></a>
+      <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+        <div class="user-avatar" id="s-av">--</div>
+        <div>
+          <div class="user-name" id="s-name">Loading...</div>
+          <div class="user-role" id="s-role">—</div>
+        </div>
+      </div>
     </div>
+  </aside>
 
-    <!-- KPI Cards -->
-    <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Leads</div>
-        <div class="kpi-value" id="kpi-total-leads">—</div>
-        <div class="kpi-sub">All stages</div>
+  <!-- MAIN -->
+  <main class="app-main">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="breadcrumb">
+        <span>Home</span><span class="breadcrumb-sep">/</span>
+        <span class="breadcrumb-current">Acquisitions</span>
       </div>
-      <div class="kpi-card kpi-hot">
-        <div class="kpi-label">🔥 Hot Deals</div>
-        <div class="kpi-value" id="kpi-hot-deals">—</div>
-        <div class="kpi-sub">Score ≥ 80</div>
-      </div>
-      <div class="kpi-card kpi-contract">
-        <div class="kpi-label">Under Contract</div>
-        <div class="kpi-value" id="kpi-under-contract">—</div>
-        <div class="kpi-sub">Active</div>
-      </div>
-      <div class="kpi-card kpi-roi">
-        <div class="kpi-label">Pipeline Profit</div>
-        <div class="kpi-value" id="kpi-potential-roi">—</div>
-        <div class="kpi-sub">Estimated</div>
+      <div class="top-bar-actions">
+        <div class="conn-badge">
+          <div class="conn-dot" id="conn-dot"></div>
+          <span id="conn-label">Connecting...</span>
+        </div>
+        <div class="user-avatar sm" id="nav-avatar" title="Sign out" onclick="P714Auth.logout()" style="cursor:pointer;margin-left:8px">EG</div>
       </div>
     </div>
 
-    <!-- Global Actions -->
-    <div class="acq-global-actions">
-      <button class="btn btn-ghost btn-sm" id="btn-export">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Export
-      </button>
-      <button class="btn btn-ghost btn-sm" id="btn-automate">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M5.34 18.66l-1.41 1.41M20 12h2M2 12h2M19.07 19.07l-1.41-1.41M5.34 5.34L3.93 3.93"/></svg>
-        Automate
-      </button>
-      <button class="btn btn-secondary btn-sm" id="btn-run-analyzer">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Analyzer
-      </button>
-      <button class="btn btn-primary" id="btn-add-lead">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Add Lead
-      </button>
+    <!-- Page Content -->
+    <div class="page-content">
+
+      <!-- Acquisitions App -->
+      <div class="acq-app" id="acq-app">
+
+        <section class="acq-page-header">
+          <div class="acq-page-title-block">
+            <h1 class="acq-page-title">Acquisitions</h1>
+            <p class="acq-page-sub">Lead pipeline · Deal intelligence · Offer management</p>
+          </div>
+
+          <!-- KPI Cards -->
+          <div class="kpi-grid">
+            <div class="kpi-card" onclick="location.href='/acquisitions/'">
+              <div class="kpi-label">Total Leads</div>
+              <div class="kpi-value" id="kpi-total-leads">—</div>
+              <div class="kpi-sub">All stages</div>
+            </div>
+            <div class="kpi-card kpi-hot">
+              <div class="kpi-label">🔥 Hot Deals</div>
+              <div class="kpi-value" id="kpi-hot-deals">—</div>
+              <div class="kpi-sub">Score ≥ 80</div>
+            </div>
+            <div class="kpi-card kpi-contract">
+              <div class="kpi-label">Under Contract</div>
+              <div class="kpi-value" id="kpi-under-contract">—</div>
+              <div class="kpi-sub">Active</div>
+            </div>
+            <div class="kpi-card kpi-roi">
+              <div class="kpi-label">Pipeline Profit</div>
+              <div class="kpi-value" id="kpi-potential-roi">—</div>
+              <div class="kpi-sub">Estimated</div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="acq-global-actions">
+            <button class="btn btn-ghost btn-sm" id="btn-export">⬇ Export</button>
+            <button class="btn btn-ghost btn-sm" id="btn-automate">🤖 Automate</button>
+            <button class="btn btn-secondary btn-sm" id="btn-run-analyzer">⚡ Analyzer</button>
+            <button class="btn btn-primary" id="btn-add-lead">＋ Add Lead</button>
+          </div>
+        </section>
+
+        <!-- Pipeline Tabs -->
+        <div id="pipeline-container" class="pipeline-wrapper"></div>
+
+        <!-- Filters -->
+        <div id="filters-container" class="filters-wrapper"></div>
+
+        <!-- Table -->
+        <div id="table-container" class="table-wrapper">
+          <div class="table-loading" id="table-loading">
+            <div class="loading-spinner"></div>
+            <span>Loading leads…</span>
+          </div>
+        </div>
+
+      </div>
     </div>
-  </section>
-
-  <!-- Pipeline Tabs -->
-  <div id="pipeline-container" class="pipeline-wrapper"></div>
-
-  <!-- Filters -->
-  <div id="filters-container" class="filters-wrapper"></div>
-
-  <!-- Table -->
-  <div id="table-container" class="table-wrapper">
-    <div class="table-loading" id="table-loading">
-      <div class="loading-spinner"></div>
-      <span>Loading leads…</span>
-    </div>
-  </div>
-
+  </main>
 </div>
 
-<!-- ── SIDEBAR ── -->
+<!-- SIDEBAR (lead detail) -->
 <div id="sidebar-backdrop" class="sidebar-backdrop">
   <aside id="lead-sidebar" class="lead-sidebar" role="dialog" aria-modal="true"></aside>
 </div>
 
-<!-- ── MODAL: Add Lead ── -->
+<!-- MODAL: Add Lead -->
 <div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true">
-  <div class="modal modal-lg">
+  <div class="modal modal-lg" style="max-width:600px">
     <div class="modal-header">
       <h2 class="modal-title">Add New Lead</h2>
       <button class="modal-close">✕</button>
@@ -136,87 +233,52 @@
         <button type="button" class="modal-step" data-step="2">2 · Property</button>
         <button type="button" class="modal-step" data-step="3">3 · Financials</button>
       </div>
-
       <!-- Step 1 -->
       <div class="modal-step-panel active" data-step-panel="1">
         <div class="form-grid">
-          <div class="form-field full">
-            <label>Full Name <span class="required">*</span></label>
-            <input type="text" name="name" placeholder="John Smith" required />
-          </div>
-          <div class="form-field">
-            <label>Phone</label>
-            <input type="tel" name="phone" placeholder="+1 (404) 555-0000" />
-          </div>
-          <div class="form-field">
-            <label>Email</label>
-            <input type="email" name="email" placeholder="owner@email.com" />
-          </div>
-          <div class="form-field">
-            <label>Lead Source</label>
+          <div class="form-field full"><label>Full Name <span class="required">*</span></label><input type="text" name="name" placeholder="John Smith" required /></div>
+          <div class="form-field"><label>Phone</label><input type="tel" name="phone" placeholder="+1 (404) 555-0000" /></div>
+          <div class="form-field"><label>Email</label><input type="email" name="email" placeholder="owner@email.com" /></div>
+          <div class="form-field"><label>Lead Source</label>
             <select name="source">
               <option value="">Select source…</option>
-              <option>Driving for Dollars</option>
-              <option>Direct Mail</option>
-              <option>Cold Call</option>
-              <option>PPC / Google</option>
-              <option>Facebook Ads</option>
-              <option>Referral</option>
-              <option>MLS / Zillow</option>
-              <option>Probate</option>
-              <option>Wholesale</option>
-              <option>Other</option>
+              <option>Driving for Dollars</option><option>Direct Mail</option>
+              <option>Cold Call</option><option>PPC / Google</option>
+              <option>Facebook Ads</option><option>Referral</option>
+              <option>Probate</option><option>Pre-Foreclosure</option>
+              <option>Tax Default</option><option>Other</option>
             </select>
           </div>
-          <div class="form-field">
-            <label>Assign To</label>
-            <select name="assigned_to">
-              <option value="">Unassigned</option>
-              <option>Eduardo</option>
-              <option>Junior</option>
-              <option>Yeimy</option>
+          <div class="form-field"><label>Deal Type</label>
+            <select name="deal_type">
+              <option value="wholesale">Wholesale</option>
+              <option value="fix_flip">Fix &amp; Flip</option>
+              <option value="buy_hold">Buy &amp; Hold</option>
             </select>
           </div>
         </div>
       </div>
-
       <!-- Step 2 -->
       <div class="modal-step-panel" data-step-panel="2">
         <div class="form-grid">
-          <div class="form-field full">
-            <label>Property Address <span class="required">*</span></label>
-            <input type="text" name="property_address" placeholder="1234 Peachtree Blvd NE" required />
-          </div>
-          <div class="form-field">
-            <label>City</label>
-            <input type="text" name="city" placeholder="Atlanta" />
-          </div>
-          <div class="form-field">
-            <label>State</label>
-            <input type="text" name="state" placeholder="GA" maxlength="2" />
-          </div>
-          <div class="form-field">
-            <label>ZIP</label>
-            <input type="text" name="zip" placeholder="30309" maxlength="5" />
-          </div>
-          <div class="form-field">
-            <label>Property Type</label>
+          <div class="form-field full"><label>Property Address <span class="required">*</span></label><input type="text" name="property_address" placeholder="1234 Peachtree Blvd NE" required /></div>
+          <div class="form-field"><label>City</label><input type="text" name="city" placeholder="Atlanta" /></div>
+          <div class="form-field"><label>State</label><input type="text" name="state" placeholder="GA" maxlength="2" /></div>
+          <div class="form-field"><label>ZIP</label><input type="text" name="zip" placeholder="30309" maxlength="5" /></div>
+          <div class="form-field"><label>Property Type</label>
             <select name="property_type">
-              <option>SFR</option><option>Duplex</option>
-              <option>Multi-Family</option><option>Commercial</option>
-              <option>Land</option><option>Mobile</option>
+              <option>SFR</option><option>Duplex</option><option>Multi-Family</option>
+              <option>Commercial</option><option>Land</option><option>Mobile</option>
             </select>
           </div>
-          <div class="form-field">
-            <label>Condition</label>
+          <div class="form-field"><label>Condition</label>
             <select name="condition">
               <option value="">Select…</option>
               <option>Excellent</option><option>Good</option>
               <option>Fair</option><option>Distressed</option><option>Tear-Down</option>
             </select>
           </div>
-          <div class="form-field">
-            <label>Occupancy</label>
+          <div class="form-field"><label>Occupancy</label>
             <select name="occupancy">
               <option value="">Select…</option>
               <option>Owner-Occupied</option><option>Tenant-Occupied</option>
@@ -225,56 +287,38 @@
           </div>
         </div>
       </div>
-
       <!-- Step 3 -->
       <div class="modal-step-panel" data-step-panel="3">
         <div class="form-grid">
-          <div class="form-field">
-            <label>Asking Price ($)</label>
-            <input type="number" name="asking_price" placeholder="180000" min="0" />
-          </div>
-          <div class="form-field">
-            <label>ARV ($)</label>
-            <input type="number" id="f-arv" name="arv" placeholder="320000" min="0" />
-          </div>
-          <div class="form-field">
-            <label>Repairs Est. ($)</label>
-            <input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" />
-          </div>
-          <div class="form-field mao-preview-field">
-            <label>MAO (Auto)</label>
+          <div class="form-field"><label>Asking Price ($)</label><input type="number" name="asking_price" placeholder="180000" min="0" /></div>
+          <div class="form-field"><label>ARV ($)</label><input type="number" id="f-arv" name="arv" placeholder="320000" min="0" /></div>
+          <div class="form-field"><label>Repairs Est. ($)</label><input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" /></div>
+          <div class="form-field mao-preview-field"><label>MAO (Auto)</label>
             <div class="mao-preview">
               <span class="mao-preview-val" id="mao-preview-val">—</span>
               <span class="mao-preview-formula">(ARV × 0.70) − Repairs</span>
             </div>
           </div>
-          <div class="form-field">
-            <label>Motivation (1–10)</label>
-            <input type="number" name="motivation_score" min="1" max="10" placeholder="7" />
-          </div>
-          <div class="form-field">
-            <label>Urgency</label>
+          <div class="form-field"><label>Motivation (1–10)</label><input type="number" name="motivation_score" min="1" max="10" placeholder="7" /></div>
+          <div class="form-field"><label>Urgency</label>
             <select name="urgency_level">
               <option value="">Select…</option>
-              <option>High</option><option>Medium</option><option>Low</option>
+              <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
             </select>
           </div>
-          <div class="form-field">
-            <label>Risk Level</label>
+          <div class="form-field"><label>Risk Level</label>
             <select name="risk_level">
               <option value="">Select…</option>
               <option>Low</option><option>Medium</option><option>High</option>
             </select>
           </div>
-          <div class="form-field">
-            <label>Initial Status</label>
+          <div class="form-field"><label>Initial Status</label>
             <select name="status">
               <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
             </select>
           </div>
         </div>
       </div>
-
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Back</button>
         <button type="button" class="btn btn-secondary" id="modal-next-btn">Next →</button>
@@ -284,9 +328,9 @@
   </div>
 </div>
 
-<!-- ── MODAL: Analyzer ── -->
+<!-- MODAL: Analyzer -->
 <div id="analyzer-modal" class="modal-backdrop" role="dialog" aria-modal="true">
-  <div class="modal">
+  <div class="modal" style="max-width:520px">
     <div class="modal-header">
       <h2 class="modal-title">⚡ Deal Analyzer</h2>
       <button class="modal-close">✕</button>
@@ -297,7 +341,6 @@
         <div class="analyzer-placeholder">
           <div class="analyzer-icon">🤖</div>
           <p>AI analysis will appear here.</p>
-          <p class="text-dim">Configure <code>Assistant.configure()</code> with your API key to enable.</p>
         </div>
       </div>
     </div>
@@ -308,11 +351,10 @@
   </div>
 </div>
 
-<!-- ── TOASTS ── -->
+<!-- TOASTS -->
 <div id="toast-container" class="toast-container" aria-live="polite"></div>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Acquisition JS modules -->
 <script src="/js/acquisitions/scoring.js"></script>
 <script src="/js/acquisitions/automation.js"></script>
 <script src="/js/acquisitions/assistant.js"></script>
@@ -323,6 +365,26 @@
 <script src="/js/acquisitions/acquisitions.js"></script>
 
 <script>
+// ── Auth guard + sidebar injection ──
+(async () => {
+  try {
+    const session = await P714Auth.init();
+    if (!session) { window.location.href = '/login/?next=/acquisitions/'; return; }
+    const p = P714Auth.getProfile();
+    const initials = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('s-av').textContent = initials;
+    document.getElementById('nav-avatar').textContent = initials;
+    document.getElementById('s-name').textContent = p?.full_name || 'User';
+    document.getElementById('s-role').textContent = p?.role === 'owner' ? 'Owner' : 'Acquisitionist';
+    // Connection status dot — will be updated by acquisitions.js
+    document.getElementById('conn-dot').classList.add('online');
+    document.getElementById('conn-label').textContent = 'Connected';
+  } catch (e) {
+    console.warn('[Acquisitions] Auth init:', e.message);
+  }
+})();
+
+// ── Multi-step modal ──
 (function () {
   let _step = 1;
   const TOTAL = 3;
@@ -352,7 +414,7 @@
   function updateMAO() {
     const a = parseFloat(arv?.value) || 0;
     const r = parseFloat(rep?.value) || 0;
-    mao.textContent = a && r ? '$' + (Math.floor(a * 0.7) - r).toLocaleString() : '—';
+    mao.textContent = a ? '$' + (Math.floor(a * 0.7) - r).toLocaleString() : '—';
   }
   arv?.addEventListener('input', updateMAO);
   rep?.addEventListener('input', updateMAO);
