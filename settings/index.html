@@ -1,63 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Properties714</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/acquisitions.css" />
-  <link rel="stylesheet" href="/css/nav.css" />
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Settings — Properties 714</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/app.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/admin.js"></script>
 </head>
 <body>
-<nav class="p714-nav">
-  <a href="/" class="nav-brand">
-    <div class="nav-brand-mark">P7</div>
-    <span class="nav-brand-name">Properties<span>714</span></span>
-  </a>
-  <div class="nav-divider"></div>
-  <div class="nav-links">
-    <a href="/"              class="nav-link"><span class="nav-link-icon">⬡</span> Dashboard</a>
-    <a href="/acquisitions/" class="nav-link"><span class="nav-link-icon">🎯</span> Acquisitions</a>
-    <a href="/leads/"        class="nav-link" id="nl"><span class="nav-link-icon">👥</span> Leads</a>
-    <a href="/deals/"        class="nav-link" id="nd"><span class="nav-link-icon">📋</span> Deals</a>
-    <a href="/reports/"      class="nav-link" id="nr"><span class="nav-link-icon">📊</span> Reports</a>
-    <a href="/settings/"     class="nav-link" id="ns"><span class="nav-link-icon">⚙️</span> Settings</a>
+<div class="app-shell">
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
+  <nav class="sidebar-nav">
+    <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
+    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
+    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
+    <a href="/deals/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📋</span>Deals<span class="nav-badge">Soon</span></a>
+    <span class="nav-section-label">Analytics</span>
+    <a href="/reports/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📊</span>Reports<span class="nav-badge">Soon</span></a>
+    <a href="/settings/" class="nav-item active"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+    <div class="user-avatar" id="s-av">--</div>
+    <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
+  </div></div>
+</aside>
+<main class="app-main">
+  <div class="top-bar">
+    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Settings</span></div>
   </div>
-  <div class="nav-right">
-    <div class="nav-avatar" title="Eduardo">EG</div>
-  </div>
-</nav>
-<div class="p714-page">
-  <div class="page-header">
-    <div class="page-title-row">
+  <div class="page-content">
+    <div class="page-header">
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Manage your team, profile, and system configuration</p>
+    </div>
+    <div class="settings-layout">
+      <nav class="settings-nav">
+        <div class="settings-nav-item active" onclick="showTab('team')">👥 Team</div>
+        <div class="settings-nav-item" onclick="showTab('profile')">👤 My Profile</div>
+        <div class="settings-nav-item" onclick="showTab('system')">🔧 System</div>
+      </nav>
       <div>
-        <h1 class="page-title" id="ptitle">Module</h1>
-        <p class="page-subtitle" id="psub"></p>
+
+        <!-- TEAM TAB -->
+        <div id="tab-team">
+          <div class="card" id="admin-notice" style="margin-bottom:16px;border-color:rgba(245,158,11,0.3)">
+            <div class="card-body" style="display:flex;gap:14px;align-items:flex-start">
+              <span style="font-size:22px;flex-shrink:0">🔑</span>
+              <div>
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px">Para crear usuarios desde aquí necesitas la Service Role Key</div>
+                <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">Crea el archivo <code style="background:var(--bg-input);padding:2px 6px;border-radius:4px">js/admin-config.js</code> en tu repo:</div>
+                <pre style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--text-2);overflow-x:auto">// js/admin-config.js
+window.__P714_ADMIN_CONFIG__ = {
+  serviceRoleKey: 'eyJ...' // Supabase → Settings → API → service_role
+};</pre>
+                <div style="font-size:11px;color:var(--text-3);margin-top:8px">⚠ Si tu repo es público, agrega este archivo a .gitignore</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+            <h2 style="font-family:var(--font-display);font-size:16px;font-weight:700">Team Members</h2>
+            <button class="btn btn-primary btn-sm" id="btn-add" onclick="openAddUser()">➕ Add Member</button>
+          </div>
+          <div class="card" id="team-list"><div style="padding:40px;text-align:center;color:var(--text-3)">Loading...</div></div>
+        </div>
+
+        <!-- PROFILE TAB -->
+        <div id="tab-profile" style="display:none">
+          <h2 style="font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:16px">My Profile</h2>
+          <div class="card">
+            <div class="card-body">
+              <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px">
+                <div class="user-avatar lg" id="pf-av">EG</div>
+                <div><div style="font-weight:600;font-size:15px" id="pf-name">—</div><div style="font-size:12px;color:var(--text-2)" id="pf-role">—</div></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="p-name"/></div>
+                <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="p-email" disabled style="opacity:.5"/></div>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="saveProfile()">Save Changes</button>
+            </div>
+          </div>
+          <h2 style="font-family:var(--font-display);font-size:16px;font-weight:700;margin:24px 0 16px">Change Password</h2>
+          <div class="card">
+            <div class="card-body">
+              <div class="form-group"><label class="form-label">New Password</label><input class="form-input" id="p-pw" type="password" placeholder="Min 6 characters"/></div>
+              <div class="form-group"><label class="form-label">Confirm Password</label><input class="form-input" id="p-pw2" type="password" placeholder="Repeat password"/></div>
+              <button class="btn btn-primary btn-sm" onclick="changePw()">Update Password</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SYSTEM TAB -->
+        <div id="tab-system" style="display:none">
+          <h2 style="font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:16px">System</h2>
+          <div class="card">
+            <div class="card-header"><span class="card-title">Supabase Connection</span></div>
+            <div class="card-body">
+              <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-2)">Project URL</span><code style="font-size:11px;font-family:var(--font-mono);color:var(--text-1)" id="sys-url">—</code></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-2)">Status</span><span class="badge badge-closed" id="sys-status"><span class="badge-dot"></span>Connected</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--text-2)">Admin Key</span><span id="sys-admin" class="badge badge-dead"><span class="badge-dot"></span>Not configured</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-  <div class="module-coming-soon">
-    <div class="module-coming-soon-icon" id="picon"></div>
-    <div class="module-coming-soon-title" id="pname"></div>
-    <div class="module-coming-soon-sub">This module is currently in development. <a href="/" style="color:var(--accent)">Return to Dashboard</a>.</div>
+</main>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal-backdrop" id="add-modal">
+<div class="modal">
+  <div class="modal-header"><span class="modal-title">Add Team Member</span><button class="modal-close" onclick="closeModal('add-modal')">×</button></div>
+  <div class="modal-body">
+    <div class="form-group"><label class="form-label">Full Name *</label><input class="form-input" id="u-name" placeholder="Jessica Miller"/></div>
+    <div class="form-group"><label class="form-label">Email *</label><input class="form-input" id="u-email" type="email" placeholder="jessica@properties714.com"/></div>
+    <div class="form-group"><label class="form-label">Password *</label><input class="form-input" id="u-pw" type="password" placeholder="Min 6 characters"/></div>
+    <div class="form-group"><label class="form-label">Role</label>
+      <select class="form-input" id="u-role"><option value="acquisitionist">Acquisitionist</option><option value="owner">Owner (Admin)</option></select>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" onclick="createUser()">Create Account</button>
+      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    </div>
   </div>
 </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal-backdrop" id="reset-modal">
+<div class="modal">
+  <div class="modal-header"><span class="modal-title">Reset Password</span><button class="modal-close" onclick="closeModal('reset-modal')">×</button></div>
+  <div class="modal-body">
+    <p style="font-size:13px;color:var(--text-2);margin-bottom:16px">New password for: <strong id="r-name"></strong></p>
+    <div class="form-group"><label class="form-label">New Password *</label><input class="form-input" id="r-pw" type="password" placeholder="Min 6 characters"/></div>
+    <div class="form-group"><label class="form-label">Confirm</label><input class="form-input" id="r-pw2" type="password" placeholder="Repeat"/></div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" style="flex:1" onclick="doReset()">Set Password</button>
+      <button class="btn btn-ghost" onclick="closeModal('reset-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="toast-container"></div>
 <script>
-  const pages = {
-    leads:    { title:'Leads / CRM',   sub:'Contact management and follow-up tracking', icon:'👥', nav:'nl' },
-    deals:    { title:'Deals',          sub:'Contract management and closing tracker',   icon:'📋', nav:'nd' },
-    reports:  { title:'Reports',        sub:'Analytics, performance metrics and insights',icon:'📊', nav:'nr' },
-    settings: { title:'Settings',       sub:'Team, automation rules and configuration',  icon:'⚙️', nav:'ns' },
-  };
-  const p = location.pathname.replace(/\//g,'') || 'leads';
-  const d = pages[p] || pages.leads;
-  document.title = d.title + ' — Properties714';
-  document.getElementById('ptitle').textContent = d.title;
-  document.getElementById('psub').textContent   = d.sub;
-  document.getElementById('picon').textContent  = d.icon;
-  document.getElementById('pname').textContent  = d.title + ' — Coming Soon';
-  document.getElementById(d.nav)?.classList.add('active');
+let _team = [], _resetId = null, _isOwner = false;
+
+(async () => {
+  try {
+    const s = await P714Auth.init();
+    if (!s) { window.location.href = '/login/?next=/settings/'; return; }
+    const p = P714Auth.getProfile();
+    _isOwner = P714Auth.isOwner();
+    document.getElementById('s-av').textContent = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('s-name').textContent = p?.full_name || 'User';
+    document.getElementById('s-role').textContent = _isOwner ? 'Owner' : 'Acquisitionist';
+    document.getElementById('p-name').value = p?.full_name || '';
+    document.getElementById('p-email').value = p?.email || '';
+    document.getElementById('pf-av').textContent = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    document.getElementById('pf-name').textContent = p?.full_name || '';
+    document.getElementById('pf-role').textContent = _isOwner ? 'Owner' : 'Acquisitionist';
+    document.getElementById('sys-url').textContent = window.__P714_CONFIG__?.supabaseUrl || '—';
+    const hasKey = !!window.__P714_ADMIN_CONFIG__?.serviceRoleKey;
+    if (hasKey) {
+      document.getElementById('admin-notice').style.display = 'none';
+      document.getElementById('sys-admin').innerHTML = '<span class="badge-dot"></span>Configured';
+      document.getElementById('sys-admin').className = 'badge badge-closed';
+    }
+    if (!_isOwner) document.getElementById('btn-add').style.display = 'none';
+    await loadTeam();
+  } catch (e) { console.error(e); }
+})();
+
+function showTab(n) {
+  ['team', 'profile', 'system'].forEach(t => document.getElementById('tab-' + t).style.display = t === n ? '' : 'none');
+  document.querySelectorAll('.settings-nav-item').forEach((el, i) => el.classList.toggle('active', ['team', 'profile', 'system'][i] === n));
+}
+
+async function loadTeam() {
+  try { _team = await P714Admin.listTeam(); renderTeam(); }
+  catch (e) { document.getElementById('team-list').innerHTML = `<div style="padding:30px;text-align:center;color:var(--text-3)">${e.message}</div>`; }
+}
+
+const AV_COLORS = ['', 'green', 'purple', 'amber'];
+function renderTeam() {
+  if (!_team.length) { document.getElementById('team-list').innerHTML = '<div style="padding:30px;text-align:center;color:var(--text-3)">No team members yet</div>'; return; }
+  document.getElementById('team-list').innerHTML = _team.map((m, i) => {
+    const init = (m.full_name || m.email || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    return `<div class="team-row">
+      <div class="user-avatar ${AV_COLORS[i % 4]}">${init}</div>
+      <div class="team-info"><div class="team-name">${esc(m.full_name || 'Unknown')}</div><div class="team-email">${esc(m.email || '—')}</div></div>
+      <span class="badge ${m.role === 'owner' ? 'badge-owner' : 'badge-acq'}">${m.role === 'owner' ? 'Owner' : 'Acquisitionist'}</span>
+      ${_isOwner ? `
+        <button class="btn btn-ghost btn-sm" onclick="openReset('${m.id}','${esc(m.full_name || m.email)}')" style="margin-left:auto">🔑 Reset Password</button>
+        <button class="btn btn-danger btn-sm" onclick="removeUser('${m.id}','${esc(m.full_name || 'this user')}')">Remove</button>
+      ` : ''}
+    </div>`;
+  }).join('');
+}
+
+function openAddUser() {
+  if (!_isOwner) { toast('error', 'Access denied', 'Only owners can add team members.'); return; }
+  ['u-name', 'u-email', 'u-pw'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('add-modal').classList.add('open');
+}
+
+async function createUser() {
+  const name = document.getElementById('u-name').value.trim();
+  const email = document.getElementById('u-email').value.trim();
+  const pw = document.getElementById('u-pw').value;
+  const role = document.getElementById('u-role').value;
+  if (!name || !email || !pw) { toast('error', 'Missing fields', 'Name, email and password required.'); return; }
+  if (pw.length < 6) { toast('error', 'Too short', 'Min 6 characters.'); return; }
+  try {
+    await P714Admin.createUser({ email, password: pw, fullName: name, role });
+    closeModal('add-modal');
+    toast('success', 'Account created', `${name} can now sign in at /login/`);
+    await loadTeam();
+  } catch (e) {
+    if (e.message.includes('service_role')) toast('error', 'Admin key needed', 'Add js/admin-config.js with your service_role key.');
+    else toast('error', 'Error', e.message);
+  }
+}
+
+function openReset(id, name) {
+  _resetId = id;
+  document.getElementById('r-name').textContent = name;
+  document.getElementById('r-pw').value = '';
+  document.getElementById('r-pw2').value = '';
+  document.getElementById('reset-modal').classList.add('open');
+}
+
+async function doReset() {
+  const pw = document.getElementById('r-pw').value;
+  const pw2 = document.getElementById('r-pw2').value;
+  if (!pw || pw.length < 6) { toast('error', 'Too short', 'Min 6 characters.'); return; }
+  if (pw !== pw2) { toast('error', 'Mismatch', 'Passwords do not match.'); return; }
+  try {
+    await P714Admin.setPassword(_resetId, pw);
+    closeModal('reset-modal');
+    toast('success', 'Password updated', 'User can now sign in with the new password.');
+  } catch (e) {
+    if (e.message.includes('service_role')) toast('error', 'Admin key needed', 'Add js/admin-config.js with your service_role key.');
+    else toast('error', 'Error', e.message);
+  }
+}
+
+async function removeUser(id, name) {
+  if (!confirm(`Remove ${name} from the team?`)) return;
+  try { await P714Admin.deleteUser(id); toast('success', 'Removed', `${name} removed`); await loadTeam(); }
+  catch (e) { toast('error', 'Error', e.message); }
+}
+
+async function saveProfile() {
+  const name = document.getElementById('p-name').value.trim();
+  if (!name) { toast('error', 'Name required'); return; }
+  try {
+    await P714Admin.updateProfile(P714Auth.getUser().id, { full_name: name });
+    document.getElementById('pf-name').textContent = name;
+    document.getElementById('s-name').textContent = name;
+    toast('success', 'Saved', 'Profile updated.');
+  } catch (e) { toast('error', 'Error', e.message); }
+}
+
+async function changePw() {
+  const pw = document.getElementById('p-pw').value;
+  const pw2 = document.getElementById('p-pw2').value;
+  if (!pw || pw.length < 6) { toast('error', 'Too short', 'Min 6 characters.'); return; }
+  if (pw !== pw2) { toast('error', 'Mismatch', 'Passwords do not match.'); return; }
+  try {
+    const { error } = await P714Auth.getClient().auth.updateUser({ password: pw });
+    if (error) throw error;
+    toast('success', 'Password updated', 'Use the new password next time you sign in.');
+    document.getElementById('p-pw').value = '';
+    document.getElementById('p-pw2').value = '';
+  } catch (e) { toast('error', 'Error', e.message); }
+}
+
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function toast(level, title, msg) {
+  const c = document.getElementById('toast-container');
+  const colors = { success: 'var(--green)', error: 'var(--red)', info: 'var(--accent)' };
+  const icons = { success: '✓', error: '✕', info: 'ℹ' };
+  const t = document.createElement('div'); t.className = 'toast';
+  t.innerHTML = `<span class="toast-icon" style="color:${colors[level]}">${icons[level]}</span><div><div class="toast-title">${title}</div>${msg ? `<div class="toast-msg">${msg}</div>` : ''}</div>`;
+  c.appendChild(t);
+  setTimeout(() => { t.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => t.remove(), 300); }, 4000);
+}
+function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 </script>
-</body>
-</html>
+</body></html>
