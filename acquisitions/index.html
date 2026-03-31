@@ -1,425 +1,366 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Acquisitions — Properties 714</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- New design system -->
-  <link rel="stylesheet" href="/css/app.css" />
-  <!-- Legacy acquisition-specific styles (table, sidebar, badges) -->
-  <link rel="stylesheet" href="/css/acquisitions.css" />
-  <link rel="stylesheet" href="/css/table.css" />
-  <link rel="stylesheet" href="/css/badges.css" />
-  <link rel="stylesheet" href="/css/sidebar.css" />
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <!-- Load real config FIRST — no override here -->
-  <script src="/js/config.js"></script>
-  <script src="/js/auth.js"></script>
-
-  <style>
-    /* Override legacy nav styles so sidebar layout works */
-    .p714-nav { display: none !important; }
-    body { background: var(--bg-app); }
-
-    /* Acquisitions content inside app-main */
-    .acq-app {
-      padding: 0;
-      background: transparent;
-    }
-    .acq-page-header {
-      padding: 0 0 20px 0;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
-    }
-    .acq-page-title {
-      font-family: var(--font-display);
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: var(--text-1);
-    }
-    .acq-page-sub {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 3px;
-    }
-
-    /* KPI row override */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin: 18px 0;
-    }
-    @media(max-width:900px){ .kpi-grid { grid-template-columns: repeat(2,1fr); } }
-    .kpi-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: border-color 180ms, transform 180ms;
-    }
-    .kpi-card:hover { border-color: var(--border-soft); transform: translateY(-2px); }
-    .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
-    .kpi-card.kpi-hot::before { background: var(--amber); }
-    .kpi-card.kpi-contract::before { background: var(--green); }
-    .kpi-card.kpi-roi::before { background: var(--purple); }
-    .kpi-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-2); margin-bottom: 6px; position: relative; }
-    .kpi-value { font-family: var(--font-display); font-size: 28px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; color: var(--accent); position: relative; }
-    .kpi-card.kpi-hot .kpi-value { color: var(--amber); }
-    .kpi-card.kpi-contract .kpi-value { color: var(--green); }
-    .kpi-card.kpi-roi .kpi-value { color: var(--purple); }
-    .kpi-sub { font-size: 11px; color: var(--text-3); margin-top: 5px; position: relative; }
-
-    /* Actions bar */
-    .acq-global-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .acq-global-actions .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .acq-global-actions .btn-primary:hover { opacity: 0.88; }
-
-    /* Pipeline wrapper */
-    .pipeline-wrapper, .filters-wrapper { margin-bottom: 12px; }
-    .table-wrapper { border-radius: var(--radius-lg); overflow: hidden; }
-
-    /* Connection badge in topbar */
-    .conn-badge {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 11px; color: var(--text-3);
-      font-family: var(--font-mono);
-    }
-    .conn-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
-    .conn-dot.online { background: var(--green); }
-  </style>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Acquisitions — Properties 714</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="/css/app.css"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
+<style>
+.sheet-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.sheet-wrap{overflow-x:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12px;font-family:var(--font);}
+.sheet-table th{background:#0f0f14;padding:7px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid var(--border);text-align:left;position:sticky;top:0;z-index:2;}
+.sheet-table th:first-child{width:34px;text-align:center;position:sticky;left:0;z-index:3;background:#0f0f14;}
+.sheet-table td{border-bottom:1px solid var(--border);border-right:1px solid rgba(255,255,255,0.04);padding:0;vertical-align:middle;}
+.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:var(--bg-card);text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:10px;width:34px;border-right:2px solid var(--border);cursor:default;padding:0 6px;}
+.sheet-table tbody tr:hover td{background:rgba(59,130,246,0.04);}
+.sheet-table tbody tr:hover td:first-child{background:var(--bg-hover);}
+.cv{display:block;padding:8px 10px;cursor:text;min-height:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px;color:var(--text-1);}
+.cv.muted{color:var(--text-2);}
+.cv.ph{color:var(--text-3);}
+.cv:not(.ro):hover{background:rgba(255,255,255,0.04);}
+.cv.ro{cursor:default;}
+.ci{width:100%;background:#1a2744;border:2px solid var(--accent);outline:none;padding:7px 9px;font-size:12px;color:var(--text-1);font-family:var(--font);min-height:36px;display:block;box-sizing:border-box;}
+select.ci{cursor:pointer;}
+.ci[type=number]{font-family:var(--font-mono);}
+tr.s-new td:first-child{box-shadow:inset 3px 0 0 #818cf8;}
+tr.s-contacted td:first-child{box-shadow:inset 3px 0 0 #60a5fa;}
+tr.s-followup td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
+tr.s-negotiation td:first-child{box-shadow:inset 3px 0 0 var(--purple);}
+tr.s-offer td:first-child{box-shadow:inset 3px 0 0 #38bdf8;}
+tr.s-contract td:first-child{box-shadow:inset 3px 0 0 var(--green);}
+tr.s-closed td:first-child{box-shadow:inset 3px 0 0 #34d399;}
+tr.s-dead{opacity:0.5;}
+tr.s-dead td:first-child{box-shadow:inset 3px 0 0 var(--red);}
+.sp{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;white-space:nowrap;}
+.sc-pill{display:inline-block;padding:2px 7px;border-radius:99px;font-family:var(--font-mono);font-size:11px;font-weight:700;}
+.sc-hi{background:var(--green-dim);color:var(--green);}
+.sc-mid{background:var(--amber-dim);color:var(--amber);}
+.sc-lo{background:rgba(255,255,255,0.06);color:var(--text-3);}
+.pp{color:var(--green)!important;font-family:var(--font-mono);}
+.pn{color:var(--red)!important;font-family:var(--font-mono);}
+.add-row{display:flex;align-items:center;gap:8px;padding:10px 14px;color:var(--text-3);font-size:12px;cursor:pointer;transition:background 140ms,color 140ms;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid var(--border);}
+.add-row:hover{background:var(--bg-hover);color:var(--accent);}
+</style>
 </head>
 <body>
-
 <div class="app-shell">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-logo">P7</div>
-      <span class="sidebar-brand-name">Properties 714</span>
-    </div>
-    <nav class="sidebar-nav">
-      <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
-      <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Acquisitions</a>
-      <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
-      <a href="/deals/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📋</span>Deals<span class="nav-badge">Soon</span></a>
-      <span class="nav-section-label">Analytics</span>
-      <a href="/reports/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📊</span>Reports<span class="nav-badge">Soon</span></a>
-      <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
-        <div class="user-avatar" id="s-av">--</div>
-        <div>
-          <div class="user-name" id="s-name">Loading...</div>
-          <div class="user-role" id="s-role">—</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="app-main">
-
-    <!-- Top Bar -->
-    <div class="top-bar">
-      <div class="breadcrumb">
-        <span>Home</span><span class="breadcrumb-sep">/</span>
-        <span class="breadcrumb-current">Acquisitions</span>
-      </div>
-      <div class="top-bar-actions">
-        <div class="conn-badge">
-          <div class="conn-dot" id="conn-dot"></div>
-          <span id="conn-label">Connecting...</span>
-        </div>
-        <div class="user-avatar sm" id="nav-avatar" title="Sign out" onclick="P714Auth.logout()" style="cursor:pointer;margin-left:8px">EG</div>
-      </div>
-    </div>
-
-    <!-- Page Content -->
-    <div class="page-content">
-
-      <!-- Acquisitions App -->
-      <div class="acq-app" id="acq-app">
-
-        <section class="acq-page-header">
-          <div class="acq-page-title-block">
-            <h1 class="acq-page-title">Acquisitions</h1>
-            <p class="acq-page-sub">Lead pipeline · Deal intelligence · Offer management</p>
-          </div>
-
-          <!-- KPI Cards -->
-          <div class="kpi-grid">
-            <div class="kpi-card" onclick="location.href='/acquisitions/'">
-              <div class="kpi-label">Total Leads</div>
-              <div class="kpi-value" id="kpi-total-leads">—</div>
-              <div class="kpi-sub">All stages</div>
-            </div>
-            <div class="kpi-card kpi-hot">
-              <div class="kpi-label">🔥 Hot Deals</div>
-              <div class="kpi-value" id="kpi-hot-deals">—</div>
-              <div class="kpi-sub">Score ≥ 80</div>
-            </div>
-            <div class="kpi-card kpi-contract">
-              <div class="kpi-label">Under Contract</div>
-              <div class="kpi-value" id="kpi-under-contract">—</div>
-              <div class="kpi-sub">Active</div>
-            </div>
-            <div class="kpi-card kpi-roi">
-              <div class="kpi-label">Pipeline Profit</div>
-              <div class="kpi-value" id="kpi-potential-roi">—</div>
-              <div class="kpi-sub">Estimated</div>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <div class="acq-global-actions">
-            <button class="btn btn-ghost btn-sm" id="btn-export">⬇ Export</button>
-            <button class="btn btn-ghost btn-sm" id="btn-automate">🤖 Automate</button>
-            <button class="btn btn-secondary btn-sm" id="btn-run-analyzer">⚡ Analyzer</button>
-            <button class="btn btn-primary" id="btn-add-lead">＋ Add Lead</button>
-          </div>
-        </section>
-
-        <!-- Pipeline Tabs -->
-        <div id="pipeline-container" class="pipeline-wrapper"></div>
-
-        <!-- Filters -->
-        <div id="filters-container" class="filters-wrapper"></div>
-
-        <!-- Table -->
-        <div id="table-container" class="table-wrapper">
-          <div class="table-loading" id="table-loading">
-            <div class="loading-spinner"></div>
-            <span>Loading leads…</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </main>
-</div>
-
-<!-- SIDEBAR (lead detail) -->
-<div id="sidebar-backdrop" class="sidebar-backdrop">
-  <aside id="lead-sidebar" class="lead-sidebar" role="dialog" aria-modal="true"></aside>
-</div>
-
-<!-- MODAL: Add Lead -->
-<div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true">
-  <div class="modal modal-lg" style="max-width:600px">
-    <div class="modal-header">
-      <h2 class="modal-title">Add New Lead</h2>
-      <button class="modal-close">✕</button>
-    </div>
-    <form id="add-lead-form" class="modal-form" novalidate>
-      <div class="modal-steps">
-        <button type="button" class="modal-step active" data-step="1">1 · Contact</button>
-        <button type="button" class="modal-step" data-step="2">2 · Property</button>
-        <button type="button" class="modal-step" data-step="3">3 · Financials</button>
-      </div>
-      <!-- Step 1 -->
-      <div class="modal-step-panel active" data-step-panel="1">
-        <div class="form-grid">
-          <div class="form-field full"><label>Full Name <span class="required">*</span></label><input type="text" name="name" placeholder="John Smith" required /></div>
-          <div class="form-field"><label>Phone</label><input type="tel" name="phone" placeholder="+1 (404) 555-0000" /></div>
-          <div class="form-field"><label>Email</label><input type="email" name="email" placeholder="owner@email.com" /></div>
-          <div class="form-field"><label>Lead Source</label>
-            <select name="source">
-              <option value="">Select source…</option>
-              <option>Driving for Dollars</option><option>Direct Mail</option>
-              <option>Cold Call</option><option>PPC / Google</option>
-              <option>Facebook Ads</option><option>Referral</option>
-              <option>Probate</option><option>Pre-Foreclosure</option>
-              <option>Tax Default</option><option>Other</option>
-            </select>
-          </div>
-          <div class="form-field"><label>Deal Type</label>
-            <select name="deal_type">
-              <option value="wholesale">Wholesale</option>
-              <option value="fix_flip">Fix &amp; Flip</option>
-              <option value="buy_hold">Buy &amp; Hold</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- Step 2 -->
-      <div class="modal-step-panel" data-step-panel="2">
-        <div class="form-grid">
-          <div class="form-field full"><label>Property Address <span class="required">*</span></label><input type="text" name="property_address" placeholder="1234 Peachtree Blvd NE" required /></div>
-          <div class="form-field"><label>City</label><input type="text" name="city" placeholder="Atlanta" /></div>
-          <div class="form-field"><label>State</label><input type="text" name="state" placeholder="GA" maxlength="2" /></div>
-          <div class="form-field"><label>ZIP</label><input type="text" name="zip" placeholder="30309" maxlength="5" /></div>
-          <div class="form-field"><label>Property Type</label>
-            <select name="property_type">
-              <option>SFR</option><option>Duplex</option><option>Multi-Family</option>
-              <option>Commercial</option><option>Land</option><option>Mobile</option>
-            </select>
-          </div>
-          <div class="form-field"><label>Condition</label>
-            <select name="condition">
-              <option value="">Select…</option>
-              <option>Excellent</option><option>Good</option>
-              <option>Fair</option><option>Distressed</option><option>Tear-Down</option>
-            </select>
-          </div>
-          <div class="form-field"><label>Occupancy</label>
-            <select name="occupancy">
-              <option value="">Select…</option>
-              <option>Owner-Occupied</option><option>Tenant-Occupied</option>
-              <option>Vacant</option><option>Unknown</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <!-- Step 3 -->
-      <div class="modal-step-panel" data-step-panel="3">
-        <div class="form-grid">
-          <div class="form-field"><label>Asking Price ($)</label><input type="number" name="asking_price" placeholder="180000" min="0" /></div>
-          <div class="form-field"><label>ARV ($)</label><input type="number" id="f-arv" name="arv" placeholder="320000" min="0" /></div>
-          <div class="form-field"><label>Repairs Est. ($)</label><input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" /></div>
-          <div class="form-field mao-preview-field"><label>MAO (Auto)</label>
-            <div class="mao-preview">
-              <span class="mao-preview-val" id="mao-preview-val">—</span>
-              <span class="mao-preview-formula">(ARV × 0.70) − Repairs</span>
-            </div>
-          </div>
-          <div class="form-field"><label>Motivation (1–10)</label><input type="number" name="motivation_score" min="1" max="10" placeholder="7" /></div>
-          <div class="form-field"><label>Urgency</label>
-            <select name="urgency_level">
-              <option value="">Select…</option>
-              <option>Critical</option><option>High</option><option>Medium</option><option>Low</option>
-            </select>
-          </div>
-          <div class="form-field"><label>Risk Level</label>
-            <select name="risk_level">
-              <option value="">Select…</option>
-              <option>Low</option><option>Medium</option><option>High</option>
-            </select>
-          </div>
-          <div class="form-field"><label>Initial Status</label>
-            <select name="status">
-              <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
-            </select>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Back</button>
-        <button type="button" class="btn btn-secondary" id="modal-next-btn">Next →</button>
-        <button type="submit" class="btn btn-primary" id="modal-submit-btn" style="display:none">✓ Add Lead</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- MODAL: Analyzer -->
-<div id="analyzer-modal" class="modal-backdrop" role="dialog" aria-modal="true">
-  <div class="modal" style="max-width:520px">
-    <div class="modal-header">
-      <h2 class="modal-title">⚡ Deal Analyzer</h2>
-      <button class="modal-close">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="analyzer-lead-name" class="analyzer-target"></div>
-      <div id="analyzer-output" class="analyzer-output">
-        <div class="analyzer-placeholder">
-          <div class="analyzer-icon">🤖</div>
-          <p>AI analysis will appear here.</p>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost modal-close">Close</button>
-      <button class="btn btn-primary" id="analyzer-run-btn">Run Analysis</button>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
+  <nav class="sidebar-nav">
+    <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
+    <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Acquisitions</a>
+    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
+    <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
+    <span class="nav-section-label">Analytics</span>
+    <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
+    <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+  </nav>
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+    <div class="user-avatar" id="s-av">--</div>
+    <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
+  </div></div>
+</aside>
+<main class="app-main">
+  <div class="top-bar">
+    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Acquisitions</span></div>
+    <div class="top-bar-actions">
+      <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)" id="save-st"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doExport()">⬇ Export</button>
+      <button class="btn btn-primary btn-sm" onclick="addRow()">＋ Add Property</button>
     </div>
   </div>
+  <div class="page-content">
+    <div class="page-header">
+      <h1 class="page-title">Acquisitions</h1>
+      <p class="page-subtitle" id="sheet-sub">Loading...</p>
+    </div>
+    <div class="kpi-row" style="margin-bottom:20px">
+      <div class="kpi-card accent-blue" onclick="setFilter('')" style="cursor:pointer">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Total Leads</div>
+        <div class="kpi-value" id="k1">—</div>
+        <div class="kpi-sub">All stages</div>
+      </div>
+      <div class="kpi-card accent-amber" onclick="setFilter('hot')" style="cursor:pointer">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">🔥 Hot Deals</div>
+        <div class="kpi-value" id="k2">—</div>
+        <div class="kpi-sub">Score ≥ 80</div>
+      </div>
+      <div class="kpi-card accent-green" onclick="setFilter('Under Contract')" style="cursor:pointer">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Under Contract</div>
+        <div class="kpi-value" id="k3">—</div>
+        <div class="kpi-sub">Active closings</div>
+      </div>
+      <div class="kpi-card accent-purple">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Pipeline Profit</div>
+        <div class="kpi-value" id="k4">—</div>
+        <div class="kpi-sub">Estimated</div>
+      </div>
+    </div>
+    <div class="sheet-toolbar">
+      <input class="search-input" id="sq" placeholder="🔍 Search..." oninput="doFilter()" style="width:220px"/>
+      <select class="search-input" id="ss" onchange="doFilter()" style="width:140px">
+        <option value="">All Statuses</option>
+        <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
+        <option>Negotiation</option><option>Offer Sent</option><option>Under Contract</option>
+        <option>Closed</option><option>Dead</option>
+      </select>
+      <select class="search-input" id="sa" onchange="doFilter()" style="width:140px"><option value="">All Agents</option></select>
+      <select class="search-input" id="st" onchange="doFilter()" style="width:125px">
+        <option value="">All Types</option>
+        <option>SFR</option><option>Duplex</option><option>Multi-Family</option><option>Commercial</option><option>Land</option>
+      </select>
+      <span style="margin-left:auto;font-size:11px;color:var(--text-3)" id="rc"></span>
+    </div>
+    <div class="sheet-wrap">
+      <table class="sheet-table">
+        <thead><tr>
+          <th>#</th>
+          <th style="min-width:140px">Seller</th>
+          <th style="min-width:120px">Phone</th>
+          <th style="min-width:200px">Property Address</th>
+          <th style="min-width:100px">City</th>
+          <th style="min-width:50px">ST</th>
+          <th style="min-width:100px">Type</th>
+          <th style="min-width:110px">Condition</th>
+          <th style="min-width:110px">Asking $</th>
+          <th style="min-width:110px">ARV $</th>
+          <th style="min-width:100px">Repairs $</th>
+          <th style="min-width:110px">MAO $</th>
+          <th style="min-width:110px">Est. Profit</th>
+          <th style="min-width:130px">Status</th>
+          <th style="min-width:60px">Score</th>
+          <th style="min-width:110px">Agent</th>
+          <th style="min-width:110px">Follow-Up</th>
+          <th style="min-width:190px">Source</th>
+          <th style="min-width:220px">Notes</th>
+        </tr></thead>
+        <tbody id="tbody"><tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
+      </table>
+      <button class="add-row" onclick="addRow()">＋ Add property</button>
+    </div>
+  </div>
+</main>
 </div>
-
-<!-- TOASTS -->
-<div id="toast-container" class="toast-container" aria-live="polite"></div>
-
-<!-- Acquisition JS modules -->
-<script src="/js/acquisitions/scoring.js"></script>
-<script src="/js/acquisitions/automation.js"></script>
-<script src="/js/acquisitions/assistant.js"></script>
-<script src="/js/acquisitions/pipeline.js"></script>
-<script src="/js/acquisitions/filters.js"></script>
-<script src="/js/acquisitions/table.js"></script>
-<script src="/js/acquisitions/sidebar.js"></script>
-<script src="/js/acquisitions/acquisitions.js"></script>
-
+<div id="toast-container"></div>
 <script>
-// ── Auth guard + sidebar injection ──
-(async () => {
-  try {
-    const session = await P714Auth.init();
-    if (!session) { window.location.href = '/login/?next=/acquisitions/'; return; }
-    const p = P714Auth.getProfile();
-    const initials = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    document.getElementById('s-av').textContent = initials;
-    document.getElementById('nav-avatar').textContent = initials;
-    document.getElementById('s-name').textContent = p?.full_name || 'User';
-    document.getElementById('s-role').textContent = p?.role === 'owner' ? 'Owner' : 'Acquisitionist';
-    // Connection status dot — will be updated by acquisitions.js
-    document.getElementById('conn-dot').classList.add('online');
-    document.getElementById('conn-label').textContent = 'Connected';
-  } catch (e) {
-    console.warn('[Acquisitions] Auth init:', e.message);
-  }
+const STATUSES=['New Lead','Contacted','Follow-Up','Negotiation','Offer Sent','Under Contract','Closed','Dead'];
+const TYPES=['SFR','Duplex','Multi-Family','Condo','Commercial','Land','Mobile'];
+const CONDITIONS=['','Excellent','Good','Fair','Distressed','Tear-Down'];
+const SOURCES=['','Driving for Dollars','Direct Mail','Cold Call','PPC / Google','Facebook Ads','Referral','MLS','Probate','Pre-Foreclosure','Tax Default','Wholesale','Other'];
+const ST_STYLE={'New Lead':'background:rgba(99,102,241,.15);color:#818cf8','Contacted':'background:rgba(59,130,246,.15);color:#60a5fa','Follow-Up':'background:rgba(245,158,11,.15);color:#fbbf24','Negotiation':'background:rgba(168,85,247,.15);color:#c084fc','Offer Sent':'background:rgba(56,189,248,.15);color:#38bdf8','Under Contract':'background:rgba(34,197,94,.15);color:#4ade80','Closed':'background:rgba(52,211,153,.15);color:#34d399','Dead':'background:rgba(239,68,68,.15);color:#f87171'};
+const ST_ROW={'New Lead':'s-new','Contacted':'s-contacted','Follow-Up':'s-followup','Negotiation':'s-negotiation','Offer Sent':'s-offer','Under Contract':'s-contract','Closed':'s-closed','Dead':'s-dead'};
+let _all=[],_uid=null,_isOwner=false;
+
+(async()=>{
+  try{
+    const s=await P714Auth.init();
+    if(!s){window.location.href='/login/?next=/acquisitions/';return;}
+    const p=P714Auth.getProfile();
+    _isOwner=P714Auth.isOwner();
+    _uid=P714Auth.getUser().id;
+    const init=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('s-av').textContent=init;
+    document.getElementById('s-name').textContent=p?.full_name||'User';
+    document.getElementById('s-role').textContent=_isOwner?'Owner':'Acquisitionist';
+    await loadData();
+  }catch(e){console.error(e);}
 })();
 
-// ── Multi-step modal ──
-(function () {
-  let _step = 1;
-  const TOTAL = 3;
-  const prev   = document.getElementById('modal-prev-btn');
-  const next   = document.getElementById('modal-next-btn');
-  const submit = document.getElementById('modal-submit-btn');
-  const arv    = document.getElementById('f-arv');
-  const rep    = document.getElementById('f-repairs');
-  const mao    = document.getElementById('mao-preview-val');
+async function loadData(){
+  const sb=P714Auth.getClient();
+  const{data,error}=await sb.from('acquisitions_leads').select('*').order('created_at',{ascending:false});
+  if(error){console.error(error);return;}
+  _all=data||[];
+  const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
+  const af=document.getElementById('sa');
+  const cur=af.value;
+  af.innerHTML='<option value="">All Agents</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
+  updateKPIs();
+  doFilter();
+}
 
-  function goTo(s) {
-    document.querySelectorAll('.modal-step-panel').forEach(p =>
-      p.classList.toggle('active', +p.dataset.stepPanel === s));
-    document.querySelectorAll('.modal-step').forEach(b =>
-      b.classList.toggle('active', +b.dataset.step === s));
-    prev.style.display   = s > 1 ? '' : 'none';
-    next.style.display   = s < TOTAL ? '' : 'none';
-    submit.style.display = s === TOTAL ? '' : 'none';
-    _step = s;
+function updateKPIs(){
+  const active=_all.filter(l=>!['Dead','Closed'].includes(l.status));
+  document.getElementById('k1').textContent=active.length;
+  document.getElementById('k2').textContent=_all.filter(l=>l.hot_deal||l.deal_score>=80).length;
+  document.getElementById('k3').textContent=_all.filter(l=>l.status==='Under Contract').length;
+  const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
+  document.getElementById('k4').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
+  document.getElementById('sheet-sub').textContent=_isOwner?`${_all.length} total properties — all agents`:`${_all.filter(l=>l.user_id===_uid).length} your properties`;
+}
+
+function setFilter(v){
+  if(v==='hot'){
+    document.getElementById('ss').value='';
+    render(_all.filter(l=>l.hot_deal||l.deal_score>=80));
+    document.getElementById('rc').textContent=_all.filter(l=>l.hot_deal||l.deal_score>=80).length+' properties';
+    return;
   }
+  document.getElementById('ss').value=v;
+  doFilter();
+}
 
-  next?.addEventListener('click', () => goTo(Math.min(_step + 1, TOTAL)));
-  prev?.addEventListener('click', () => goTo(Math.max(_step - 1, 1)));
-  document.querySelectorAll('.modal-step').forEach(b =>
-    b.addEventListener('click', () => goTo(+b.dataset.step)));
+function doFilter(){
+  const q=document.getElementById('sq').value.toLowerCase();
+  const ss=document.getElementById('ss').value;
+  const sa=document.getElementById('sa').value;
+  const st=document.getElementById('st').value;
+  const list=_all.filter(l=>{
+    const txt=`${l.name||''} ${l.property_address||''} ${l.city||''} ${l.phone||''}`.toLowerCase();
+    return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa)&&(!st||l.property_type===st);
+  });
+  render(list);
+  document.getElementById('rc').textContent=list.length+' properties';
+}
 
-  function updateMAO() {
-    const a = parseFloat(arv?.value) || 0;
-    const r = parseFloat(rep?.value) || 0;
-    mao.textContent = a ? '$' + (Math.floor(a * 0.7) - r).toLocaleString() : '—';
+function mao(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*0.7)-r:null;}
+function profit(l){const m=mao(l),ask=Number(l.asking_price)||0;return m!==null&&ask?m-ask:null;}
+function fm(n){if(n===null||n===''||n===undefined)return '';const v=Number(n);return isNaN(v)?'':'$'+v.toLocaleString('en-US');}
+function fd(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}):''}
+
+function cv(id,f,val,type,ml){
+  const disp=type==='number'?fm(val):esc(val||'');
+  return `<span class="cv${!val?' ph':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}"${ml?` data-ml="${ml}"`:''} title="${esc(String(val||''))}"> ${disp||'—'}</span>`;
+}
+function sv(id,f,val,opts,style){
+  const d=val?`<span class="sp" style="${style||''}">${esc(val)}</span>`:'<span style="color:var(--text-3)">—</span>';
+  return `<span class="cs" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" style="display:block;padding:6px 10px;cursor:pointer;min-height:36px">${d}</span>`;
+}
+
+function render(list){
+  const tb=document.getElementById('tbody');
+  if(!list.length){
+    tb.innerHTML='<tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">No properties found. Click “+ Add property” to start.</td></tr>';
+    return;
   }
-  arv?.addEventListener('input', updateMAO);
-  rep?.addEventListener('input', updateMAO);
-})();
+  tb.innerHTML=list.map((l,i)=>{
+    const m=mao(l),pr=profit(l),sc=l.deal_score||0;
+    const scc=sc>=80?'sc-hi':sc>=60?'sc-mid':'sc-lo';
+    const styl=ST_STYLE[l.status]||'background:rgba(255,255,255,0.08);color:var(--text-2)';
+    const rc=ST_ROW[l.status]||'';
+    const fu=fd(l.next_followup);
+    const fuOv=l.next_followup&&new Date(l.next_followup)<new Date();
+    return `<tr data-id="${l.id}" class="${rc}">
+      <td>${i+1}</td>
+      <td>${cv(l.id,'name',l.name,'text')}</td>
+      <td>${cv(l.id,'phone',l.phone,'text')}</td>
+      <td>${cv(l.id,'property_address',l.property_address,'text')}</td>
+      <td>${cv(l.id,'city',l.city,'text')}</td>
+      <td>${cv(l.id,'state',l.state,'text',2)}</td>
+      <td>${sv(l.id,'property_type',l.property_type,TYPES)}</td>
+      <td>${sv(l.id,'condition',l.condition,CONDITIONS)}</td>
+      <td>${cv(l.id,'asking_price',l.asking_price,'number')}</td>
+      <td>${cv(l.id,'arv',l.arv,'number')}</td>
+      <td>${cv(l.id,'repairs',l.repairs,'number')}</td>
+      <td><span class="cv ro muted">${fm(m)}</span></td>
+      <td><span class="cv ro ${pr!==null?(pr>=0?'pp':'pn'):''}">${fm(pr)}</span></td>
+      <td>${sv(l.id,'status',l.status,STATUSES,styl)}</td>
+      <td><span class="cv ro"><span class="sc-pill ${scc}">${sc}</span></span></td>
+      <td>${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
+      <td><span class="cv ro${fuOv?' pn':''}">${fu}</span></td>
+      <td>${sv(l.id,'source',l.source,SOURCES)}</td>
+      <td>${cv(l.id,'notes',l.notes,'text')}</td>
+    </tr>`;
+  }).join('');
+
+  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>el.addEventListener('click',()=>{
+    startEdit(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t,el.dataset.ml);
+  }));
+  tb.querySelectorAll('.cs').forEach(el=>el.addEventListener('click',()=>{
+    startSel(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'));
+  }));
+}
+
+function startEdit(td,id,field,cur,type,ml){
+  if(td.querySelector('input,textarea'))return;
+  const inp=document.createElement('input');
+  inp.className='ci';
+  inp.type=type==='number'?'number':'text';
+  inp.value=cur||'';
+  if(ml)inp.maxLength=parseInt(ml);
+  td.innerHTML='';td.appendChild(inp);inp.focus();inp.select();
+  const save=async()=>{await saveF(id,field,inp.value.trim()||null);await loadData();};
+  inp.addEventListener('blur',save);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')loadData();});
+}
+
+function startSel(td,id,field,cur,opts){
+  if(td.querySelector('select'))return;
+  const sel=document.createElement('select');
+  sel.className='ci';
+  sel.innerHTML=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o||'(none)'}</option>`).join('');
+  td.innerHTML='';td.appendChild(sel);sel.focus();
+  const save=async()=>{await saveF(id,field,sel.value||null);await loadData();};
+  sel.addEventListener('change',save);
+  sel.addEventListener('blur',save);
+}
+
+async function saveF(id,field,value){
+  setSt('saving');
+  try{
+    const sb=P714Auth.getClient();
+    const upd={[field]:value,updated_at:new Date().toISOString()};
+    const lead=_all.find(l=>l.id===id);
+    if(lead&&['arv','repairs','asking_price'].includes(field)){
+      const nl={...lead,[field]:value};
+      const m=mao(nl),pr=profit(nl);
+      if(m!==null)upd.mao=m;
+      if(pr!==null)upd.estimated_profit=pr;
+    }
+    const{error}=await sb.from('acquisitions_leads').update(upd).eq('id',id);
+    if(error)throw error;
+    setSt('saved');
+  }catch(e){setSt('error');toast('error','Save failed',e.message);}
+}
+
+function setSt(s){
+  const el=document.getElementById('save-st');
+  if(s==='saving')el.textContent='⏳ Saving...';
+  else if(s==='saved'){el.textContent='✓ Saved';setTimeout(()=>el.textContent='',2000);}
+  else{el.textContent='✕ Error';setTimeout(()=>el.textContent='',3000);}
+}
+
+async function addRow(){
+  try{
+    const sb=P714Auth.getClient();
+    const user=P714Auth.getUser(),p=P714Auth.getProfile();
+    const{error}=await sb.from('acquisitions_leads').insert({
+      user_id:user.id,assigned_to:p?.full_name||'Unknown',
+      name:'',property_address:'New Property',status:'New Lead',state:'GA',
+    });
+    if(error)throw error;
+    await loadData();
+    document.querySelector('.sheet-wrap').scrollTop=99999;
+    toast('success','Row added','Click any cell to edit');
+  }catch(e){toast('error','Error',e.message);}
+}
+
+function doExport(){
+  const cols=['name','phone','property_address','city','state','property_type','condition','asking_price','arv','repairs','mao','estimated_profit','status','deal_score','assigned_to','next_followup','source','notes'];
+  const h=['Seller','Phone','Address','City','ST','Type','Condition','Asking','ARV','Repairs','MAO','Est Profit','Status','Score','Agent','Follow-Up','Source','Notes'];
+  const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='acquisitions_p714.csv';a.click();
+  toast('success','Exported',`${_all.length} properties`);
+}
+
+function toast(l,t,m){
+  const c=document.getElementById('toast-container');
+  const cols={success:'var(--green)',error:'var(--red)',info:'var(--accent)'};
+  const ic={success:'✓',error:'✕',info:'ℹ'};
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
+  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},4000);
+}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
-
-</body>
-</html>
+</body></html>
