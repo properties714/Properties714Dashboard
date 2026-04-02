@@ -56,28 +56,24 @@
     <div class="kpi-row">
       <div class="kpi-card accent-blue" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:linear-gradient(135deg,#1e3a5f,#0c1a2e)"></div>
         <div class="kpi-label">Active Deals</div>
         <div class="kpi-value" id="k-leads">—</div>
         <div class="kpi-sub">In acquisitions pipeline</div>
       </div>
       <div class="kpi-card accent-green" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:linear-gradient(135deg,#14532d,#052e16)"></div>
         <div class="kpi-label">Pipeline Profit</div>
         <div class="kpi-value" id="k-profit">—</div>
         <div class="kpi-sub">Estimated total</div>
       </div>
       <div class="kpi-card accent-amber" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:linear-gradient(135deg,#451a03,#1c0a00)"></div>
         <div class="kpi-label">Hot Deals 🔥</div>
         <div class="kpi-value" id="k-hot">—</div>
         <div class="kpi-sub">Score ≥ 80</div>
       </div>
       <div class="kpi-card accent-purple" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:linear-gradient(135deg,#2e1065,#0f0520)"></div>
         <div class="kpi-label">Under Contract</div>
         <div class="kpi-value" id="k-contract">—</div>
         <div class="kpi-sub">Active closings</div>
@@ -91,7 +87,7 @@
           <a href="/acquisitions/" style="font-size:12px;color:var(--accent)">View all →</a>
         </div>
         <div id="activity-feed">
-          <div style="padding:40px;text-align:center;color:var(--text-3);font-size:13px">No activity yet</div>
+          <div style="padding:40px;text-align:center;color:var(--text-3);font-size:13px;font-weight:300">No activity yet</div>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:16px">
@@ -108,15 +104,15 @@
           <div class="card-header"><span class="card-title">System</span></div>
           <div style="padding:4px 0">
             <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2)">Dashboard</span>
+              <span style="color:var(--text-2);font-weight:300">Dashboard</span>
               <span class="badge badge-closed"><span class="badge-dot"></span>Online</span>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2)">Database</span>
+              <span style="color:var(--text-2);font-weight:300">Database</span>
               <span id="sys-db" class="badge badge-follow-up"><span class="badge-dot"></span>Connecting</span>
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2)">Auth</span>
+              <span style="color:var(--text-2);font-weight:300">Auth</span>
               <span id="sys-auth" class="badge badge-follow-up"><span class="badge-dot"></span>Pending</span>
             </div>
           </div>
@@ -166,8 +162,8 @@
       document.getElementById('activity-feed').innerHTML = act.map(a =>
         `<div style="display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:flex-start">
           <span style="font-size:14px;flex-shrink:0">${icons[a.type] || '•'}</span>
-          <div><div style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px">${a.description || a.type}</div>
-          <div style="font-size:11px;color:var(--text-3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div></div>
+          <div><div style="font-size:12px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px">${a.description || a.type}</div>
+          <div style="font-size:11px;font-weight:300;color:var(--text-3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div></div>
         </div>`).join('');
     }
   } catch (e) {
