@@ -13,11 +13,17 @@
 <script src="/js/auth.js"></script>
 <style>
 .dash-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;}
-@media(max-width:1100px){.dash-grid{grid-template-columns:1fr;}}
-.pipeline-bar{display:flex;align-items:stretch;border-radius:var(--radius);overflow:hidden;height:8px;margin-bottom:6px;gap:2px;}
-.pb-seg{border-radius:3px;transition:flex 0.5s;}
-.mini-trend{display:flex;align-items:flex-end;gap:2px;height:30px;}
-.mini-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px;opacity:0.8;}
+@media(max-width:1150px){.dash-grid{grid-template-columns:1fr;}}
+.chart-stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);}
+.chart-stat{padding:14px 18px;border-right:1px solid var(--border);}
+.chart-stat:last-child{border-right:none;}
+.chart-stat-val{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--text-1);}
+.chart-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-top:2px;}
+.strat-tag{display:inline-flex;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em;}
+.flip-tag{background:var(--purple-light);color:var(--purple);}
+.rental-tag{background:var(--blue-light);color:var(--blue);}
+.wholesale-tag{background:var(--amber-light);color:var(--amber);}
+.rejected-tag{background:var(--red-light);color:var(--red);}
 </style>
 </head>
 <body>
@@ -42,94 +48,134 @@
   <div class="top-bar">
     <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Dashboard</span></div>
     <div class="top-bar-actions">
-      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono)" id="today-date"></span>
-      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/'" style="gap:4px">+ New Deal</button>
+      <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)" id="today-date"></span>
+      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/'" style="gap:5px">+ New Deal</button>
+      <button class="top-bar-btn" title="Notifications">🔔</button>
     </div>
   </div>
   <div class="page-content">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <h1 class="page-title">Top Deal Today</h1>
+        <p class="page-subtitle" id="dash-greeting">Loading your portfolio...</p>
+      </div>
+    </div>
 
-    <!-- Hero: Top Deal Today -->
-    <div style="margin-bottom:20px">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:10px">Top Deal Today</div>
-      <div class="hero-deal" id="hero-card">
-        <div class="hero-deal-bg"></div>
+    <!-- Hero + AI Panel -->
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;margin-bottom:20px">
+      <!-- Hero Deal -->
+      <div class="hero-deal">
         <div class="hero-deal-body">
-          <div class="hero-deal-label">Highest Score Property</div>
+          <div class="hero-deal-label">Best deal right now</div>
           <div class="hero-deal-price" id="h-price">—</div>
           <div class="hero-deal-addr" id="h-addr">Loading best deal...</div>
           <div class="hero-deal-meta">
-            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-profit">—</div><div class="hero-deal-stat-lbl">Est. Profit</div></div>
+            <div><div class="hero-deal-stat-val" id="h-profit">—</div><div class="hero-deal-stat-lbl">Potential profit</div></div>
             <div class="hero-sep"></div>
-            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-roi">—</div><div class="hero-deal-stat-lbl">ROI %</div></div>
+            <div><div class="hero-deal-stat-val" id="h-roi">—</div><div class="hero-deal-stat-lbl">ROI %</div></div>
             <div class="hero-sep"></div>
-            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-score">—</div><div class="hero-deal-stat-lbl">Score</div></div>
+            <div><div class="hero-deal-stat-val" id="h-score">—</div><div class="hero-deal-stat-lbl">Score</div></div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <div id="h-strategy" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700"></div>
-            <button class="btn btn-ghost btn-sm" onclick="location.href='/deals/'" style="font-size:11px">View Details →</button>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span id="h-strategy-tag" class="strat-tag flip-tag">BUY (Flip)</span>
+            <button class="btn btn-sm" onclick="location.href='/deals/'" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3)">View Details →</button>
           </div>
         </div>
+        <div style="position:absolute;right:24px;bottom:16px;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,0.4)">Potential profit: <span id="h-profit2" style="color:rgba(255,255,255,0.7)">—</span></div>
       </div>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-row">
-      <div class="kpi-card c-blue" onclick="location.href='/acquisitions/'">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#2563eb,transparent)"></div>
-        <div class="kpi-label">Deals Under Review</div>
-        <div class="kpi-value" id="k1">—</div>
-        <div class="kpi-sub" id="k1-sub">All stages</div>
-      </div>
-      <div class="kpi-card c-teal" onclick="location.href='/acquisitions/'">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#14b8a6,transparent)"></div>
-        <div class="kpi-label">High Confidence Deals</div>
-        <div class="kpi-value" id="k2">—</div>
-        <div class="kpi-sub">Score ≥ 70</div>
-      </div>
-      <div class="kpi-card c-green" onclick="location.href='/deals/'">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#22c55e,transparent)"></div>
-        <div class="kpi-label">Pipeline Value</div>
-        <div class="kpi-value" id="k3">—</div>
-        <div class="kpi-sub">Estimated profit</div>
-      </div>
-      <div class="kpi-card c-amber" onclick="location.href='/reports/'">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#f59e0b,transparent)"></div>
-        <div class="kpi-label">Avg ROI This Month</div>
-        <div class="kpi-value" id="k4">—</div>
-        <div class="kpi-sub">Across active deals</div>
-      </div>
-    </div>
-
-    <!-- Body grid -->
-    <div class="dash-grid">
-      <!-- Deal table -->
-      <div>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-          <div style="font-size:12px;font-weight:700;color:var(--text-2)">Deal Analysis <span style="color:var(--text-3);font-weight:400">— Latest</span></div>
-          <a href="/acquisitions/" style="font-size:11px;color:var(--blue)">View all →</a>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th>Score</th><th>Address</th><th>Price</th><th>ARV</th>
-              <th>ROI</th><th>Strategy</th><th>Status</th>
-            </tr></thead>
-            <tbody id="dash-tbody"><tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
-          </table>
-        </div>
-      </div>
-      <!-- AI Recommendation Panel -->
-      <div class="ai-panel" id="ai-rec-panel">
+      <!-- AI Recommendation -->
+      <div class="ai-panel">
         <div class="ai-panel-hdr">
           <div class="ai-panel-dot"></div>
           <span class="ai-panel-title">AI Recommendation</span>
         </div>
-        <div style="padding:16px" id="ai-panel-body">
-          <div class="ai-loading"><div class="ai-spinner"></div><span>Loading best deal...</span></div>
+        <div style="padding:14px" id="ai-quick-panel">
+          <div class="ai-loading"><div class="ai-spinner"></div><span>Loading...</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+      <div class="kpi-card c-blue" onclick="location.href='/acquisitions/'">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Deals Under Review</div>
+        <div class="kpi-value" id="k1">—</div>
+        <div class="kpi-sub" id="k1-sub">Active in pipeline</div>
+      </div>
+      <div class="kpi-card c-teal" onclick="location.href='/deals/'">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">High Confidence Deals</div>
+        <div class="kpi-value" id="k2">—</div>
+        <div class="kpi-sub">Score ≥ 70 — offer ready</div>
+      </div>
+      <div class="kpi-card c-green" onclick="location.href='/deals/'">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Pipeline Value</div>
+        <div class="kpi-value" id="k3">—</div>
+        <div class="kpi-sub">Validated profit</div>
+      </div>
+      <div class="kpi-card c-amber" onclick="location.href='/reports/'">
+        <div class="kpi-card-accent"></div>
+        <div class="kpi-label">Avg ROI</div>
+        <div class="kpi-value" id="k4">—</div>
+        <div class="kpi-sub">Last 30 days</div>
+      </div>
+    </div>
+
+    <!-- Chart + Table -->
+    <div class="dash-grid">
+      <div>
+        <!-- Deal Analysis Chart -->
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-hdr">
+            <span class="card-title">Deal Analysis — Last 30 Days</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-ghost btn-sm" id="filter-status" style="font-size:10px">Status: All</button>
+              <button class="btn btn-ghost btn-sm" id="filter-strat" style="font-size:10px">Strategy: All</button>
+            </div>
+          </div>
+          <div style="padding:16px 18px">
+            <canvas id="deal-chart" height="160"></canvas>
+          </div>
+          <div class="chart-stats">
+            <div class="chart-stat"><div class="chart-stat-val" id="cs1">—</div><div class="chart-stat-lbl">Deals Analyzed</div></div>
+            <div class="chart-stat"><div class="chart-stat-val" id="cs2">—</div><div class="chart-stat-lbl">Accepted Deals</div></div>
+            <div class="chart-stat"><div class="chart-stat-val" id="cs3">—</div><div class="chart-stat-lbl">ROI Avg This Month</div></div>
+            <div class="chart-stat"><div class="chart-stat-val" id="cs4">—</div><div class="chart-stat-lbl">Avg ROI for Max 1</div></div>
+          </div>
+        </div>
+
+        <!-- Deal Table -->
+        <div class="table-wrap">
+          <div class="table-hdr">
+            <span style="font-size:13px;font-weight:700;color:var(--text-1)">Deals</span>
+            <a href="/acquisitions/" style="font-size:11px;color:var(--blue);font-weight:600">View all →</a>
+          </div>
+          <table>
+            <thead><tr>
+              <th>Score</th><th>Address</th><th>Price</th><th>ARV</th><th>ROI</th><th>Flip Margin</th><th>Strategy</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dash-tbody"><tr><td colspan="8" style="padding:30px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right sidebar -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Quick Access</span></div>
+          <div style="padding:6px 0">
+            <a href="/acquisitions/" class="nav-item" style="border-radius:0;color:var(--text-2)" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''"><span>🎯</span>Acquisitions</a>
+            <a href="/acquisitions/" class="nav-item" style="border-radius:0;color:var(--text-2)" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''"><span>➕</span>Add new deal</a>
+            <a href="/deals/" class="nav-item" style="border-radius:0;color:var(--text-2)" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''"><span>📋</span>View deals</a>
+            <a href="/reports/" class="nav-item" style="border-radius:0;color:var(--text-2)" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''"><span>📊</span>Reports</a>
+            <a href="/settings/" class="nav-item" style="border-radius:0;color:var(--text-2)" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''"><span>⚙️</span>Team settings</a>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><span class="card-title">Deals to Review</span></div>
+          <div id="review-list"><div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">Loading...</div></div>
         </div>
       </div>
     </div>
@@ -138,8 +184,9 @@
 </div>
 <div id="toast-container"></div>
 <script>
-const STRATEGY_STYLE={flip:'background:var(--purple-dim);color:var(--purple)',rental:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)',pass:'background:var(--red-dim);color:var(--red)'};
+const STRAT_STYLE={fix_flip:'flip-tag',buy_hold:'rental-tag',wholesale:'wholesale-tag',pass:'rejected-tag'};
 const STATUS_BADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass',review:'b-review'};
+let _chart=null;
 
 (async()=>{
   document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
@@ -147,6 +194,10 @@ const STATUS_BADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer
     const s=await P714Auth.init();
     if(!s){window.location.href='/login/?next=/';return;}
     const p=P714Auth.getProfile();
+    const name=(p?.full_name||'').split(' ')[0]||'there';
+    const h=new Date().getHours();
+    const gr=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+    document.getElementById('dash-greeting').textContent=`${gr}, ${name} — here's your pipeline.`;
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
     document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agent';
@@ -158,7 +209,7 @@ async function loadData(){
   const sb=P714Auth.getClient();
   const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
   const all=data||[];
-  const active=all.filter(l=>!['Dead','Closed','pass'].includes((l.status||'').toLowerCase()));
+  const active=all.filter(l=>!['Pass','Dead'].includes(l.status||''));
   // KPIs
   document.getElementById('k1').textContent=active.length;
   document.getElementById('k2').textContent=all.filter(l=>(l.deal_score||0)>=70).length;
@@ -166,68 +217,148 @@ async function loadData(){
   document.getElementById('k3').textContent=profit>=1e6?'$'+(profit/1e6).toFixed(1)+'M':profit>=1000?'$'+Math.round(profit/1000)+'K':'$'+Math.round(profit);
   const rois=active.map(l=>Number(l.roi)||0).filter(r=>r>0);
   document.getElementById('k4').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'—';
+  // Chart stats
+  document.getElementById('cs1').textContent=all.length;
+  document.getElementById('cs2').textContent=all.filter(l=>['Offer Ready','Under Contract','Closed'].includes(l.status||'')).length;
+  const avgRoi=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length):0;
+  document.getElementById('cs3').textContent=avgRoi+'%';
+  const maxRoi=Math.max(0,...rois);
+  document.getElementById('cs4').textContent=maxRoi?maxRoi+'%':'—';
   // Hero deal
   const top=all[0];
   if(top){
     document.getElementById('h-price').textContent=fm(top.asking_price);
     document.getElementById('h-addr').textContent=top.property_address||'—';
-    const p2=Number(top.estimated_profit)||0;
-    document.getElementById('h-profit').textContent=p2?'$'+p2.toLocaleString('en-US'):'—';
-    const roi=top.arv&&top.asking_price?Math.round((p2/(Number(top.asking_price)||1))*100):null;
-    document.getElementById('h-roi').textContent=roi?roi+'%':'—';
+    document.getElementById('h-profit').textContent=fm(top.estimated_profit);
+    document.getElementById('h-profit2').textContent=fm(top.estimated_profit);
+    const r=top.asking_price&&top.estimated_profit?Math.round(Number(top.estimated_profit)/Number(top.asking_price)*100):null;
+    document.getElementById('h-roi').textContent=r?r+'%':'—';
     document.getElementById('h-score').textContent=top.deal_score||'—';
-    const strat=(top.deal_type||'flip').toLowerCase();
-    document.getElementById('h-strategy').textContent=(strat==='fix_flip'?'BUY (Flip)':strat==='buy_hold'?'BUY (Rental)':strat==='wholesale'?'Wholesale':'Analyzing');
-    document.getElementById('h-strategy').style.cssText=STRATEGY_STYLE[strat==='fix_flip'?'flip':strat==='buy_hold'?'rental':'wholesale']||STRATEGY_STYLE.flip;
-    // AI Panel
-    renderAIPanel(top,roi);
+    const st=top.deal_type||'fix_flip';
+    const stTag=document.getElementById('h-strategy-tag');
+    stTag.className='strat-tag '+(STRAT_STYLE[st]||'flip-tag');
+    stTag.textContent=st==='fix_flip'?'BUY (Flip)':st==='buy_hold'?'BUY (Rental)':'Wholesale';
+    // AI panel
+    renderAIQuick(top);
   }
+  // Chart
+  buildChart(all);
   // Table
   const recent=all.slice(0,8);
   document.getElementById('dash-tbody').innerHTML=recent.map(l=>{
     const sc=l.deal_score||0;
     const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
-    const strat=(l.deal_type||'fix_flip');
-    const stratLabel=strat==='fix_flip'?'Flip':strat==='buy_hold'?'Rental':strat==='wholesale'?'Wholesale':'—';
-    const stratStyle=STRATEGY_STYLE[strat==='fix_flip'?'flip':strat==='buy_hold'?'rental':'wholesale']||'';
     const st=(l.status||'lead').toLowerCase();
     const stBadge=STATUS_BADGE[st]||'b-analyzing';
-    const roi2=l.arv&&l.asking_price?Math.round(((Number(l.estimated_profit)||0)/(Number(l.asking_price)||1))*100):null;
+    const strat=l.deal_type||'fix_flip';
+    const stratClass=STRAT_STYLE[strat]||'flip-tag';
+    const stratLabel=strat==='fix_flip'?'Flip':strat==='buy_hold'?'Rental':'Wholesale';
+    const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
+    const margin=l.arv&&l.asking_price?Math.round((Number(l.arv)-Number(l.asking_price))/Number(l.arv)*100):null;
     return `<tr onclick="location.href='/deals/?id=${l.id}'">
-      <td><span class="score-badge sm ${scClass}">${sc}</span></td>
+      <td><span class="score-badge sm ${scClass}">${sc||'?'}</span></td>
       <td><div class="td-addr">${esc(l.property_address||'—')}</div><div class="td-sub">${l.city||''} ${l.state||''}</div></td>
-      <td class="price-cell">${fm(l.asking_price)}</td>
+      <td class="price-cell bright">${fm(l.asking_price)}</td>
       <td class="price-cell">${fm(l.arv)}</td>
-      <td class="price-cell${roi2&&roi2>0?' green':roi2&&roi2<0?' red':''}">${roi2!==null?roi2+'%':'—'}</td>
-      <td><span class="badge" style="${stratStyle};padding:2px 8px;font-size:9px">${stratLabel}</span></td>
+      <td class="price-cell${r&&r>=15?' green':r&&r<0?' red':''}">${r!==null?r+'%':'—'}</td>
+      <td class="price-cell${margin&&margin>=25?' green':margin&&margin<10?' red':''}">${margin!==null?margin+'%':'—'}</td>
+      <td><span class="strat-tag ${stratClass}">${stratLabel}</span></td>
       <td><span class="badge ${stBadge}"><span class="badge-dot"></span>${l.status||'Lead'}</span></td>
     </tr>`;
-  }).join('')||'<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-3)">No deals yet</td></tr>';
+  }).join('')||'<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--text-3)">No deals yet — add your first deal in Acquisitions</td></tr>';
+  // Review list
+  const toReview=all.filter(l=>(l.deal_score||0)>=70&&!['Offer Ready','Under Contract','Closed','Pass'].includes(l.status||'')).slice(0,5);
+  document.getElementById('review-list').innerHTML=toReview.length?toReview.map(l=>{
+    const sc=l.deal_score||0;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer" onclick="location.href='/deals/?id=${l.id}'" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''">
+      <span class="score-badge sm hi" style="flex-shrink:0">${sc}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.property_address||'—')}</div>
+        <div style="font-size:10px;color:var(--text-3)">${fm(l.estimated_profit)} profit</div>
+      </div>
+      <span style="color:var(--text-3);font-size:14px">›</span>
+    </div>`;
+  }).join(''):'<div style="padding:24px;text-align:center;color:var(--text-3);font-size:12px">No high-confidence deals yet</div>';
 }
 
-function renderAIPanel(l,roi){
+function buildChart(all){
+  if(_chart){_chart.destroy();}
+  // Group by week (last 8 weeks)
+  const weeks=[];
+  for(let i=7;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i*7);
+    weeks.push({label:'W'+(8-i),count:0,score:0});
+  }
+  all.forEach(l=>{
+    const created=new Date(l.created_at||Date.now());
+    const weeksAgo=Math.floor((Date.now()-created)/(7*86400000));
+    if(weeksAgo<8){
+      const idx=7-weeksAgo;
+      if(weeks[idx]){weeks[idx].count++;weeks[idx].score+=(l.deal_score||0);}
+    }
+  });
+  const ctx=document.getElementById('deal-chart').getContext('2d');
+  _chart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:weeks.map(w=>w.label),
+      datasets:[{
+        label:'Deals',
+        data:weeks.map(w=>w.count),
+        borderColor:'#2563EB',
+        backgroundColor:'rgba(37,99,235,0.08)',
+        fill:true,
+        tension:0.4,
+        pointRadius:4,
+        pointBackgroundColor:'#2563EB',
+        borderWidth:2
+      },{
+        label:'Avg Score',
+        data:weeks.map(w=>w.count?Math.round(w.score/w.count):0),
+        borderColor:'#14B8A6',
+        backgroundColor:'transparent',
+        fill:false,
+        tension:0.4,
+        pointRadius:3,
+        pointBackgroundColor:'#14B8A6',
+        borderWidth:2,
+        yAxisID:'y2'
+      }]
+    },
+    options:{
+      responsive:true,
+      interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'top',labels:{color:'#94A3B8',font:{family:'Inter',size:11},boxWidth:10,padding:16}}},
+      scales:{
+        x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}}},
+        y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true,title:{display:true,text:'Deals',color:'#94A3B8',font:{size:10}}},
+        y2:{position:'right',grid:{display:false},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true,max:100,title:{display:true,text:'Score',color:'#94A3B8',font:{size:10}}}
+      }
+    }
+  });
+}
+
+function renderAIQuick(l){
   const sc=l.deal_score||0;
-  const strat=l.deal_type==='fix_flip'?'Flip':l.deal_type==='buy_hold'?'Rental':'Wholesale';
-  const mao=l.mao?fm(l.mao):'—';
-  const hasKey=!!window.__P714_CONFIG__?.anthropicKey;
-  document.getElementById('ai-panel-body').innerHTML=`
-    <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">${esc(l.property_address||'—')}</div>
-    <div class="ai-rec">
-      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:44px;height:44px;font-size:16px;border-radius:10px">${sc}</div>
-      <div style="flex:1">
-        <div class="ai-rec-label">Score / 100</div>
-        <div class="ai-rec-val">✦ Recommendation: ${strat} ${sc>=70?'✓':sc>=50?'⚠':'✗'}</div>
-      </div>
+  const strat=l.deal_type==='fix_flip'?'BUY (Flip)':l.deal_type==='buy_hold'?'BUY (Rental)':'Wholesale';
+  const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
+  const margin=l.arv&&l.asking_price?Math.round((Number(l.arv)-Number(l.asking_price))/Number(l.arv)*100):null;
+  document.getElementById('ai-quick-panel').innerHTML=`
+    <div style="font-size:11px;color:#64748B;margin-bottom:10px">${esc(l.property_address||'—')}
+      <span style="float:right;font-family:var(--font-mono);font-size:10px;color:#14B8A6">${sc}/100</span>
     </div>
-    <div class="ai-detail-row"><span class="ai-detail-label">Est. Profit</span><span class="ai-detail-val" style="color:var(--green)">${fm(l.estimated_profit)}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ROI</span><span class="ai-detail-val">${roi!==null?roi+'%':'—'}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">MAO</span><span class="ai-detail-val">${mao}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ARV</span><span class="ai-detail-val">${fm(l.arv)}</span></div>
-    <div style="margin:14px 0 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Analysis</div>
-    ${sc>=70?'<div class="ai-bullet">High confidence deal — score qualifies for offer</div><div class="ai-bullet">Verify ARV with recent comps within 0.5mi</div><div class="ai-bullet">Check repair estimate accuracy before offer</div>':sc>=50?'<div class="ai-bullet">Deal needs further validation before offer</div><div class="ai-bullet">Comps variance may affect ARV reliability</div><div class="ai-bullet">Moderate risk — negotiate price down</div>':'<div class="ai-bullet">Score below threshold — high risk deal</div><div class="ai-bullet">ROI insufficient for target return</div><div class="ai-bullet">Consider passing or renegotiating significantly</div>'}
-    <div style="margin:14px 0 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
-    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:12px">${mao}</div>
-    ${hasKey?'<button class="ai-simulate-btn" onclick="location.href=\'\'/deals/?id='+l.id+'\'\'" style="background:var(--teal);border-color:var(--teal)">✦ Run AI Analysis</button>':'<div style="font-size:11px;color:var(--text-3);text-align:center;padding:8px">Add Anthropic key in js/config.js to enable full AI analysis</div>'}
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${sc>=70?'#22C55E':sc>=50?'#F59E0B':'#EF4444'};"></div>
+      <span style="font-size:13px;font-weight:700;color:${sc>=70?'#4ADE80':sc>=50?'#FCD34D':'#F87171'}">Recommendation: ${strat}</span>
+    </div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ROI</span><span class="ai-detail-val">${r!==null?r+'%':'—'}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">Flip Margin</span><span class="ai-detail-val">${margin!==null?margin+'%':'—'} <span style="width:7px;height:7px;border-radius:50%;background:${margin&&margin>=20?'#22C55E':'#F59E0B'};display:inline-block"></span></span></div>
+    <div style="margin:10px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748B">Analysis:</div>
+    ${sc>=70?'<div class="ai-bullet">Comps variance in 1mi radius</div><div class="ai-bullet">ARV within acceptable range</div><div class="ai-bullet">Strong seller motivation</div>':'<div class="ai-bullet">Verify ARV before offer</div><div class="ai-bullet">Comps needed to validate</div><div class="ai-bullet">Negotiate price down</div>'}
+    <div style="margin:12px 0 4px;font-size:10px;color:#64748B">Suggested Offer:</div>
+    <div style="font-family:var(--font-mono);font-size:20px;font-weight:800;color:#F1F5F9;margin-bottom:10px">${fm(l.mao)}</div>
+    <button class="ai-simulate-btn" onclick="location.href='/deals/?id=${l.id}'">⚡ Simulate Offer</button>
   `;
 }
 
