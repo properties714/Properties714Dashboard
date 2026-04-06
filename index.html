@@ -6,15 +6,43 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/css/app.css?v=7"/>
+<link rel="stylesheet" href="/css/app.css?v=9"/>
+<style>
+html,body,*{box-sizing:border-box;}
+html,body,.app-shell,.app-main,.page-content{background:#F8FAFC!important;color:#0F172A!important;}
+.top-bar{background:#fff!important;border-bottom:1px solid #E2E8F0!important;}
+.card{background:#fff!important;border:1px solid #E2E8F0!important;}
+.kpi-card{background:#fff!important;border:1px solid #E2E8F0!important;}
+.kpi-value{line-height:1;font-family:'Syne',sans-serif;font-size:28px;font-weight:800;}
+.kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:8px;}
+.kpi-sub{font-size:11px;color:#94A3B8;margin-top:5px;}
+table thead tr{background:#F8FAFC!important;}
+th{color:#94A3B8!important;font-size:10px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:0.08em!important;}
+td{color:#0F172A!important;}
+tbody tr:hover{background:#F0F7FF!important;}
+.hamburger{display:none;width:36px;height:36px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:5px;flex-shrink:0;}
+.hamburger span{display:block;width:18px;height:2px;background:#475569;border-radius:2px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99;}
+.sidebar-overlay.open{display:block;}
+@media(max-width:768px){.hamburger{display:flex!important;}.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.kpi-row{grid-template-columns:1fr 1fr!important;}.dash-grid{grid-template-columns:1fr!important;}.hero-grid{grid-template-columns:1fr!important;}}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kpi-card{padding:18px 20px;position:relative;overflow:hidden;cursor:pointer;transition:all 160ms;box-shadow:0 1px 3px rgba(0,0,0,0.05);border-radius:14px;}
+.kpi-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.kpi-card-accent{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.c-blue .kpi-card-accent{background:#2563EB;}.c-blue .kpi-value{color:#2563EB;}
+.c-teal .kpi-card-accent{background:#0D9488;}.c-teal .kpi-value{color:#0D9488;}
+.c-green .kpi-card-accent{background:#16A34A;}.c-green .kpi-value{color:#16A34A;}
+.c-amber .kpi-card-accent{background:#D97706;}.c-amber .kpi-value{color:#D97706;}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-<script src="/js/config.js?v=7"></script>
-<script src="/js/auth.js?v=7"></script>
+<script src="/js/config.js?v=9"></script>
+<script src="/js/auth.js?v=9"></script>
 </head>
-<body style="background:#F8FAFC">
+<body>
+<div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
 <div class="app-shell">
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
     <a href="/" class="nav-item active"><span class="nav-icon">⬡</span>Dashboard</a>
@@ -25,52 +53,53 @@
     <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
-  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()">
     <div class="user-avatar" id="s-av">--</div>
-    <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
+    <div><div class="user-name" id="s-name">...</div><div class="user-role" id="s-role">—</div></div>
   </div></div>
 </aside>
-<main class="app-main" style="background:#F8FAFC">
+<main class="app-main">
   <div class="top-bar">
-    <div class="breadcrumb"><span style="color:#94A3B8">Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Dashboard</span></div>
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+    <div class="breadcrumb"><span style="color:#94A3B8">Home</span><span style="color:#CBD5E1;margin:0 4px">/</span><span style="color:#0F172A;font-weight:600">Dashboard</span></div>
     <div class="top-bar-actions">
-      <span style="font-size:11px;color:var(--text-3)" id="today-date"></span>
-      <button class="btn btn-ghost btn-sm" onclick="location.href='/reports/'">📊 Reports</button>
-      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/'">+ New Deal</button>
+      <span style="font-size:11px;color:#94A3B8" id="today-dt"></span>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='/reports/'" style="background:transparent;color:#475569;border:1px solid #E2E8F0;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;">📊 Reports</button>
+      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/'" style="background:#2563EB;color:#fff;border:1px solid #2563EB;border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;">+ New Deal</button>
     </div>
   </div>
   <div class="page-content">
     <div style="margin-bottom:20px">
-      <h1 class="page-title" id="greeting">Dashboard</h1>
-      <p class="page-subtitle">Properties 714 — Sistema de Adquisiciones</p>
+      <h1 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#0F172A" id="greeting">Dashboard</h1>
+      <p style="font-size:12px;color:#94A3B8;margin-top:3px">Properties 714 — Sistema de Adquisiciones</p>
     </div>
-    <!-- Hero + AI -->
-    <div style="display:grid;grid-template-columns:1fr 285px;gap:16px;margin-bottom:20px">
-      <div class="hero-deal">
-        <div class="hero-deal-body">
-          <div class="hero-deal-label">⭐ Top Deal Hoy</div>
-          <div class="hero-deal-price" id="h-price">—</div>
-          <div class="hero-deal-addr" id="h-addr">Sin propiedades en el pipeline</div>
-          <div class="hero-deal-meta">
-            <div><span class="hero-deal-stat-val" id="h-profit">—</span><span class="hero-deal-stat-lbl">Ganancia Est.</span></div>
-            <div class="hero-sep"></div>
-            <div><span class="hero-deal-stat-val" id="h-roi">—</span><span class="hero-deal-stat-lbl">ROI %</span></div>
-            <div class="hero-sep"></div>
-            <div><span class="hero-deal-stat-val" id="h-score">—</span><span class="hero-deal-stat-lbl">Score</span></div>
+    <!-- Hero -->
+    <div class="hero-grid" style="display:grid;grid-template-columns:1fr 285px;gap:16px;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,#1E3A8A 0%,#1D4ED8 40%,#2563EB 70%,#7C3AED 100%);border-radius:16px;overflow:hidden;position:relative;min-height:160px;box-shadow:0 4px 20px rgba(37,99,235,0.3)">
+        <div style="padding:24px 28px;position:relative;z-index:1">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.55);margin-bottom:6px">⭐ Top Deal Hoy</div>
+          <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1;margin-bottom:4px" id="h-price">—</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.65);margin-bottom:16px" id="h-addr">Sin propiedades</div>
+          <div style="display:flex;align-items:center;gap:18px;margin-bottom:16px">
+            <div><span style="font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:#fff;display:block" id="h-profit">—</span><span style="font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em">Ganancia Est.</span></div>
+            <div style="width:1px;height:28px;background:rgba(255,255,255,0.2)"></div>
+            <div><span style="font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:#fff;display:block" id="h-roi">—</span><span style="font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em">ROI %</span></div>
+            <div style="width:1px;height:28px;background:rgba(255,255,255,0.2)"></div>
+            <div><span style="font-family:'DM Mono',monospace;font-size:15px;font-weight:700;color:#fff;display:block" id="h-score">—</span><span style="font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em">Score</span></div>
           </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span id="h-strat" class="strat-tag flip-tag">—</span>
-            <button class="btn btn-sm" onclick="location.href='/deals/'" style="background:rgba(255,255,255,0.15);color:#fff;border-color:rgba(255,255,255,0.3);font-size:11px">Ver Detalles →</button>
-          </div>
+          <button onclick="location.href='/deals/'" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer">Ver Detalles →</button>
         </div>
       </div>
-      <div class="ai-panel">
-        <div class="ai-panel-hdr"><div class="ai-panel-dot"></div><span class="ai-panel-title">AI Recommendation</span></div>
-        <div style="padding:14px" id="ai-quick"><div class="ai-loading"><div class="ai-spinner"></div><span>Cargando...</span></div></div>
+      <div style="background:linear-gradient(135deg,#0F172A 0%,#1E293B 100%);border:1px solid rgba(13,148,136,0.3);border-radius:16px;overflow:hidden">
+        <div style="background:rgba(13,148,136,0.12);border-bottom:1px solid rgba(13,148,136,0.2);padding:12px 16px;display:flex;align-items:center;gap:8px">
+          <div style="width:8px;height:8px;border-radius:50%;background:#0D9488;box-shadow:0 0 6px #0D9488"></div>
+          <span style="font-size:12px;font-weight:700;color:#0D9488;font-family:'Syne',sans-serif">AI Recommendation</span>
+        </div>
+        <div style="padding:14px" id="ai-panel"><div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;color:#64748B;font-size:12px"><div style="width:24px;height:24px;border:2px solid rgba(13,148,136,0.2);border-top-color:#0D9488;border-radius:50%;animation:spin 0.8s linear infinite"></div>Cargando...</div></div>
       </div>
     </div>
     <!-- KPIs -->
-    <div class="kpi-row" style="margin-bottom:20px">
+    <div class="kpi-row">
       <div class="kpi-card c-blue" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div><div class="kpi-label">Deals en Revisión</div>
         <div class="kpi-value" id="k1">—</div><div class="kpi-sub">Pipeline activo</div>
@@ -88,93 +117,93 @@
         <div class="kpi-value" id="k4">—</div><div class="kpi-sub">Deals activos</div>
       </div>
     </div>
-    <!-- Body -->
-    <div style="display:grid;grid-template-columns:1fr 275px;gap:18px">
+    <!-- Body grid -->
+    <div class="dash-grid" style="display:grid;grid-template-columns:1fr 275px;gap:18px">
       <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="card">
-          <div class="card-hdr"><span class="card-title">📈 Análisis de Deals</span><a href="/reports/" style="font-size:11px;color:var(--blue);font-weight:600">Ver reporte →</a></div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#0F172A">📈 Análisis de Deals</span>
+            <a href="/reports/" style="font-size:11px;color:#2563EB;font-weight:600;text-decoration:none">Ver reporte →</a>
+          </div>
           <div style="padding:16px 18px"><canvas id="deal-chart" height="150"></canvas></div>
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border)">
-            <div style="padding:13px 16px;border-right:1px solid var(--border)">
-              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1)" id="cs1">—</div>
-              <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Analizados</div>
-            </div>
-            <div style="padding:13px 16px;border-right:1px solid var(--border)">
-              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1)" id="cs2">—</div>
-              <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Aceptados</div>
-            </div>
-            <div style="padding:13px 16px;border-right:1px solid var(--border)">
-              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--text-1)" id="cs3">—</div>
-              <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">ROI Promedio</div>
-            </div>
-            <div style="padding:13px 16px">
-              <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--teal)" id="cs4">—</div>
-              <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Alta Confianza</div>
-            </div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid #E2E8F0">
+            <div style="padding:13px 16px;border-right:1px solid #E2E8F0"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#0F172A" id="cs1">—</div><div style="font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Analizados</div></div>
+            <div style="padding:13px 16px;border-right:1px solid #E2E8F0"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#0F172A" id="cs2">—</div><div style="font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Aceptados</div></div>
+            <div style="padding:13px 16px;border-right:1px solid #E2E8F0"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#0F172A" id="cs3">—</div><div style="font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">ROI Prom.</div></div>
+            <div style="padding:13px 16px"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:#0D9488" id="cs4">—</div><div style="font-size:10px;color:#94A3B8;text-transform:uppercase;letter-spacing:0.07em;margin-top:2px">Alta Conf.</div></div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-hdr"><span class="card-title">🏠 Deals Recientes</span><a href="/acquisitions/" style="font-size:11px;color:var(--blue);font-weight:600">Ver todos →</a></div>
-          <table><thead><tr>
-            <th>Score</th><th>Dirección</th><th>Precio</th><th>ARV</th><th>ROI</th><th>Margen</th><th>Estrategia</th><th>Estatus</th>
-          </tr></thead>
-          <tbody id="dash-tbody"><tr><td colspan="8" style="padding:30px;text-align:center;color:var(--text-3)">Cargando...</td></tr></tbody>
+        <div class="card" style="border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#0F172A">🏠 Deals Recientes</span>
+            <a href="/acquisitions/" style="font-size:11px;color:#2563EB;font-weight:600;text-decoration:none">Ver todos →</a>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <thead><tr style="background:#F8FAFC;border-bottom:2px solid #E2E8F0">
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">Score</th>
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">Dirección</th>
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">Precio</th>
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">ARV</th>
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">ROI</th>
+              <th style="padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;text-align:left">Estatus</th>
+            </tr></thead>
+            <tbody id="dash-tbody"><tr><td colspan="6" style="padding:30px;text-align:center;color:#94A3B8">Cargando...</td></tr></tbody>
           </table>
         </div>
       </div>
       <div style="display:flex;flex-direction:column;gap:14px">
-        <div class="card">
-          <div class="card-hdr"><span class="card-title">🔥 Para Revisar</span><span class="badge b-ai" id="rc">0</span></div>
-          <div id="review-list"><div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">Sin deals de alta confianza</div></div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#0F172A">🔥 Para Revisar</span>
+            <span id="rev-cnt" style="background:#F0FDFA;color:#0D9488;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700">0</span>
+          </div>
+          <div id="review-list"><div style="padding:20px;text-align:center;color:#94A3B8;font-size:12px">Sin deals</div></div>
         </div>
-        <div class="card">
-          <div class="card-hdr"><span class="card-title">⚡ Acceso Rápido</span></div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0"><span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#0F172A">⚡ Acceso Rápido</span></div>
           <div style="padding:6px 0">
-            <a href="/acquisitions/" class="nav-item" style="color:var(--text-2);border-radius:0" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>🎯</span>Adquisiciones</a>
-            <a href="/acquisitions/" class="nav-item" style="color:var(--text-2);border-radius:0" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>➕</span>Nueva propiedad</a>
-            <a href="/deals/" class="nav-item" style="color:var(--text-2);border-radius:0" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>📋</span>Ver deals</a>
-            <a href="/reports/" class="nav-item" style="color:var(--text-2);border-radius:0" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>📊</span>Reports</a>
-            <a href="/settings/" class="nav-item" style="color:var(--text-2);border-radius:0" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>⚙️</span>Equipo</a>
+            <a href="/acquisitions/" style="display:flex;align-items:center;gap:9px;padding:8px 16px;color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:background 120ms" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>🎯</span>Adquisiciones</a>
+            <a href="/acquisitions/" style="display:flex;align-items:center;gap:9px;padding:8px 16px;color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:background 120ms" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>➕</span>Nueva propiedad</a>
+            <a href="/deals/" style="display:flex;align-items:center;gap:9px;padding:8px 16px;color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:background 120ms" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>📋</span>Ver deals</a>
+            <a href="/reports/" style="display:flex;align-items:center;gap:9px;padding:8px 16px;color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:background 120ms" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>📊</span>Reports</a>
+            <a href="/settings/" style="display:flex;align-items:center;gap:9px;padding:8px 16px;color:#475569;font-size:13px;font-weight:500;text-decoration:none;transition:background 120ms" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''"><span>⚙️</span>Equipo</a>
           </div>
         </div>
-        <div class="card">
-          <div class="card-hdr"><span class="card-title">👥 Equipo</span><a href="/settings/" style="font-size:11px;color:var(--blue)">Gestionar →</a></div>
-          <div id="team-list"><div style="padding:16px;text-align:center;color:var(--text-3);font-size:12px">Cargando...</div></div>
+        <div class="card" style="border-radius:12px;overflow:hidden">
+          <div style="padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#0F172A">👥 Equipo</span>
+            <a href="/settings/" style="font-size:11px;color:#2563EB;font-weight:600;text-decoration:none">Gestionar →</a>
+          </div>
+          <div id="team-list"><div style="padding:16px;text-align:center;color:#94A3B8;font-size:12px">Cargando...</div></div>
         </div>
       </div>
     </div>
   </div>
 </main>
 </div>
-<div id="toast-container"></div>
+<div id="toast-container" style="position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px"></div>
+<style>@keyframes spin{to{transform:rotate(360deg);}}.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap;text-transform:uppercase;}.badge-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;}.b-new-lead,.b-nuevo{background:#F5F3FF;color:#7C3AED;}.b-new-lead .badge-dot,.b-nuevo .badge-dot{background:#7C3AED;}.b-analyzing,.b-ana{background:#F0FDFA;color:#0D9488;}.b-analyzing .badge-dot,.b-ana .badge-dot{background:#0D9488;}.b-offer,.b-ofe{background:#EFF6FF;color:#2563EB;}.b-offer .badge-dot,.b-ofe .badge-dot{background:#2563EB;}.b-contract,.b-con{background:#F0FDF4;color:#16A34A;}.b-contract .badge-dot,.b-con .badge-dot{background:#16A34A;}.b-closed,.b-cer{background:#ECFDF5;color:#059669;}.b-closed .badge-dot,.b-cer .badge-dot{background:#059669;}.b-pass,.b-des{background:#FEF2F2;color:#DC2626;}.b-pass .badge-dot,.b-des .badge-dot{background:#DC2626;}.strat-tag{display:inline-flex;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;}.flip-tag{background:#F5F3FF;color:#7C3AED;}.rental-tag{background:#EFF6FF;color:#2563EB;}.wholesale-tag{background:#FFFBEB;color:#D97706;}.score-badge{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;border:1.5px solid;}.sc-hi{background:#F0FDF4;color:#16A34A;border-color:rgba(22,163,74,0.2);}.sc-mid{background:#FFFBEB;color:#D97706;border-color:rgba(217,119,6,0.2);}.sc-lo{background:#FEF2F2;color:#DC2626;border-color:rgba(220,38,38,0.2);}</style>
 <script>
-const STRAT_STYLE={fix_flip:'flip-tag',buy_hold:'rental-tag',wholesale:'wholesale-tag'};
-const STRAT_LABEL={fix_flip:'Fix & Flip',buy_hold:'Rental',wholesale:'Wholesale'};
-const ST_BADGE={
-  'lead':'b-lead','nuevo lead':'b-new-lead','new lead':'b-new-lead',
-  'analyzing':'b-analyzing','analizando':'b-analyzing',
-  'offer ready':'b-offer','oferta lista':'b-offer',
-  'under contract':'b-under-contract','bajo contrato':'b-under-contract',
-  'closed':'b-closed','cerrado':'b-closed',
-  'pass':'b-pass','descartado':'b-pass'
-};
-let _chart=null;
-
+const SMAP={'nuevo lead':'b-nuevo','analizando':'b-ana','oferta lista':'b-ofe','bajo contrato':'b-con','cerrado':'b-cer','descartado':'b-des','new lead':'b-nuevo','analyzing':'b-ana','offer ready':'b-ofe','under contract':'b-con','closed':'b-cer','pass':'b-des'};
+const STRAT={'fix_flip':'Fix & Flip','buy_hold':'Rental','wholesale':'Wholesale'};
+const STYL={'fix_flip':'flip-tag','buy_hold':'rental-tag','wholesale':'wholesale-tag'};
+let _ch=null;
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-overlay').classList.toggle('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-overlay').classList.remove('open');}
 (async()=>{
-  document.getElementById('today-date').textContent=new Date().toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'});
+  document.getElementById('today-dt').textContent=new Date().toLocaleDateString('es-MX',{weekday:'short',day:'numeric',month:'short'});
   try{
     const s=await P714Auth.init();
     if(!s){window.location.href='/login/?next=/';return;}
     const p=P714Auth.getProfile();
     const name=(p?.full_name||'').split(' ')[0]||'Eduardo';
-    document.getElementById('greeting').textContent=`Hola, ${name} \ud83d\udc4b`;
+    document.getElementById('greeting').textContent=`Hola, ${name} 👋`;
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
     document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agente';
     await loadData();
   }catch(e){console.warn(e);}
 })();
-
 async function loadData(){
   const sb=P714Auth.getClient();
   const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
@@ -183,116 +212,84 @@ async function loadData(){
   document.getElementById('k1').textContent=active.length;
   document.getElementById('k2').textContent=all.filter(l=>(l.deal_score||0)>=70).length;
   const profit=all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
-  document.getElementById('k3').textContent=profit>=1e6?'$'+(profit/1e6).toFixed(1)+'M':profit>=1000?'$'+Math.round(profit/1000)+'K':'$'+Math.round(profit)||'\u2014';
+  document.getElementById('k3').textContent=profit>=1e6?'$'+(profit/1e6).toFixed(1)+'M':profit>=1000?'$'+Math.round(profit/1000)+'K':'$'+Math.round(profit)||'—';
   const rois=active.map(l=>Number(l.roi)||0).filter(r=>r>0);
-  document.getElementById('k4').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'\u2014';
+  document.getElementById('k4').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'—';
   document.getElementById('cs1').textContent=all.length;
   document.getElementById('cs2').textContent=all.filter(l=>['Oferta Lista','Offer Ready','Bajo Contrato','Under Contract','Cerrado','Closed'].includes(l.status||'')).length;
-  document.getElementById('cs3').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'\u2014';
+  document.getElementById('cs3').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'—';
   document.getElementById('cs4').textContent=all.filter(l=>(l.deal_score||0)>=70).length;
   const top=all[0];
   if(top){
     document.getElementById('h-price').textContent=fm(top.asking_price);
-    document.getElementById('h-addr').textContent=top.property_address||'\u2014';
-    document.getElementById('h-profit').textContent=fm(top.estimated_profit);
+    document.getElementById('h-addr').textContent=top.property_address||'—';
     const r=top.asking_price&&top.estimated_profit?Math.round(Number(top.estimated_profit)/Number(top.asking_price)*100):null;
-    document.getElementById('h-roi').textContent=r?r+'%':'\u2014';
-    document.getElementById('h-score').textContent=top.deal_score||'\u2014';
-    const st=top.deal_type||'fix_flip';
-    const stEl=document.getElementById('h-strat');
-    stEl.className='strat-tag '+(STRAT_STYLE[st]||'flip-tag');
-    stEl.textContent=STRAT_LABEL[st]||'\u2014';
+    document.getElementById('h-profit').textContent=fm(top.estimated_profit);
+    document.getElementById('h-roi').textContent=r?r+'%':'—';
+    document.getElementById('h-score').textContent=top.deal_score||'—';
     renderAI(top);
-  } else {
-    document.getElementById('ai-quick').innerHTML='<div style="padding:16px;text-align:center;color:#64748B;font-size:12px">Agrega tu primera propiedad en Adquisiciones</div>';
+  }else{
+    document.getElementById('ai-panel').innerHTML='<div style="padding:16px;text-align:center;color:#64748B;font-size:12px">Agrega tu primera propiedad</div>';
   }
   buildChart(all);
   document.getElementById('dash-tbody').innerHTML=all.slice(0,6).map(l=>{
-    const sc=l.deal_score||0;
-    const scC=sc>=70?'hi':sc>=50?'mid':'lo';
-    const st=(l.status||'lead').toLowerCase();
-    const stB=ST_BADGE[st]||'b-analyzing';
-    const strat=l.deal_type||'fix_flip';
+    const sc=l.deal_score||0;const scC=sc>=70?'sc-hi':sc>=50?'sc-mid':'sc-lo';
+    const st=(l.status||'nuevo lead').toLowerCase();const stB=SMAP[st]||'b-ana';
     const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
-    const margin=l.arv&&l.asking_price?Math.round((Number(l.arv)-Number(l.asking_price))/Number(l.arv)*100):null;
-    return `<tr onclick="location.href='/deals/?id=${l.id}'">
-      <td><span class="score-badge sm ${scC}">${sc||'?'}</span></td>
-      <td><div class="td-addr">${esc(l.property_address||'\u2014')}</div><div class="td-sub">${l.city||''} ${l.state||''}</div></td>
-      <td class="price-cell bright">${fm(l.asking_price)}</td>
-      <td class="price-cell">${fm(l.arv)}</td>
-      <td class="price-cell${r&&r>=15?' green':r&&r<0?' red':''}">${r!==null?r+'%':'\u2014'}</td>
-      <td class="price-cell${margin&&margin>=25?' green':margin&&margin<10?' red':''}">${margin!==null?margin+'%':'\u2014'}</td>
-      <td><span class="strat-tag ${STRAT_STYLE[strat]||'flip-tag'}">${STRAT_LABEL[strat]||'\u2014'}</span></td>
-      <td><span class="badge ${stB}"><span class="badge-dot"></span>${l.status||'Lead'}</span></td>
+    return `<tr onclick="location.href='/deals/?id=${l.id}'" style="border-bottom:1px solid #E2E8F0;cursor:pointer" onmouseover="this.style.background='#F0F7FF'" onmouseout="this.style.background=''">
+      <td style="padding:11px 14px"><span class="score-badge ${scC}">${sc||'?'}</span></td>
+      <td style="padding:11px 14px"><div style="font-weight:600;font-size:13px;color:#0F172A;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.property_address||'—')}</div><div style="font-size:10px;color:#94A3B8">${l.city||''} ${l.state||''}</div></td>
+      <td style="padding:11px 14px;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:#0F172A">${fm(l.asking_price)}</td>
+      <td style="padding:11px 14px;font-family:'DM Mono',monospace;font-size:12px;color:#475569">${fm(l.arv)}</td>
+      <td style="padding:11px 14px;font-family:'DM Mono',monospace;font-size:12px;color:${r&&r>=15?'#16A34A':r&&r<0?'#DC2626':'#475569'}">${r!==null?r+'%':'—'}</td>
+      <td style="padding:11px 14px"><span class="badge ${stB}"><span class="badge-dot"></span>${l.status||'Lead'}</span></td>
     </tr>`;
-  }).join('')||'<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--text-3)">Sin propiedades. <a href="/acquisitions/" style="color:var(--blue)">Agrega la primera \u2192</a></td></tr>';
-  const toReview=all.filter(l=>(l.deal_score||0)>=70&&!['Oferta Lista','Offer Ready','Bajo Contrato','Under Contract','Cerrado','Closed','Descartado','Pass'].includes(l.status||'')).slice(0,5);
-  document.getElementById('rc').textContent=toReview.length;
-  document.getElementById('review-list').innerHTML=toReview.length?toReview.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);cursor:pointer" onclick="location.href='/deals/?id=${l.id}'" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''">
-    <span class="score-badge sm hi">${l.deal_score}</span>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.property_address||'\u2014')}</div>
-      <div style="font-size:10px;color:var(--text-3)">${fm(l.estimated_profit)} ganancia est.</div>
-    </div>
-    <span style="color:var(--text-3)">&rsaquo;</span>
-  </div>`).join(''):'<div style="padding:20px;text-align:center;color:var(--text-3);font-size:12px">Sin deals de alta confianza a\u00fan</div>';
+  }).join('')||'<tr><td colspan="6" style="padding:30px;text-align:center;color:#94A3B8">Sin propiedades. <a href="/acquisitions/" style="color:#2563EB">Agrega la primera →</a></td></tr>';
+  const toRev=all.filter(l=>(l.deal_score||0)>=70&&!['Oferta Lista','Offer Ready','Bajo Contrato','Under Contract','Cerrado','Closed','Descartado','Pass'].includes(l.status||'')).slice(0,5);
+  document.getElementById('rev-cnt').textContent=toRev.length;
+  document.getElementById('review-list').innerHTML=toRev.length?toRev.map(l=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #E2E8F0;cursor:pointer;transition:background 100ms" onclick="location.href='/deals/?id=${l.id}'" onmouseover="this.style.background='#EFF6FF'" onmouseout="this.style.background=''">
+    <div style="width:28px;height:28px;border-radius:6px;background:#F0FDF4;border:1.5px solid rgba(22,163,74,0.2);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#16A34A;flex-shrink:0">${l.deal_score}</div>
+    <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#0F172A">${esc(l.property_address||'—')}</div><div style="font-size:10px;color:#94A3B8">${fm(l.estimated_profit)} ganancia est.</div></div>
+    <span style="color:#CBD5E1;font-size:16px">&rsaquo;</span>
+  </div>`).join(''):'<div style="padding:24px;text-align:center;color:#94A3B8;font-size:12px">Sin deals de alta confianza</div>';
   const{data:team}=await sb.from('profiles').select('full_name,role,email').order('created_at');
-  const avC=['','teal','green','purple','amber'];
   document.getElementById('team-list').innerHTML=(team||[]).map((m,i)=>{
     const init=(m.full_name||m.email||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)">
-      <div class="user-avatar sm ${avC[i%5]}">${init}</div>
-      <div><div style="font-size:12px;font-weight:500">${esc(m.full_name||'\u2014')}</div><div style="font-size:10px;color:var(--text-3)">${m.role==='owner'?'Owner':'Agente'}</div></div>
-      <span class="badge ${m.role==='owner'?'b-owner':'b-acq'}" style="margin-left:auto;font-size:9px">${m.role==='owner'?'Owner':'Agente'}</span>
+    const colors=['rgba(37,99,235,0.3)','rgba(13,148,136,0.2)','rgba(22,163,74,0.2)','rgba(124,58,237,0.15)','rgba(217,119,6,0.15)'];
+    const textColors=['#93C5FD','#0D9488','#16A34A','#7C3AED','#D97706'];
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid #E2E8F0">
+      <div style="width:30px;height:30px;border-radius:50%;background:${colors[i%5]};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:${textColors[i%5]};flex-shrink:0">${init}</div>
+      <div><div style="font-size:12px;font-weight:500;color:#0F172A">${esc(m.full_name||'—')}</div><div style="font-size:10px;color:#94A3B8">${m.role==='owner'?'Owner':'Agente'}</div></div>
+      <span style="margin-left:auto;background:${m.role==='owner'?'#EFF6FF':'#F5F3FF'};color:${m.role==='owner'?'#2563EB':'#7C3AED'};padding:2px 8px;border-radius:99px;font-size:9px;font-weight:700">${m.role==='owner'?'Owner':'Agente'}</span>
     </div>`;
-  }).join('')||'<div style="padding:16px;text-align:center;color:var(--text-3);font-size:12px">Sin miembros</div>';
+  }).join('')||'<div style="padding:16px;text-align:center;color:#94A3B8;font-size:12px">Sin miembros</div>';
 }
-
 function buildChart(all){
-  if(_chart)_chart.destroy();
+  if(_ch)_ch.destroy();
   const weeks=Array.from({length:8},(_,i)=>({label:'S'+(i+1),count:0,score:0}));
-  all.forEach(l=>{
-    const wk=Math.min(7,Math.floor((Date.now()-new Date(l.created_at||Date.now()))/(7*86400000)));
-    const idx=7-wk;if(weeks[idx]){weeks[idx].count++;weeks[idx].score+=(l.deal_score||0);}
-  });
+  all.forEach(l=>{const wk=Math.min(7,Math.floor((Date.now()-new Date(l.created_at||Date.now()))/(7*86400000)));const idx=7-wk;if(weeks[idx]){weeks[idx].count++;weeks[idx].score+=(l.deal_score||0);}});
   const ctx=document.getElementById('deal-chart').getContext('2d');
-  _chart=new Chart(ctx,{
-    type:'line',
-    data:{labels:weeks.map(w=>w.label),datasets:[
-      {label:'Deals',data:weeks.map(w=>w.count),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,0.06)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#2563EB',borderWidth:2},
-      {label:'Score Prom.',data:weeks.map(w=>w.count?Math.round(w.score/w.count):0),borderColor:'#0D9488',backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:3,pointBackgroundColor:'#0D9488',borderWidth:2,yAxisID:'y2'}
-    ]},
-    options:{responsive:true,interaction:{mode:'index',intersect:false},
-      plugins:{legend:{position:'top',labels:{color:'#94A3B8',font:{family:'Inter',size:11},boxWidth:10,padding:14}}},
-      scales:{
-        x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}}},
-        y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true},
-        y2:{position:'right',grid:{display:false},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true,max:100}
-      }}
-  });
+  _ch=new Chart(ctx,{type:'line',data:{labels:weeks.map(w=>w.label),datasets:[{label:'Deals',data:weeks.map(w=>w.count),borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,0.06)',fill:true,tension:0.4,pointRadius:4,pointBackgroundColor:'#2563EB',borderWidth:2},{label:'Score Prom.',data:weeks.map(w=>w.count?Math.round(w.score/w.count):0),borderColor:'#0D9488',backgroundColor:'transparent',fill:false,tension:0.4,pointRadius:3,pointBackgroundColor:'#0D9488',borderWidth:2,yAxisID:'y2'}]},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top',labels:{color:'#94A3B8',font:{family:'Inter',size:11},boxWidth:10,padding:14}}},scales:{x:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true},y2:{position:'right',grid:{display:false},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true,max:100}}}});
 }
-
 function renderAI(l){
   const sc=l.deal_score||0;
   const strat=l.deal_type==='fix_flip'?'BUY (Flip)':l.deal_type==='buy_hold'?'BUY (Rental)':'Wholesale';
   const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
   const margin=l.arv&&l.asking_price?Math.round((Number(l.arv)-Number(l.asking_price))/Number(l.arv)*100):null;
-  document.getElementById('ai-quick').innerHTML=`
-    <div style="font-size:11px;color:#64748B;margin-bottom:10px">${esc(l.property_address||'\u2014')}
-      <span style="float:right;font-family:'DM Mono',monospace;font-size:10px;color:#0D9488">${sc}/100</span></div>
+  document.getElementById('ai-panel').innerHTML=`
+    <div style="font-size:11px;color:#64748B;margin-bottom:10px">${esc(l.property_address||'—')}<span style="float:right;font-family:'DM Mono',monospace;font-size:10px;color:#0D9488">${sc}/100</span></div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
       <div style="width:8px;height:8px;border-radius:50%;background:${sc>=70?'#22C55E':sc>=50?'#F59E0B':'#EF4444'}"></div>
-      <span style="font-size:13px;font-weight:700;color:${sc>=70?'#4ADE80':sc>=50?'#FCD34D':'#F87171'}">&rarr; ${strat}</span>
+      <span style="font-size:13px;font-weight:700;color:${sc>=70?'#4ADE80':sc>=50?'#FCD34D':'#F87171'}">→ ${strat}</span>
     </div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ROI</span><span class="ai-detail-val">${r!==null?r+'%':'\u2014'}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">Margen Flip</span><span class="ai-detail-val">${margin!==null?margin+'%':'\u2014'}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">Oferta Sugerida</span><span class="ai-detail-val">${fm(l.mao||l.initial_offer)}</span></div>
-    ${sc>=70?'<div class="ai-bullet">Score alto \u2014 lista para oferta</div><div class="ai-bullet">Verificar ARV con comps</div>':sc>=50?'<div class="ai-bullet">Necesita validaci\u00f3n antes de ofertar</div>':'<div class="ai-bullet">Score bajo \u2014 renegociar o descartar</div>'}
-    <button class="ai-simulate-btn" onclick="location.href='/deals/?id=${l.id}'" style="background:var(--teal)">&zap; Ver An\u00e1lisis Completo</button>
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px"><span style="color:#94A3B8">ROI</span><span style="color:#F1F5F9;font-family:'DM Mono',monospace;font-weight:600">${r!==null?r+'%':'—'}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:12px"><span style="color:#94A3B8">Margen Flip</span><span style="color:#F1F5F9;font-family:'DM Mono',monospace;font-weight:600">${margin!==null?margin+'%':'—'}</span></div>
+    <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px"><span style="color:#94A3B8">MAO Sugerido</span><span style="color:#F1F5F9;font-family:'DM Mono',monospace;font-weight:600">${fm(l.mao||l.initial_offer)}</span></div>
+    ${sc>=70?'<div style="font-size:11px;color:#94A3B8;padding:4px 0;display:flex;gap:6px"><span style="color:#0D9488">&bull;</span>Score alto — lista para oferta</div>':sc>=50?'<div style="font-size:11px;color:#94A3B8;padding:4px 0;display:flex;gap:6px"><span style="color:#0D9488">&bull;</span>Validar comps antes de ofertar</div>':'<div style="font-size:11px;color:#94A3B8;padding:4px 0;display:flex;gap:6px"><span style="color:#0D9488">&bull;</span>Score bajo — renegociar</div>'}
+    <button onclick="location.href='/deals/?id=${l.id}'" style="width:100%;padding:10px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;margin-top:12px;font-family:'Inter',sans-serif">&zap; Ver Análisis Completo</button>
   `;
 }
-
-function fm(n){if(!n&&n!==0)return '\u2014';const v=Number(n);return isNaN(v)?'\u2014':'$'+v.toLocaleString('en-US');}
+function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body></html>
