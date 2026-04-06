@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Acquisitions — Properties 714</title>
+<title>Adquisiciones — Properties 714</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -11,185 +11,226 @@
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
 <style>
-.sheet-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);}
-.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12px;}
-.sheet-table th{background:#0e1929;padding:8px 12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-3);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid var(--border);text-align:left;position:sticky;top:0;z-index:2;}
-.sheet-table th:first-child{width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#0e1929;}
-.sheet-table td{border-bottom:1px solid rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.03);padding:0;vertical-align:middle;}
-.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:var(--card);text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:10px;width:36px;border-right:2px solid var(--border);cursor:default;padding:0 6px;}
-.sheet-table tbody tr:hover td{background:rgba(37,99,235,0.04);}
-.sheet-table tbody tr:hover td:first-child{background:rgba(37,99,235,0.08);}
-.cv{display:block;padding:8px 11px;cursor:text;min-height:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px;color:var(--text-1);}
-.cv.muted{color:var(--text-2);}
+/* ─ Sheet table ─ White theme */
+.sheet-wrap{overflow-x:auto;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
+.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12.5px;}
+.sheet-table thead tr{background:#F8FAFC;}
+.sheet-table th{padding:9px 13px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748B;white-space:nowrap;border-bottom:2px solid #E2E8F0;border-right:1px solid #E2E8F0;text-align:left;position:sticky;top:0;z-index:2;background:#F8FAFC;}
+.sheet-table th:first-child{width:38px;text-align:center;position:sticky;left:0;z-index:3;background:#F8FAFC;border-right:2px solid #E2E8F0;}
+.sheet-table td{border-bottom:1px solid #F1F5F9;border-right:1px solid #F8FAFC;padding:0;vertical-align:middle;}
+.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:#fff;text-align:center;color:#CBD5E1;font-family:var(--font-mono);font-size:10px;width:38px;border-right:2px solid #E2E8F0;padding:0 6px;cursor:default;}
+.sheet-table tbody tr:hover td{background:#F0F7FF;}
+.sheet-table tbody tr:hover td:first-child{background:#E0EFFF;color:#94A3B8;}
+/* Editable cell */
+.cv{display:block;padding:8px 12px;cursor:text;min-height:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:22px;color:#0F172A;transition:background 100ms;}
+.cv.muted{color:#94A3B8;}
 .cv.ro{cursor:default;}
-.cv:not(.ro):hover{background:rgba(255,255,255,0.03);}
-.ci{width:100%;background:#0d2040;border:2px solid var(--blue);outline:none;padding:7px 10px;font-size:12px;color:var(--text-1);font-family:var(--font);min-height:36px;display:block;box-sizing:border-box;}
+.cv:not(.ro):hover{background:#EFF6FF;}
+.ci{width:100%;background:#fff;border:2px solid #2563EB;border-radius:4px;outline:none;padding:7px 11px;font-size:12.5px;color:#0F172A;font-family:var(--font);min-height:38px;display:block;box-sizing:border-box;}
 select.ci{cursor:pointer;}
 .ci[type=number]{font-family:var(--font-mono);}
-.add-row-btn{display:flex;align-items:center;gap:8px;padding:9px 14px;color:var(--text-3);font-size:12px;cursor:pointer;transition:all 130ms;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid var(--border);font-family:var(--font);}
-.add-row-btn:hover{background:rgba(37,99,235,0.06);color:var(--blue);}
-.score-col{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:center;padding:6px 10px;border-radius:6px;display:inline-block;}
-tr.row-hi td:first-child{box-shadow:inset 3px 0 0 var(--green);}
-tr.row-mid td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
-tr.row-lo td:first-child{box-shadow:inset 3px 0 0 var(--red);}
-tr.row-dead{opacity:0.4;}
-.strat-pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em;}
+/* Row highlight by score */
+tr.row-hi td:first-child{box-shadow:inset 3px 0 0 #16A34A;}
+tr.row-mid td:first-child{box-shadow:inset 3px 0 0 #D97706;}
+tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
+/* Col group headers */
+.th-group{background:#EFF6FF!important;color:#2563EB!important;border-bottom:2px solid #BFDBFE!important;letter-spacing:0.04em;}
+.th-comp{background:#FFF7ED!important;color:#C2410C!important;border-bottom:2px solid #FED7AA!important;}
+.th-fin{background:#F0FDF4!important;color:#166534!important;border-bottom:2px solid #BBF7D0!important;}
+/* Strat pill */
+.sp-flip{background:#F5F3FF;color:#7C3AED;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
+.sp-rental{background:#EFF6FF;color:#2563EB;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
+.sp-wholesale{background:#FFFBEB;color:#D97706;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
+/* Add row */
+.add-row-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;color:#94A3B8;font-size:12px;cursor:pointer;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid #E2E8F0;font-family:var(--font);transition:all 130ms;}
+.add-row-btn:hover{background:#EFF6FF;color:#2563EB;}
+/* Link cell */
+.link-cell{display:flex;align-items:center;gap:5px;padding:8px 12px;min-height:38px;}
+.link-icon{color:#2563EB;font-size:13px;text-decoration:none;flex-shrink:0;}
+.link-icon:hover{color:#1D4ED8;}
 </style>
 </head>
-<body>
+<body style="background:#F1F5F9">
 <div class="app-shell">
 <aside class="sidebar">
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
     <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
-    <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Acquisitions</a>
+    <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Adquisiciones</a>
     <span class="nav-section-label">Management</span>
     <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
     <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
     <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
-  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()">
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
     <div class="user-avatar" id="s-av">--</div>
     <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
   </div></div>
 </aside>
-<main class="app-main">
-  <div class="top-bar">
-    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Acquisitions</span></div>
+<main class="app-main" style="background:#F1F5F9">
+  <div class="top-bar" style="background:#fff">
+    <div class="breadcrumb"><span style="color:#94A3B8">Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Adquisiciones</span></div>
     <div class="top-bar-actions">
-      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono)" id="save-st"></span>
-      <button class="btn btn-ghost btn-sm" onclick="doExport()">⬇ Export</button>
-      <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ New Deal</button>
+      <span style="font-size:11px;color:#94A3B8;font-family:var(--font-mono)" id="save-st"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doExport()">⬇ Exportar</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Nueva Propiedad</button>
     </div>
   </div>
   <div class="page-content">
     <div class="page-header">
-      <h1 class="page-title">Acquisitions</h1>
-      <p class="page-subtitle" id="sheet-sub">Deal pipeline — click any cell to edit inline</p>
+      <h1 class="page-title" style="color:#0F172A">Adquisiciones</h1>
+      <p class="page-subtitle" id="sheet-sub">Haz click en cualquier celda para editar</p>
     </div>
-    <div class="kpi-row" style="margin-bottom:16px">
-      <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Deals</div><div class="kpi-value" id="k1">—</div><div class="kpi-sub">All stages</div></div>
-      <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">High Confidence</div><div class="kpi-value" id="k2">—</div><div class="kpi-sub">Score ≥ 70</div></div>
-      <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Est. Pipeline</div><div class="kpi-value" id="k3">—</div><div class="kpi-sub">Profit potential</div></div>
-      <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Avg Score</div><div class="kpi-value" id="k4">—</div><div class="kpi-sub">Portfolio quality</div></div>
+    <!-- KPIs -->
+    <div class="kpi-row" style="margin-bottom:18px">
+      <div class="kpi-card c-blue" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Total Propiedades</div><div class="kpi-value" id="k1">—</div><div class="kpi-sub">Todas las etapas</div></div>
+      <div class="kpi-card c-teal" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Alta Confianza</div><div class="kpi-value" id="k2">—</div><div class="kpi-sub">Score ≥ 70</div></div>
+      <div class="kpi-card c-green" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Pipeline Estimado</div><div class="kpi-value" id="k3">—</div><div class="kpi-sub">Ganancia potencial</div></div>
+      <div class="kpi-card c-amber" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Bajo Contrato</div><div class="kpi-value" id="k4">—</div><div class="kpi-sub">Cierres activos</div></div>
     </div>
+    <!-- Filters -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <input class="search-input" id="sq" placeholder="🔍 Search address, seller..." oninput="doFilter()" style="width:240px"/>
-      <select class="search-input" id="ss" onchange="doFilter()" style="width:130px">
-        <option value="">All Status</option>
-        <option>New Lead</option><option>Analyzing</option><option>Offer Ready</option>
-        <option>Under Contract</option><option>Closed</option><option>Pass</option>
+      <input class="search-input" id="sq" placeholder="🔍 Buscar dirección, ciudad..." oninput="doFilter()" style="width:260px;background:#fff"/>
+      <select class="search-input" id="ss" onchange="doFilter()" style="width:140px;background:#fff">
+        <option value="">Todos los Estatus</option>
+        <option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option>
+        <option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option>
       </select>
-      <select class="search-input" id="sa" onchange="doFilter()" style="width:130px"><option value="">All Agents</option></select>
-      <select class="search-input" id="sd" onchange="doFilter()" style="width:130px">
-        <option value="">All Strategies</option>
-        <option value="fix_flip">Fix &amp; Flip</option>
-        <option value="buy_hold">Rental</option>
-        <option value="wholesale">Wholesale</option>
-      </select>
-      <span style="margin-left:auto;font-size:11px;color:var(--text-3)" id="rc"></span>
+      <select class="search-input" id="sa" onchange="doFilter()" style="width:140px;background:#fff"><option value="">Todos los Agentes</option></select>
+      <span style="margin-left:auto;font-size:11px;color:#94A3B8" id="rc"></span>
     </div>
+    <!-- Sheet -->
     <div class="sheet-wrap">
       <table class="sheet-table">
-        <thead><tr>
-          <th>#</th>
-          <th style="min-width:36px">Score</th>
-          <th style="min-width:160px">Property Address</th>
-          <th style="min-width:110px">City / ST</th>
-          <th style="min-width:100px">Seller</th>
-          <th style="min-width:100px">Asking $</th>
-          <th style="min-width:100px">ARV $</th>
-          <th style="min-width:90px">Repairs $</th>
-          <th style="min-width:100px">MAO $</th>
-          <th style="min-width:100px">Est. Profit</th>
-          <th style="min-width:40px">ROI %</th>
-          <th style="min-width:110px">Strategy</th>
-          <th style="min-width:120px">Status</th>
-          <th style="min-width:100px">Agent</th>
-          <th style="min-width:90px">Type</th>
-          <th style="min-width:100px">Condition</th>
-          <th style="min-width:100px">Source</th>
-          <th style="min-width:90px">Follow-Up</th>
-          <th style="min-width:200px">Notes</th>
-        </tr></thead>
-        <tbody id="tbody"><tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
+        <thead>
+          <!-- Group headers -->
+          <tr>
+            <th class="th-group" style="border-right:none">#</th>
+            <th class="th-group" colspan="5">Información de la Propiedad</th>
+            <th class="th-group" style="border-right:2px solid #BFDBFE">Estatus</th>
+            <th class="th-fin" colspan="4">Financieros</th>
+            <th class="th-group" style="border-right:2px solid #BFDBFE">Dueño</th>
+            <th class="th-group" colspan="2">Detalles</th>
+            <th class="th-group" style="border-right:2px solid #BFDBFE">Agente</th>
+            <th class="th-comp" colspan="6">Comparables</th>
+          </tr>
+          <!-- Column headers -->
+          <tr>
+            <th>#</th>
+            <th style="min-width:90px">Fecha</th>
+            <th style="min-width:200px">Dirección</th>
+            <th style="min-width:110px">Ciudad</th>
+            <th style="min-width:70px">Código Postal</th>
+            <th style="min-width:60px">Link</th>
+            <th style="min-width:130px;border-right:2px solid #E2E8F0">Estatus</th>
+            <th style="min-width:110px">Precio Vendedor</th>
+            <th style="min-width:110px">ARV Estimado</th>
+            <th style="min-width:110px">Costo Reparación</th>
+            <th style="min-width:110px;border-right:2px solid #E2E8F0">Oferta Inicial</th>
+            <th style="min-width:130px;border-right:2px solid #E2E8F0">Dueño (Vendedor)</th>
+            <th style="min-width:60px">Cuartos</th>
+            <th style="min-width:60px">Baños</th>
+            <th style="min-width:130px;border-right:2px solid #E2E8F0">Agente</th>
+            <th style="min-width:200px">Comparable 1</th>
+            <th style="min-width:90px">Distancia 1</th>
+            <th style="min-width:200px">Comparable 2</th>
+            <th style="min-width:90px">Distancia 2</th>
+            <th style="min-width:200px">Comparable 3</th>
+            <th style="min-width:90px">Distancia 3</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="21" style="padding:50px;text-align:center;color:#94A3B8">Cargando propiedades...</td></tr>
+        </tbody>
       </table>
-      <button class="add-row-btn" onclick="addRow()">＋ Add deal</button>
+      <button class="add-row-btn" onclick="addRow()">＋ Agregar propiedad</button>
     </div>
   </div>
 </main>
 </div>
 
-<!-- Add Deal Modal -->
+<!-- Add Property Modal -->
 <div class="modal-backdrop" id="add-modal">
-<div class="modal" style="max-width:600px">
-  <div class="modal-hdr">
-    <span class="modal-title">New Deal</span>
-    <button class="modal-close-btn" onclick="closeModal('add-modal')">×</button>
+<div class="modal" style="max-width:640px;background:#fff">
+  <div class="modal-hdr" style="border-bottom:1px solid #E2E8F0;padding-bottom:14px;margin-bottom:0">
+    <span class="modal-title" style="color:#0F172A">🏠 Nueva Propiedad</span>
+    <button class="modal-close-btn" onclick="closeModal('add-modal')" style="background:#F1F5F9;border-color:#E2E8F0;color:#64748B">×</button>
   </div>
   <div class="modal-body">
-    <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:14px">
-      <button class="btn btn-sm" id="tab-contact" onclick="switchTab('contact')" style="background:var(--blue);color:#fff">Contact</button>
-      <button class="btn btn-ghost btn-sm" id="tab-property" onclick="switchTab('property')">Property</button>
-      <button class="btn btn-ghost btn-sm" id="tab-financials" onclick="switchTab('financials')">Financials</button>
+    <!-- Tabs -->
+    <div style="display:flex;gap:6px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #E2E8F0">
+      <button class="btn btn-sm" id="tb1" onclick="sw(1)" style="background:#2563EB;color:#fff;border-color:#2563EB">1 • Propiedad</button>
+      <button class="btn btn-ghost btn-sm" id="tb2" onclick="sw(2)">2 • Financieros</button>
+      <button class="btn btn-ghost btn-sm" id="tb3" onclick="sw(3)">3 • Comparables</button>
     </div>
-    <!-- Contact -->
-    <div id="panel-contact">
+    <!-- Panel 1: Propiedad -->
+    <div id="p1">
+      <div class="form-group"><label class="form-label">Dirección *</label><input class="form-input" id="m-addr" placeholder="123 Main St"/></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Seller Name *</label><input class="form-input" id="n-name" placeholder="John Smith"/></div>
-        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="n-phone" placeholder="+1 (404) 000-0000"/></div>
+        <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="m-city" placeholder="Atlanta"/></div>
+        <div class="form-group"><label class="form-label">Código Postal</label><input class="form-input" id="m-zip" placeholder="30309"/></div>
       </div>
+      <div class="form-group"><label class="form-label">Link (Zillow / MLS / etc.)</label><input class="form-input" id="m-link" placeholder="https://zillow.com/..."/></div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="n-email" type="email"/></div>
-        <div class="form-group"><label class="form-label">Lead Source</label>
-          <select class="form-input" id="n-source"><option>Driving for Dollars</option><option>Direct Mail</option><option>Cold Call</option><option>Pre-Foreclosure</option><option>Probate</option><option>Tax Default</option><option>Facebook Ads</option><option>Referral</option><option>Other</option></select>
-        </div>
-      </div>
-    </div>
-    <!-- Property -->
-    <div id="panel-property" style="display:none">
-      <div class="form-group"><label class="form-label">Property Address *</label><input class="form-input" id="n-addr" placeholder="123 Main St, Atlanta, GA"/></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">City</label><input class="form-input" id="n-city" placeholder="Atlanta"/></div>
-        <div class="form-group"><label class="form-label">State</label><input class="form-input" id="n-state" placeholder="GA" maxlength="2"/></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Property Type</label>
-          <select class="form-input" id="n-type"><option>SFR</option><option>Duplex</option><option>Multi-Family</option><option>Commercial</option><option>Land</option></select>
-        </div>
-        <div class="form-group"><label class="form-label">Condition</label>
-          <select class="form-input" id="n-cond"><option value="">Select...</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Distressed</option><option>Tear-Down</option></select>
+        <div class="form-group"><label class="form-label">Dueño / Vendedor</label><input class="form-input" id="m-owner" placeholder="Nombre del vendedor"/></div>
+        <div class="form-group"><label class="form-label">Estatus</label>
+          <select class="form-input" id="m-status">
+            <option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option>
+            <option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option>
+          </select>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Sqft</label><input class="form-input" id="n-sqft" type="number" placeholder="1500"/></div>
-        <div class="form-group"><label class="form-label">Beds / Baths</label><div style="display:flex;gap:6px"><input class="form-input" id="n-beds" type="number" placeholder="3" style="width:50%"/><input class="form-input" id="n-baths" type="number" step="0.5" placeholder="2" style="width:50%"/></div></div>
+        <div class="form-group"><label class="form-label">Cuartos</label><input class="form-input" id="m-beds" type="number" placeholder="3"/></div>
+        <div class="form-group"><label class="form-label">Baños</label><input class="form-input" id="m-baths" type="number" step="0.5" placeholder="2"/></div>
       </div>
     </div>
-    <!-- Financials -->
-    <div id="panel-financials" style="display:none">
+    <!-- Panel 2: Financieros -->
+    <div id="p2" style="display:none">
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Asking Price $</label><input class="form-input" id="n-ask" type="number" placeholder="180000"/></div>
-        <div class="form-group"><label class="form-label">ARV $</label><input class="form-input" id="n-arv" type="number" placeholder="300000" oninput="calcMAO()"/></div>
+        <div class="form-group"><label class="form-label">Precio Vendedor $</label><input class="form-input" id="m-ask" type="number" placeholder="180000" oninput="calcMao()"/></div>
+        <div class="form-group"><label class="form-label">ARV Estimado $</label><input class="form-input" id="m-arv" type="number" placeholder="300000" oninput="calcMao()"/></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Repairs Est. $</label><input class="form-input" id="n-rep" type="number" placeholder="40000" oninput="calcMAO()"/></div>
-        <div class="form-group"><label class="form-label">MAO (auto)</label>
-          <div style="background:rgba(20,184,166,0.1);border:1px solid var(--teal-dim);border-radius:var(--radius);padding:8px 11px;font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--teal)" id="n-mao">—</div>
+        <div class="form-group"><label class="form-label">Costo Reparación $</label><input class="form-input" id="m-rep" type="number" placeholder="40000" oninput="calcMao()"/></div>
+        <div class="form-group"><label class="form-label">Oferta Inicial / MAO (auto)</label>
+          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:var(--radius);padding:9px 12px;font-family:var(--font-mono);font-size:15px;font-weight:800;color:#15803D" id="m-mao-display">—</div>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label class="form-label">Strategy</label>
-          <select class="form-input" id="n-dtype"><option value="fix_flip">Fix &amp; Flip</option><option value="buy_hold">Buy &amp; Hold (Rental)</option><option value="wholesale">Wholesale</option></select>
+        <div class="form-group"><label class="form-label">Estrategia</label>
+          <select class="form-input" id="m-dtype">
+            <option value="fix_flip">Fix &amp; Flip</option>
+            <option value="buy_hold">Renta / Hold</option>
+            <option value="wholesale">Wholesale</option>
+          </select>
         </div>
-        <div class="form-group"><label class="form-label">Motivation (1-10)</label><input class="form-input" id="n-mot" type="number" min="1" max="10" placeholder="7"/></div>
+        <div class="form-group"><label class="form-label">Motivación (1-10)</label><input class="form-input" id="m-mot" type="number" min="1" max="10" placeholder="7"/></div>
       </div>
-      <div class="form-group"><label class="form-label">Next Follow-Up</label><input class="form-input" id="n-fu" type="date"/></div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-      <button class="btn btn-primary" style="flex:1" onclick="saveDeal()">Save Deal</button>
-      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    <!-- Panel 3: Comparables -->
+    <div id="p3" style="display:none">
+      <p style="font-size:12px;color:#64748B;margin-bottom:14px">Ingresa las propiedades comparables vendidas para validar el ARV</p>
+      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 1</div>
+        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c1" placeholder="456 Oak Ave, Atlanta, GA"/></div>
+        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d1" type="number" step="0.1" placeholder="0.3"/></div>
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 2</div>
+        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c2" placeholder="789 Pine Rd, Atlanta, GA"/></div>
+        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d2" type="number" step="0.1" placeholder="0.5"/></div>
+      </div>
+      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px">
+        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 3</div>
+        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c3" placeholder="321 Elm St, Atlanta, GA"/></div>
+        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d3" type="number" step="0.1" placeholder="0.8"/></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid #E2E8F0">
+      <button class="btn btn-primary" style="flex:1" onclick="saveNew()">Guardar Propiedad</button>
+      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -197,13 +238,8 @@ tr.row-dead{opacity:0.4;}
 
 <div id="toast-container"></div>
 <script>
-const STATUSES=['New Lead','Analyzing','Offer Ready','Under Contract','Closed','Pass'];
-const TYPES=['SFR','Duplex','Multi-Family','Condo','Commercial','Land','Mobile'];
-const CONDITIONS=['','Excellent','Good','Fair','Distressed','Tear-Down'];
-const SOURCES=['','Driving for Dollars','Direct Mail','Cold Call','PPC/Google','Facebook Ads','Referral','MLS','Probate','Pre-Foreclosure','Tax Default','Wholesale','Other'];
-const ST_BADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass',review:'b-review'};
-const STRAT_LABEL={fix_flip:'Flip',buy_hold:'Rental',wholesale:'Wholesale'};
-const STRAT_STYLE={fix_flip:'background:var(--purple-dim);color:var(--purple)',buy_hold:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)'};
+const STATUSES_ES=['Nuevo Lead','Analizando','Oferta Lista','Bajo Contrato','Cerrado','Descartado'];
+const STATUS_BADGE={'nuevo lead':'b-new-lead','analizando':'b-analyzing','oferta lista':'b-offer','bajo contrato':'b-under-contract','cerrado':'b-closed','descartado':'b-pass','new lead':'b-new-lead','analyzing':'b-analyzing','offer ready':'b-offer','under contract':'b-under-contract','closed':'b-closed','pass':'b-pass'};
 let _all=[],_uid=null,_isOwner=false;
 
 (async()=>{
@@ -215,105 +251,121 @@ let _all=[],_uid=null,_isOwner=false;
     _uid=P714Auth.getUser().id;
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
-    document.getElementById('s-role').textContent=_isOwner?'Owner':'Agent';
+    document.getElementById('s-role').textContent=_isOwner?'Owner':'Agente';
     await load();
   }catch(e){console.error(e);}
 })();
 
 async function load(){
   const sb=P714Auth.getClient();
-  const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
+  const{data}=await sb.from('acquisitions_leads').select('*').order('created_at',{ascending:false});
   _all=data||[];
   const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
   const af=document.getElementById('sa');const cur=af.value;
-  af.innerHTML='<option value="">All Agents</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
+  af.innerHTML='<option value="">Todos los Agentes</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
   updateKPIs();doFilter();
 }
 
 function updateKPIs(){
-  const active=_all.filter(l=>!['Pass','Closed','Dead'].includes(l.status));
   document.getElementById('k1').textContent=_all.length;
   document.getElementById('k2').textContent=_all.filter(l=>(l.deal_score||0)>=70).length;
   const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
   document.getElementById('k3').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
-  const scores=active.map(l=>l.deal_score||0).filter(s=>s>0);
-  document.getElementById('k4').textContent=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):'—';
-  document.getElementById('sheet-sub').textContent=`${_all.length} deals — click any cell to edit • ${_all.filter(l=>(l.deal_score||0)>=70).length} high confidence`;
+  document.getElementById('k4').textContent=_all.filter(l=>(l.status||'').toLowerCase().includes('contrato')||(l.status||'').toLowerCase().includes('contract')).length;
+  document.getElementById('sheet-sub').textContent=`${_all.length} propiedades — haz click en cualquier celda para editar`;
 }
 
 function doFilter(){
   const q=document.getElementById('sq').value.toLowerCase();
   const ss=document.getElementById('ss').value;
   const sa=document.getElementById('sa').value;
-  const sd=document.getElementById('sd').value;
   const list=_all.filter(l=>{
-    const txt=`${l.property_address||''} ${l.name||''} ${l.city||''}`.toLowerCase();
-    return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa)&&(!sd||l.deal_type===sd);
+    const txt=`${l.property_address||''} ${l.city||''} ${l.zip||''}`.toLowerCase();
+    return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa);
   });
   render(list);
-  document.getElementById('rc').textContent=list.length+' deals';
+  document.getElementById('rc').textContent=list.length+' propiedades';
 }
 
-function mao(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*.7)-r:null;}
-function profit(l){const m=mao(l),ask=Number(l.asking_price)||0;return m!==null&&ask?m-ask:null;}
-function roi(l){const p2=profit(l),ask=Number(l.asking_price)||1;return p2!==null?Math.round(p2/ask*100):null;}
+function maoCalc(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*.7)-r:null;}
+function profitCalc(l){const m=maoCalc(l),ask=Number(l.asking_price)||0;return m!==null&&ask?m-ask:null;}
 function fm(n){if(n===null||n===undefined||n==='')return '';const v=Number(n);return isNaN(v)?'':'$'+v.toLocaleString('en-US');}
-function fd(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}):''}
+function fd(d){return d?new Date(d).toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'}):''}
 
 function render(list){
   const tb=document.getElementById('tbody');
-  if(!list.length){tb.innerHTML='<tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">No deals found. Click "+ New Deal" to start.</td></tr>';return;}
+  if(!list.length){
+    tb.innerHTML='<tr><td colspan="21" style="padding:50px;text-align:center;color:#94A3B8">No hay propiedades. Haz click en “+ Agregar propiedad” para comenzar.</td></tr>';
+    return;
+  }
   tb.innerHTML=list.map((l,i)=>{
-    const sc=l.deal_score||0,m=mao(l),pr=profit(l),r=roi(l);
+    const sc=l.deal_score||0;
     const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
     const rowClass=sc>=70?'row-hi':sc>=50?'row-mid':sc>0?'row-lo':'';
-    const st=(l.status||'new lead').toLowerCase();
-    const stBadge=ST_BADGE[st]||'b-analyzing';
-    const strat=l.deal_type||'fix_flip';
-    const stratStyle=STRAT_STYLE[strat]||'';
-    const fu=fd(l.next_followup);
-    const fuOv=l.next_followup&&new Date(l.next_followup)<new Date();
-    return `<tr data-id="${l.id}" class="${rowClass}" onclick="location.href='/deals/?id=${l.id}'" style="cursor:pointer">
-      <td onclick="event.stopPropagation()">${i+1}</td>
-      <td onclick="event.stopPropagation()"><span class="score-badge sm ${scClass}" style="margin:auto;display:flex;align-items:center;justify-content:center">${sc||'—'}</span></td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'property_address',l.property_address,'text')}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'city',l.city,'text')}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'name',l.name,'text')}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'asking_price',l.asking_price,'number')}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'arv',l.arv,'number')}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'repairs',l.repairs,'number')}</td>
-      <td onclick="event.stopPropagation()"><span class="cv ro muted">${fm(m)||'—'}</span></td>
-      <td onclick="event.stopPropagation()"><span class="cv ro" style="color:${pr!==null&&pr>=0?'var(--green)':'var(--red)'}">${fm(pr)||'—'}</span></td>
-      <td onclick="event.stopPropagation()"><span class="cv ro" style="color:${r!==null&&r>=0?'var(--green)':'var(--red)'}">${r!==null?r+'%':'—'}</span></td>
-      <td onclick="event.stopPropagation()">${svc(l.id,'deal_type',l.deal_type,['fix_flip','buy_hold','wholesale'],stratStyle,v=>STRAT_LABEL[v]||v)}</td>
-      <td onclick="event.stopPropagation()">${svc(l.id,'status',l.status,STATUSES,'',null,stBadge)}</td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
-      <td onclick="event.stopPropagation()">${svc(l.id,'property_type',l.property_type,TYPES)}</td>
-      <td onclick="event.stopPropagation()">${svc(l.id,'condition',l.condition,CONDITIONS)}</td>
-      <td onclick="event.stopPropagation()">${svc(l.id,'source',l.source,SOURCES)}</td>
-      <td onclick="event.stopPropagation()"><span class="cv ro ${fuOv?'':'muted'}" style="${fuOv?'color:var(--red)':''}">${fu||'—'}</span></td>
-      <td onclick="event.stopPropagation()">${cv(l.id,'notes',l.notes,'text')}</td>
+    const st=(l.status||'nuevo lead').toLowerCase();
+    const stBadge=STATUS_BADGE[st]||'b-analyzing';
+    const mao=maoCalc(l);
+    const pr=profitCalc(l);
+    const link=l.listing_url;
+    const fecha=fd(l.created_at);
+    return `<tr class="${rowClass}">
+      <td>${i+1}</td>
+      <td><span class="cv ro muted">${fecha}</span></td>
+      <td>${cv(l.id,'property_address',l.property_address,'text')}</td>
+      <td>${cv(l.id,'city',l.city,'text')}</td>
+      <td>${cv(l.id,'zip',l.zip,'text')}</td>
+      <td>
+        <div class="link-cell">
+          ${link?`<a class="link-icon" href="${esc(link)}" target="_blank" title="Abrir link">🔗</a>`:'<span style="color:#CBD5E1;font-size:12px">—</span>'}
+          <span class="cv" data-id="${l.id}" data-f="listing_url" data-v="${esc(link||'')}" data-t="text" style="flex:1;padding:0;min-height:auto;font-size:11px;color:#2563EB;overflow:hidden;text-overflow:ellipsis;max-width:80px;white-space:nowrap;cursor:text">${link?'enlace':''}</span>
+        </div>
+      </td>
+      <td style="border-right:2px solid #E2E8F0">${svc(l.id,'status',l.status,STATUSES_ES,'',null,stBadge)}</td>
+      <td>${cv(l.id,'asking_price',l.asking_price,'number')}</td>
+      <td>${cv(l.id,'arv',l.arv,'number')}</td>
+      <td>${cv(l.id,'repairs',l.repairs,'number')}</td>
+      <td style="border-right:2px solid #E2E8F0"><span class="cv ro" style="color:${pr!==null&&pr>=0?'#16A34A':'#DC2626'};font-weight:700">${fm(mao)||'<span style="color:#CBD5E1">—</span>'}</span></td>
+      <td style="border-right:2px solid #E2E8F0">${cv(l.id,'owner_name',l.owner_name||l.name,'text')}</td>
+      <td>${cv(l.id,'beds',l.beds,'number')}</td>
+      <td>${cv(l.id,'baths',l.baths,'number')}</td>
+      <td style="border-right:2px solid #E2E8F0">${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp1_address',l.comp1_address,'text')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp1_distance',l.comp1_distance,'number')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp2_address',l.comp2_address,'text')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp2_distance',l.comp2_distance,'number')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp3_address',l.comp3_address,'text')}</td>
+      <td style="background:#FFFBEB">${cv(l.id,'comp3_distance',l.comp3_distance,'number')}</td>
     </tr>`;
   }).join('');
-  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();startEdit(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t);}));
-  tb.querySelectorAll('.cs').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();startSel(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'),el.dataset.style||'');}));
+  // Attach events
+  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>{
+    el.addEventListener('click',e=>{
+      e.stopPropagation();
+      startEdit(el.closest('td'),el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t);
+    });
+  });
+  tb.querySelectorAll('.cs').forEach(el=>{
+    el.addEventListener('click',e=>{
+      e.stopPropagation();
+      startSel(el.closest('td'),el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'));
+    });
+  });
 }
 
 function cv(id,f,val,type){
   const disp=type==='number'?fm(val):esc(val||'');
-  return `<span class="cv${!val?' muted':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}">${disp||'—'}</span>`;
+  return `<span class="cv${!val?' muted':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}">${disp||'<span style="color:#E2E8F0">—</span>'}</span>`;
 }
 
-function svc(id,f,val,opts,style='',labelFn=null,badgeClass=''){
+function svc(id,f,val,opts,style,labelFn,badgeClass){
   let inner;
   if(badgeClass&&val)inner=`<span class="badge ${badgeClass}"><span class="badge-dot"></span>${val}</span>`;
-  else if(style&&val)inner=`<span class="strat-pill" style="${style}">${labelFn?labelFn(val):val}</span>`;
-  else inner=`<span style="color:${val?'var(--text-1)':'var(--text-3)'}">${val||'—'}</span>`;
-  return `<span class="cs cv" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" data-style="${esc(style)}" style="display:block;min-height:36px;padding:8px 11px;cursor:pointer">${inner}</span>`;
+  else inner=`<span style="color:${val?'#0F172A':'#CBD5E1'}">${val||'—'}</span>`;
+  return `<span class="cs cv" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" style="display:block;min-height:38px;padding:8px 12px;cursor:pointer">${inner}</span>`;
 }
 
 function startEdit(td,id,field,cur,type){
-  if(td.querySelector('input,textarea'))return;
+  if(!td||td.querySelector('input,select'))return;
   const inp=document.createElement('input');
   inp.className='ci';inp.type=type==='number'?'number':'text';inp.value=cur||'';
   td.innerHTML='';td.appendChild(inp);inp.focus();inp.select();
@@ -322,10 +374,10 @@ function startEdit(td,id,field,cur,type){
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')load();});
 }
 
-function startSel(td,id,field,cur,opts,style){
-  if(td.querySelector('select'))return;
+function startSel(td,id,field,cur,opts){
+  if(!td||td.querySelector('select'))return;
   const sel=document.createElement('select');sel.className='ci';
-  sel.innerHTML=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o||'(none)'}</option>`).join('');
+  sel.innerHTML=opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${o||'(ninguno)'}</option>`).join('');
   td.innerHTML='';td.appendChild(sel);sel.focus();
   const save=async()=>{await saveF(id,field,sel.value||null);await load();};
   sel.addEventListener('change',save);sel.addEventListener('blur',save);
@@ -335,42 +387,25 @@ async function saveF(id,field,value){
   setSt('saving');
   try{
     const sb=P714Auth.getClient();
-    const upd={[field]:value,updated_at:new Date().toISOString()};
+    const upd={[field]:field==='beds'||field==='comp1_distance'||field==='comp2_distance'||field==='comp3_distance'?(value?Number(value):null):value,updated_at:new Date().toISOString()};
     const lead=_all.find(l=>l.id===id);
     if(lead&&['arv','repairs','asking_price'].includes(field)){
       const nl={...lead,[field]:value};
-      const m=mao(nl),pr=profit(nl),r=roi(nl);
-      if(m!==null)upd.mao=m;
+      const m=maoCalc(nl),pr=profitCalc(nl);
+      if(m!==null){upd.mao=m;upd.initial_offer=m;}
       if(pr!==null)upd.estimated_profit=pr;
-      if(r!==null)upd.roi=r;
-      // Auto-score
-      const sc=calcScore({...nl,mao:m,estimated_profit:pr,roi:r});
-      upd.deal_score=sc;
+      if(pr!==null&&Number(nl.asking_price))upd.roi=Math.round(pr/Number(nl.asking_price)*100);
     }
     const{error}=await sb.from('acquisitions_leads').update(upd).eq('id',id);
     if(error)throw error;
     setSt('saved');
-  }catch(e){setSt('error');toast('error','Save failed',e.message);}
-}
-
-function calcScore(l){
-  let sc=0;
-  const r=Number(l.roi)||0;const pr=Number(l.estimated_profit)||0;
-  const mot=Number(l.motivation_score)||5;
-  if(r>=20)sc+=30;else if(r>=15)sc+=22;else if(r>=10)sc+=14;else if(r>=5)sc+=6;
-  if(pr>=50000)sc+=25;else if(pr>=30000)sc+=18;else if(pr>=15000)sc+=10;else if(pr>=5000)sc+=4;
-  if(mot>=9)sc+=20;else if(mot>=7)sc+=14;else if(mot>=5)sc+=8;else sc+=2;
-  if(l.condition==='Distressed')sc+=10;else if(l.condition==='Fair')sc+=7;else if(l.condition==='Tear-Down')sc+=12;
-  if(l.source==='Pre-Foreclosure'||l.source==='Probate'||l.source==='Tax Default')sc+=15;
-  else if(l.source==='Driving for Dollars'||l.source==='Direct Mail')sc+=10;
-  else sc+=5;
-  return Math.min(100,sc);
+  }catch(e){setSt('error');toast('error','Error al guardar',e.message);}
 }
 
 function setSt(s){
   const el=document.getElementById('save-st');
-  if(s==='saving')el.textContent='⏳ Saving...';
-  else if(s==='saved'){el.textContent='✓ Saved';setTimeout(()=>el.textContent='',2000);}
+  if(s==='saving')el.textContent='⏳ Guardando...';
+  else if(s==='saved'){el.textContent='✓ Guardado';setTimeout(()=>el.textContent='',2000);}
   else{el.textContent='✕ Error';setTimeout(()=>el.textContent='',3000);}
 }
 
@@ -378,79 +413,95 @@ async function addRow(){
   try{
     const sb=P714Auth.getClient();
     const user=P714Auth.getUser(),p=P714Auth.getProfile();
-    await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',property_address:'New Property',status:'New Lead',state:'GA',deal_type:'fix_flip',deal_score:0});
+    await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',property_address:'Nueva Propiedad',status:'Nuevo Lead',state:'GA',deal_type:'fix_flip',deal_score:0});
     await load();
-    toast('success','Deal added','Click cells to fill in details');
+    document.querySelector('.sheet-wrap').scrollTop=99999;
+    toast('success','Propiedad agregada','Haz click en las celdas para completar la info');
   }catch(e){toast('error','Error',e.message);}
 }
 
 async function doExport(){
-  const cols=['property_address','city','state','name','asking_price','arv','repairs','mao','estimated_profit','roi','deal_score','deal_type','status','assigned_to','source','condition','notes'];
-  const h=['Address','City','ST','Seller','Asking','ARV','Repairs','MAO','Profit','ROI%','Score','Strategy','Status','Agent','Source','Condition','Notes'];
+  const cols=['created_at','city','property_address','zip','listing_url','status','asking_price','arv','repairs','initial_offer','owner_name','beds','baths','assigned_to','comp1_address','comp1_distance','comp2_address','comp2_distance','comp3_address','comp3_distance'];
+  const h=['Fecha','Ciudad','Dirección','Código Postal','Link','Estatus','Precio Vendedor','ARV Estimado','Costo Reparación','Oferta Inicial','Dueño','Cuartos','Baños','Agente','Comparable 1','Distancia 1','Comparable 2','Distancia 2','Comparable 3','Distancia 3'];
   const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='deals_p714.csv';a.click();
-  toast('success','Exported',`${_all.length} deals`);
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(rows.join('\n'));a.download='adquisiciones_p714.csv';a.click();
+  toast('success','Exportado',`${_all.length} propiedades`);
 }
 
-// Modal
-let _curTab='contact';
-function switchTab(t){
-  _curTab=t;
-  ['contact','property','financials'].forEach(tab=>{
-    document.getElementById('panel-'+tab).style.display=tab===t?'':'none';
-    const btn=document.getElementById('tab-'+tab);
-    btn.style.background=tab===t?'var(--blue)':'transparent';
-    btn.style.color=tab===t?'#fff':'var(--text-2)';
-    btn.style.borderColor=tab===t?'var(--blue)':'var(--border)';
+// Modal tabs
+function sw(n){
+  [1,2,3].forEach(i=>{
+    document.getElementById('p'+i).style.display=i===n?'':'none';
+    const btn=document.getElementById('tb'+i);
+    btn.style.background=i===n?'#2563EB':'transparent';
+    btn.style.color=i===n?'#fff':'#64748B';
+    btn.style.borderColor=i===n?'#2563EB':'#E2E8F0';
   });
 }
 
-function calcMAO(){
-  const arv=parseFloat(document.getElementById('n-arv').value)||0;
-  const rep=parseFloat(document.getElementById('n-rep').value)||0;
-  const m=arv?Math.floor(arv*.7)-rep:null;
-  document.getElementById('n-mao').textContent=m!==null?'$'+m.toLocaleString('en-US'):'—';
+function calcMao(){
+  const a=parseFloat(document.getElementById('m-arv').value)||0;
+  const r=parseFloat(document.getElementById('m-rep').value)||0;
+  const m=a?Math.floor(a*.7)-r:null;
+  document.getElementById('m-mao-display').textContent=m!==null?'$'+m.toLocaleString('en-US'):'—';
 }
 
 function openAddModal(){
-  ['n-name','n-phone','n-email','n-addr','n-city','n-sqft','n-ask','n-arv','n-rep'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('n-mao').textContent='—';
-  document.getElementById('n-fu').valueAsDate=new Date(Date.now()+3*86400000);
-  switchTab('contact');
+  ['m-addr','m-city','m-zip','m-link','m-owner','m-ask','m-arv','m-rep','m-c1','m-d1','m-c2','m-d2','m-c3','m-d3','m-beds','m-baths'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('m-mao-display').textContent='—';
+  sw(1);
   document.getElementById('add-modal').classList.add('open');
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-async function saveDeal(){
-  const addr=document.getElementById('n-addr').value.trim();
-  if(!addr){toast('error','Address required','');return;}
+async function saveNew(){
+  const addr=document.getElementById('m-addr').value.trim();
+  if(!addr){toast('error','Dirección requerida','');return;}
   try{
     const sb=P714Auth.getClient();
     const user=P714Auth.getUser(),p=P714Auth.getProfile();
-    const arv=parseFloat(document.getElementById('n-arv').value)||0;
-    const ask=parseFloat(document.getElementById('n-ask').value)||0;
-    const rep=parseFloat(document.getElementById('n-rep').value)||0;
-    const m=arv?Math.floor(arv*.7)-rep:null;
-    const pr=m&&ask?m-ask:null;
+    const arv=parseFloat(document.getElementById('m-arv').value)||0;
+    const ask=parseFloat(document.getElementById('m-ask').value)||0;
+    const rep=parseFloat(document.getElementById('m-rep').value)||0;
+    const mao=arv?Math.floor(arv*.7)-rep:null;
+    const pr=mao&&ask?mao-ask:null;
     const r=pr&&ask?Math.round(pr/ask*100):null;
-    const mot=parseInt(document.getElementById('n-mot').value)||5;
-    const dtype=document.getElementById('n-dtype').value;
-    const tmp={arv,asking_price:ask,repairs:rep,mao:m,estimated_profit:pr,roi:r,motivation_score:mot,condition:document.getElementById('n-cond').value,source:document.getElementById('n-source').value,deal_type:dtype};
-    const sc=calcScore(tmp);
-    const{error}=await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',name:document.getElementById('n-name').value||null,phone:document.getElementById('n-phone').value||null,email:document.getElementById('n-email').value||null,source:tmp.source,property_address:addr,city:document.getElementById('n-city').value||null,state:document.getElementById('n-state').value||'GA',property_type:document.getElementById('n-type').value,condition:tmp.condition,...tmp,deal_score:sc,status:'New Lead',next_followup:document.getElementById('n-fu').value||null});
+    const{error}=await sb.from('acquisitions_leads').insert({
+      user_id:user.id,assigned_to:p?.full_name||'Unknown',
+      property_address:addr,
+      city:document.getElementById('m-city').value||null,
+      zip:document.getElementById('m-zip').value||null,
+      listing_url:document.getElementById('m-link').value||null,
+      owner_name:document.getElementById('m-owner').value||null,
+      name:document.getElementById('m-owner').value||null,
+      status:document.getElementById('m-status').value||'Nuevo Lead',
+      asking_price:ask||null,arv:arv||null,repairs:rep||null,mao,initial_offer:mao,
+      estimated_profit:pr,roi:r,
+      beds:parseInt(document.getElementById('m-beds').value)||null,
+      baths:parseFloat(document.getElementById('m-baths').value)||null,
+      deal_type:document.getElementById('m-dtype').value||'fix_flip',
+      motivation_score:parseInt(document.getElementById('m-mot').value)||5,
+      comp1_address:document.getElementById('m-c1').value||null,
+      comp1_distance:parseFloat(document.getElementById('m-d1').value)||null,
+      comp2_address:document.getElementById('m-c2').value||null,
+      comp2_distance:parseFloat(document.getElementById('m-d2').value)||null,
+      comp3_address:document.getElementById('m-c3').value||null,
+      comp3_distance:parseFloat(document.getElementById('m-d3').value)||null,
+      state:'GA',deal_score:0
+    });
     if(error)throw error;
     closeModal('add-modal');
-    toast('success','Deal saved',`Score: ${sc} — ${sc>=70?'🟢 High confidence':sc>=50?'🟡 Review needed':'🔴 Pass or renegotiate'}`);
+    toast('success','Propiedad guardada','Los datos se han registrado correctamente');
     await load();
   }catch(e){toast('error','Error',e.message);}
 }
 
 function toast(l,t,m){
   const c=document.getElementById('toast-container');
-  const cols={success:'var(--green)',error:'var(--red)',info:'var(--teal)'};
-  const ic={success:'✓',error:'✕',info:'✦'};
-  const el=document.createElement('div');el.className='toast';
-  el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
+  const cols={success:'#16A34A',error:'#DC2626',info:'#2563EB'};
+  const ic={success:'✓',error:'✕',info:'ℹ'};
+  const el=document.createElement('div');el.className='toast';el.style.background='#fff';
+  el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title" style="color:#0F172A">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
   c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},5000);
 }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
