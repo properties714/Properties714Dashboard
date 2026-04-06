@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Deals — Properties 714</title>
+<title>Deal Detail — Properties 714</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
@@ -11,30 +11,18 @@
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
 <style>
-.deal-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;transition:border-color 180ms,transform 180ms;}
-.deal-card:hover{border-color:var(--border-soft);transform:translateY(-2px);}
-.deal-accent{height:3px;}
-.deal-body{padding:18px;}
-.deal-addr{font-weight:600;font-size:14px;color:var(--text-1);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.deal-city{font-size:12px;color:var(--text-3);margin-bottom:14px;}
-.deal-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.deal-stat{background:var(--bg-input);border-radius:8px;padding:8px 10px;}
-.deal-stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px;}
-.deal-stat-val{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-1);}
-.deal-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-top:1px solid var(--border);background:rgba(0,0,0,0.15);}
-.days-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;}
-.days-ok{background:var(--green-dim);color:var(--green);}
-.days-warn{background:var(--amber-dim);color:var(--amber);}
-.days-urgent{background:var(--red-dim);color:var(--red);}
-.days-past{background:rgba(255,255,255,0.06);color:var(--text-3);}
-.deal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
-.deal-progress{height:4px;border-radius:99px;background:var(--bg-input);margin-bottom:12px;overflow:hidden;}
-.deal-progress-fill{height:100%;border-radius:99px;background:var(--green);transition:width 0.6s;}
-/* Detail modal extras */
-.detail-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
-.detail-row:last-child{border-bottom:none;}
-.detail-label{color:var(--text-2);}
-.detail-val{font-weight:500;color:var(--text-1);font-family:var(--font-mono);}
+.deal-list-grid{display:grid;gap:10px;}
+.deal-card-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;cursor:pointer;transition:border-color 150ms,transform 150ms;display:flex;align-items:center;gap:14px;}
+.deal-card-item:hover{border-color:var(--border-soft);transform:translateX(3px);}
+.deal-card-info{flex:1;min-width:0;}
+.deal-card-addr{font-weight:600;font-size:13px;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.deal-card-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
+.deal-card-stats{display:flex;gap:16px;align-items:center;flex-shrink:0;}
+.deal-stat{text-align:center;}
+.deal-stat-val{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-1);display:block;}
+.deal-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);}
+.detail-view{display:none;}
+.detail-view.open{display:block;}
 </style>
 </head>
 <body>
@@ -44,9 +32,9 @@
   <nav class="sidebar-nav">
     <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
     <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
-    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
+    <span class="nav-section-label">Management</span>
+    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
     <a href="/deals/" class="nav-item active"><span class="nav-icon">📋</span>Deals</a>
-    <span class="nav-section-label">Analytics</span>
     <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
@@ -57,50 +45,167 @@
 </aside>
 <main class="app-main">
   <div class="top-bar">
-    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Deals</span></div>
-    <div class="top-bar-actions">
-      <button class="btn btn-ghost btn-sm" onclick="filterDeals('active')">Active</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterDeals('closed')">Closed</button>
-      <button class="btn btn-ghost btn-sm" onclick="filterDeals('all')">All</button>
+    <div class="breadcrumb">
+      <span>Home</span><span class="breadcrumb-sep">/</span>
+      <a href="/deals/" style="color:var(--text-2)" id="bc-deals">Deals</a>
+      <span class="breadcrumb-sep" id="bc-sep" style="display:none">/</span>
+      <span class="breadcrumb-current" id="bc-name" style="display:none"></span>
+    </div>
+    <div class="top-bar-actions" id="detail-actions" style="display:none">
+      <button class="btn btn-success btn-sm" onclick="approveDeal()">✓ Approve</button>
+      <button class="btn btn-danger btn-sm" onclick="rejectDeal()">✕ Pass</button>
+      <button class="btn btn-ghost btn-sm" onclick="backToList()">← Back</button>
     </div>
   </div>
   <div class="page-content">
-    <div class="page-header">
-      <h1 class="page-title">Deals</h1>
-      <p class="page-subtitle">Properties under contract and recently closed</p>
+    <!-- LIST VIEW -->
+    <div id="list-view">
+      <div class="page-header">
+        <h1 class="page-title">Deals</h1>
+        <p class="page-subtitle">All properties — click to open detail + AI analysis</p>
+      </div>
+      <div class="kpi-row" style="margin-bottom:16px">
+        <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">High Confidence</div><div class="kpi-value" id="dk1">—</div><div class="kpi-sub">Score ≥ 70 → ready to offer</div></div>
+        <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Needs Review</div><div class="kpi-value" id="dk2">—</div><div class="kpi-sub">Score 50–69</div></div>
+        <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Under Contract</div><div class="kpi-value" id="dk3">—</div><div class="kpi-sub">Active closings</div></div>
+        <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Pipeline</div><div class="kpi-value" id="dk4">—</div><div class="kpi-sub">Est. profit</div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-sm" id="fl-all" onclick="setListFilter('all',this)" style="background:var(--blue);color:#fff">All</button>
+        <button class="btn btn-ghost btn-sm" id="fl-hi" onclick="setListFilter('hi',this)">🟢 High Confidence</button>
+        <button class="btn btn-ghost btn-sm" id="fl-mid" onclick="setListFilter('mid',this)">🟡 Review</button>
+        <button class="btn btn-ghost btn-sm" id="fl-contract" onclick="setListFilter('contract',this)">📋 Under Contract</button>
+        <button class="btn btn-ghost btn-sm" id="fl-closed" onclick="setListFilter('closed',this)">✓ Closed</button>
+        <input class="search-input" id="dl-q" placeholder="🔍 Search..." oninput="renderList()" style="margin-left:auto;width:200px"/>
+      </div>
+      <div class="deal-list-grid" id="deal-list"><div style="padding:40px;text-align:center;color:var(--text-3)">Loading...</div></div>
     </div>
-    <div class="kpi-row" style="margin-bottom:24px">
-      <div class="kpi-card accent-green"><div class="kpi-card-accent"></div><div class="kpi-label">Under Contract</div><div class="kpi-value" id="dk1">—</div><div class="kpi-sub">Active</div></div>
-      <div class="kpi-card accent-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Closing This Week</div><div class="kpi-value" id="dk2">—</div><div class="kpi-sub">Next 7 days</div></div>
-      <div class="kpi-card accent-purple"><div class="kpi-card-accent"></div><div class="kpi-label">Total Assignment Fees</div><div class="kpi-value" id="dk3">—</div><div class="kpi-sub">Est. profit</div></div>
-      <div class="kpi-card accent-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Closed (All Time)</div><div class="kpi-value" id="dk4">—</div><div class="kpi-sub">Completed</div></div>
-    </div>
-    <div class="deal-grid" id="deal-grid">
-      <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-3)">Loading deals...</div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detail-view" class="detail-view">
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
+        <!-- Left: Deal Data -->
+        <div>
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+            <div class="score-badge hi" id="d-score-badge" style="width:52px;height:52px;font-size:20px;border-radius:12px">—</div>
+            <div>
+              <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text-1)" id="d-title">—</div>
+              <div style="font-size:12px;color:var(--text-3);margin-top:2px" id="d-subtitle">—</div>
+            </div>
+            <div id="d-strategy-badge" style="margin-left:auto"></div>
+          </div>
+
+          <!-- Financials KPIs -->
+          <div class="detail-section-title">Financials</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px">
+            <div class="detail-kpi"><div class="detail-kpi-lbl">Asking</div><div class="detail-kpi-val" id="df-ask">—</div></div>
+            <div class="detail-kpi"><div class="detail-kpi-lbl">ARV</div><div class="detail-kpi-val" id="df-arv">—</div></div>
+            <div class="detail-kpi"><div class="detail-kpi-lbl">Repairs</div><div class="detail-kpi-val" id="df-rep">—</div></div>
+            <div class="detail-kpi"><div class="detail-kpi-lbl">MAO</div><div class="detail-kpi-val" style="color:var(--teal)" id="df-mao">—</div></div>
+            <div class="detail-kpi"><div class="detail-kpi-lbl">Est. Profit</div><div class="detail-kpi-val" style="color:var(--green)" id="df-profit">—</div></div>
+          </div>
+
+          <!-- Property Data -->
+          <div class="detail-section-title">Property Info</div>
+          <div class="card" style="margin-bottom:20px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Type</span><span class="ai-detail-val" id="dp-type">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Condition</span><span class="ai-detail-val" id="dp-cond">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Occupancy</span><span class="ai-detail-val" id="dp-occ">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Source</span><span class="ai-detail-val" id="dp-src">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Agent</span><span class="ai-detail-val" id="dp-agent">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Status</span><span id="dp-status">—</span></div>
+            </div>
+          </div>
+
+          <!-- Comps -->
+          <div class="detail-section-title">Comparable Sales (Comps)</div>
+          <div class="card" style="margin-bottom:20px">
+            <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:11px;color:var(--text-3)">Enter comparable sold properties to validate ARV</span>
+              <button class="btn btn-ghost btn-sm" onclick="addComp()">+ Add Comp</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table>
+                <thead class="comp-table"><tr><th>Address</th><th>Sqft</th><th>Beds</th><th>Baths</th><th>Sale Price</th><th>$/Sqft</th><th>Dist (mi)</th><th>Sold Date</th><th></th></tr></thead>
+                <tbody id="comp-tbody"><tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-3);font-size:11px">No comps added. Add comps to validate ARV.</td></tr></tbody>
+              </table>
+            </div>
+            <div style="padding:10px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">Avg Price/sqft</div><div style="font-family:var(--font-mono);font-weight:700;color:var(--text-1)" id="comp-ppsf">—</div></div>
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">Avg Sale Price</div><div style="font-family:var(--font-mono);font-weight:700;color:var(--text-1)" id="comp-avg">—</div></div>
+              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">ARV Confidence</div><div style="font-weight:700" id="comp-conf">—</div></div>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="detail-section-title">Notes</div>
+          <div class="card">
+            <div class="card-body">
+              <textarea class="form-input" id="d-notes" rows="4" placeholder="Add notes about this deal, negotiations, seller motivation..." style="margin-bottom:8px"></textarea>
+              <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: AI Panel -->
+        <div>
+          <div class="ai-panel">
+            <div class="ai-panel-hdr">
+              <div class="ai-panel-dot"></div>
+              <span class="ai-panel-title">AI Analysis</span>
+              <span style="margin-left:auto;font-size:10px;color:var(--teal);opacity:0.7" id="ai-model">Claude Sonnet</span>
+            </div>
+            <div style="padding:16px" id="ai-body">
+              <div class="ai-loading"><div class="ai-spinner"></div><span>Select a deal to analyze</span></div>
+            </div>
+          </div>
+
+          <!-- Admin Actions (owner only) -->
+          <div class="card" id="admin-actions" style="margin-top:14px;display:none">
+            <div class="card-hdr"><span class="card-title">Admin Actions</span></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-success" onclick="approveAndSendOffer()">✓ Approve — Send to Offer</button>
+              <button class="btn btn-ghost" onclick="markReview()">⚐ Flag for Review</button>
+              <button class="btn btn-danger" onclick="rejectDeal()">✕ Pass on Deal</button>
+            </div>
+          </div>
+
+          <!-- Quick stats -->
+          <div class="card" style="margin-top:14px">
+            <div class="card-hdr"><span class="card-title">Deal Timeline</span></div>
+            <div style="padding:0">
+              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Added</span><span class="ai-detail-val" id="d-created">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Last update</span><span class="ai-detail-val" id="d-updated">—</span></div>
+              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Days in pipeline</span><span class="ai-detail-val" id="d-days">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </main>
 </div>
 
-<!-- Deal Detail Modal -->
-<div class="modal-backdrop" id="deal-modal">
+<!-- Add Comp Modal -->
+<div class="modal-backdrop" id="comp-modal">
 <div class="modal" style="max-width:520px">
-  <div class="modal-header"><span class="modal-title" id="dm-title">Deal Details</span><button class="modal-close" onclick="closeModal()">×</button></div>
+  <div class="modal-hdr"><span class="modal-title">Add Comparable</span><button class="modal-close-btn" onclick="closeModal('comp-modal')">×</button></div>
   <div class="modal-body">
-    <div id="dm-body"></div>
-    <div style="margin-top:20px">
-      <div class="form-group"><label class="form-label">Closing Date</label><input class="form-input" id="dm-closing" type="date"/></div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Buyer Name</label><input class="form-input" id="dm-buyer" placeholder="Cash buyer name"/></div>
-        <div class="form-group"><label class="form-label">Assignment Fee $</label><input class="form-input" id="dm-fee" type="number" placeholder="0"/></div>
-      </div>
-      <div class="form-group"><label class="form-label">Attorney / Title</label><input class="form-input" id="dm-atty" placeholder="Attorney name"/></div>
-      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="dm-notes" rows="3" placeholder="Deal notes, inspection status..."></textarea></div>
-      <div style="display:flex;gap:10px;margin-top:4px">
-        <button class="btn btn-primary" style="flex:1" onclick="saveDeal()">✓ Save</button>
-        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-danger btn-sm" id="dm-close-btn" onclick="markClosed()">Mark Closed</button>
-      </div>
+    <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="c-addr" placeholder="456 Main St, Atlanta, GA"/></div>
+    <div class="form-row-3">
+      <div class="form-group"><label class="form-label">Sqft</label><input class="form-input" id="c-sqft" type="number" placeholder="1500"/></div>
+      <div class="form-group"><label class="form-label">Beds</label><input class="form-input" id="c-beds" type="number" placeholder="3"/></div>
+      <div class="form-group"><label class="form-label">Baths</label><input class="form-input" id="c-baths" type="number" step="0.5" placeholder="2"/></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Sale Price $</label><input class="form-input" id="c-price" type="number" placeholder="280000"/></div>
+      <div class="form-group"><label class="form-label">Distance (miles)</label><input class="form-input" id="c-dist" type="number" step="0.1" placeholder="0.5"/></div>
+    </div>
+    <div class="form-group"><label class="form-label">Sold Date</label><input class="form-input" id="c-date" type="date"/></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveComp()">Add Comp</button>
+      <button class="btn btn-ghost" onclick="closeModal('comp-modal')">Cancel</button>
     </div>
   </div>
 </div>
@@ -108,158 +213,306 @@
 
 <div id="toast-container"></div>
 <script>
-let _deals=[],_curId=null,_filter='active';
+let _all=[],_curDeal=null,_comps=[],_listFilter='all',_isOwner=false;
 
 (async()=>{
   try{
     const s=await P714Auth.init();
     if(!s){window.location.href='/login/?next=/deals/';return;}
     const p=P714Auth.getProfile();
+    _isOwner=P714Auth.isOwner();
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
-    document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Acquisitionist';
+    document.getElementById('s-role').textContent=_isOwner?'Owner':'Agent';
+    if(_isOwner)document.getElementById('admin-actions').style.display='';
     await load();
+    // Check URL for deal id
+    const params=new URLSearchParams(window.location.search);
+    if(params.get('id')){
+      const deal=_all.find(d=>d.id===params.get('id'));
+      if(deal)openDeal(deal);
+    }
   }catch(e){console.error(e);}
 })();
 
 async function load(){
   const sb=P714Auth.getClient();
-  const{data}=await sb.from('acquisitions_leads')
-    .select('*')
-    .in('status',['Under Contract','Closed'])
-    .order('updated_at',{ascending:false});
-  _deals=data||[];
-  updateKPIs();
-  renderDeals();
+  const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
+  _all=data||[];
+  updateListKPIs();
+  renderList();
 }
 
-function updateKPIs(){
-  const now=new Date();
-  const next7=new Date(now.getTime()+7*86400000);
-  const active=_deals.filter(l=>l.status==='Under Contract');
-  const closed=_deals.filter(l=>l.status==='Closed');
-  const closingWeek=active.filter(l=>l.closing_date&&new Date(l.closing_date)<=next7);
-  const fees=active.reduce((s,l)=>s+(Number(l.assignment_fee||l.estimated_profit)||0),0);
-  document.getElementById('dk1').textContent=active.length;
-  document.getElementById('dk2').textContent=closingWeek.length;
-  document.getElementById('dk3').textContent=fees>=1000?'$'+Math.round(fees/1000)+'K':'$'+Math.round(fees);
-  document.getElementById('dk4').textContent=closed.length;
+function updateListKPIs(){
+  document.getElementById('dk1').textContent=_all.filter(l=>(l.deal_score||0)>=70).length;
+  document.getElementById('dk2').textContent=_all.filter(l=>{const s=l.deal_score||0;return s>=50&&s<70;}).length;
+  document.getElementById('dk3').textContent=_all.filter(l=>l.status==='Under Contract').length;
+  const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
+  document.getElementById('dk4').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
 }
 
-function filterDeals(f){_filter=f;renderDeals();}
-
-function daysTo(d){
-  if(!d)return null;
-  return Math.ceil((new Date(d)-new Date())/(1000*60*60*24));
+function setListFilter(f,btn){
+  _listFilter=f;
+  document.querySelectorAll('.btn[id^="fl-"]').forEach(b=>{b.style.background='transparent';b.style.color='var(--text-2)';b.style.borderColor='var(--border)';});
+  btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
+  renderList();
 }
 
-function renderDeals(){
-  let list=_deals;
-  if(_filter==='active')list=_deals.filter(l=>l.status==='Under Contract');
-  else if(_filter==='closed')list=_deals.filter(l=>l.status==='Closed');
-  const grid=document.getElementById('deal-grid');
-  if(!list.length){
-    grid.innerHTML=`<div style="grid-column:1/-1;padding:60px;text-align:center;color:var(--text-3)">${_filter==='active'?'No deals under contract yet. Properties will appear here when you change their status to “Under Contract” in Acquisitions.':'No closed deals yet.'}</div>`;
-    return;
-  }
+const STRAT_STYLE={fix_flip:'background:var(--purple-dim);color:var(--purple)',buy_hold:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)'};
+const STRAT_LABEL={fix_flip:'Fix & Flip',buy_hold:'Rental / Hold',wholesale:'Wholesale'};
+
+function renderList(){
+  const q=(document.getElementById('dl-q').value||'').toLowerCase();
+  let list=_all;
+  if(_listFilter==='hi')list=_all.filter(l=>(l.deal_score||0)>=70);
+  else if(_listFilter==='mid')list=_all.filter(l=>{const s=l.deal_score||0;return s>=50&&s<70;});
+  else if(_listFilter==='contract')list=_all.filter(l=>l.status==='Under Contract');
+  else if(_listFilter==='closed')list=_all.filter(l=>l.status==='Closed');
+  if(q)list=list.filter(l=>`${l.property_address||''} ${l.name||''} ${l.city||''}`.toLowerCase().includes(q));
+  const grid=document.getElementById('deal-list');
+  if(!list.length){grid.innerHTML='<div style="padding:50px;text-align:center;color:var(--text-3)">No deals in this filter</div>';return;}
   grid.innerHTML=list.map(l=>{
-    const days=daysTo(l.closing_date);
-    let daysBadge='',accentColor='var(--green)';
-    if(l.status==='Closed'){daysBadge='<span class="days-badge days-past">✓ Closed</span>';accentColor='#34d399';}
-    else if(days===null){daysBadge='<span class="days-badge days-warn">📅 No closing date</span>';}
-    else if(days<0){daysBadge=`<span class="days-badge days-urgent">⚠ ${Math.abs(days)}d overdue</span>`;accentColor='var(--red)';}
-    else if(days<=7){daysBadge=`<span class="days-badge days-urgent">🔥 ${days}d left</span>`;accentColor='var(--amber)';}
-    else if(days<=14){daysBadge=`<span class="days-badge days-warn">📅 ${days}d left</span>`;}
-    else{daysBadge=`<span class="days-badge days-ok">✓ ${days}d left</span>`;}
-    const fee=l.assignment_fee||l.estimated_profit||0;
-    const progress=l.closing_date&&l.created_at?Math.min(100,Math.max(0,Math.round((new Date()-new Date(l.created_at))/(new Date(l.closing_date)-new Date(l.created_at))*100))):0;
-    const init=(l.assigned_to||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return `<div class="deal-card" onclick="openDeal('${l.id}')" style="cursor:pointer">
-      <div class="deal-accent" style="background:${accentColor}"></div>
-      <div class="deal-body">
-        <div class="deal-addr">${esc(l.property_address||'No address')}</div>
-        <div class="deal-city">${esc(l.city||'')} ${esc(l.state||'')} • ${esc(l.property_type||'SFR')}</div>
-        ${l.closing_date?`<div class="deal-progress"><div class="deal-progress-fill" style="width:${progress}%;background:${accentColor}"></div></div>`:''}
-        <div class="deal-stats">
-          <div class="deal-stat"><div class="deal-stat-lbl">Asking</div><div class="deal-stat-val">${fm(l.asking_price)}</div></div>
-          <div class="deal-stat"><div class="deal-stat-lbl">ARV</div><div class="deal-stat-val">${fm(l.arv)}</div></div>
-          <div class="deal-stat"><div class="deal-stat-lbl">Assignment Fee</div><div class="deal-stat-val" style="color:${accentColor}">${fee?fm(fee):'—'}</div></div>
-          <div class="deal-stat"><div class="deal-stat-lbl">Buyer</div><div class="deal-stat-val" style="font-family:var(--font);font-size:12px">${esc(l.cash_buyer||l.buyer_name||'—')}</div></div>
-        </div>
+    const sc=l.deal_score||0;
+    const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
+    const strat=l.deal_type||'fix_flip';
+    const stratSt=STRAT_STYLE[strat]||'';
+    const profit=Number(l.estimated_profit)||0;
+    const roi2=l.asking_price&&profit?Math.round(profit/Number(l.asking_price)*100):null;
+    return `<div class="deal-card-item" onclick="openDeal(${JSON.stringify(JSON.stringify(l))})">
+      <span class="score-badge ${scClass}">${sc||'?'}</span>
+      <div class="deal-card-info">
+        <div class="deal-card-addr">${esc(l.property_address||'No address')}</div>
+        <div class="deal-card-sub">${l.city||''} ${l.state||''} • ${l.property_type||'SFR'} • Agent: ${esc(l.assigned_to||'—')}</div>
       </div>
-      <div class="deal-footer">
-        ${daysBadge}
-        <div style="display:flex;align-items:center;gap:6px">
-          <div class="user-avatar sm">${init}</div>
-          <span style="font-size:12px;color:var(--text-2)">${esc(l.assigned_to||'—')}</span>
-        </div>
+      <div class="deal-card-stats">
+        <div class="deal-stat"><span class="deal-stat-val">${fm(l.asking_price)}</span><span class="deal-stat-lbl">Asking</span></div>
+        <div class="deal-stat"><span class="deal-stat-val" style="color:var(--green)">${profit?'$'+Math.round(profit/1000)+'K':'—'}</span><span class="deal-stat-lbl">Profit</span></div>
+        <div class="deal-stat"><span class="deal-stat-val" style="color:${roi2&&roi2>=15?'var(--green)':roi2&&roi2>=10?'var(--amber)':'var(--text-2)'}">${roi2!==null?roi2+'%':'—'}</span><span class="deal-stat-lbl">ROI</span></div>
+        <span class="badge" style="${stratSt};padding:2px 9px;font-size:9px;letter-spacing:0.04em">${STRAT_LABEL[strat]||strat}</span>
       </div>
+      <span style="color:var(--text-3);font-size:16px">›</span>
     </div>`;
   }).join('');
 }
 
-function openDeal(id){
-  const l=_deals.find(d=>d.id===id);
-  if(!l)return;
-  _curId=id;
-  document.getElementById('dm-title').textContent=l.property_address||'Deal Details';
-  document.getElementById('dm-closing').value=l.closing_date||'';
-  document.getElementById('dm-buyer').value=l.cash_buyer||l.buyer_name||'';
-  document.getElementById('dm-fee').value=l.assignment_fee||'';
-  document.getElementById('dm-atty').value=l.attorney_name||'';
-  document.getElementById('dm-notes').value=l.notes||'';
-  document.getElementById('dm-close-btn').style.display=l.status==='Under Contract'?'':'none';
-  document.getElementById('dm-body').innerHTML=`
-    <div class="detail-row"><span class="detail-label">Address</span><span class="detail-val" style="font-family:var(--font)">${esc(l.property_address||'—')}</span></div>
-    <div class="detail-row"><span class="detail-label">Status</span><span class="badge ${l.status==='Closed'?'badge-closed':'badge-under-contract'}"><span class="badge-dot"></span>${l.status}</span></div>
-    <div class="detail-row"><span class="detail-label">Asking Price</span><span class="detail-val">${fm(l.asking_price)}</span></div>
-    <div class="detail-row"><span class="detail-label">ARV</span><span class="detail-val">${fm(l.arv)}</span></div>
-    <div class="detail-row"><span class="detail-label">Est. Profit</span><span class="detail-val" style="color:var(--green)">${fm(l.estimated_profit)}</span></div>
-    <div class="detail-row"><span class="detail-label">Agent</span><span class="detail-val" style="font-family:var(--font)">${esc(l.assigned_to||'—')}</span></div>
+function openDeal(dealOrJson){
+  const l=typeof dealOrJson==='string'?JSON.parse(dealOrJson):dealOrJson;
+  _curDeal=l;_comps=[];
+  document.getElementById('list-view').style.display='none';
+  document.getElementById('detail-view').classList.add('open');
+  document.getElementById('detail-actions').style.display='';
+  document.getElementById('bc-sep').style.display='';
+  document.getElementById('bc-name').style.display='';
+  document.getElementById('bc-name').textContent=l.property_address||'Deal';
+  document.getElementById('bc-deals').onclick=backToList;
+  document.getElementById('bc-deals').style.cursor='pointer';
+  // Score badge
+  const sc=l.deal_score||0;
+  const sb2=document.getElementById('d-score-badge');
+  sb2.textContent=sc||'—';
+  sb2.className='score-badge '+(sc>=70?'hi':sc>=50?'mid':'lo');
+  sb2.style.cssText='width:52px;height:52px;font-size:20px;border-radius:12px';
+  // Header
+  document.getElementById('d-title').textContent=l.property_address||'—';
+  document.getElementById('d-subtitle').textContent=`${l.city||''} ${l.state||''} • ${l.property_type||'SFR'}`;
+  const strat=l.deal_type||'fix_flip';
+  const stratSt=STRAT_STYLE[strat]||'';
+  document.getElementById('d-strategy-badge').innerHTML=`<span style="${stratSt};padding:4px 14px;border-radius:99px;font-size:11px;font-weight:700;display:inline-block">${STRAT_LABEL[strat]||strat}</span>`;
+  // Financials
+  document.getElementById('df-ask').textContent=fm(l.asking_price);
+  document.getElementById('df-arv').textContent=fm(l.arv);
+  document.getElementById('df-rep').textContent=fm(l.repairs);
+  document.getElementById('df-mao').textContent=fm(l.mao);
+  document.getElementById('df-profit').textContent=fm(l.estimated_profit);
+  // Property
+  document.getElementById('dp-type').textContent=l.property_type||'—';
+  document.getElementById('dp-cond').textContent=l.condition||'—';
+  document.getElementById('dp-occ').textContent=l.occupancy||'—';
+  document.getElementById('dp-src').textContent=l.source||'—';
+  document.getElementById('dp-agent').textContent=l.assigned_to||'—';
+  const stBadge={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass'};
+  document.getElementById('dp-status').innerHTML=`<span class="badge ${stBadge[(l.status||'lead').toLowerCase()]||'b-analyzing'}"><span class="badge-dot"></span>${l.status||'Lead'}</span>`;
+  // Notes
+  document.getElementById('d-notes').value=l.notes||'';
+  // Timeline
+  const fmt=d=>d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}):'—';
+  document.getElementById('d-created').textContent=fmt(l.created_at);
+  document.getElementById('d-updated').textContent=fmt(l.updated_at);
+  const days=l.created_at?Math.floor((Date.now()-new Date(l.created_at))/(1000*60*60*24)):null;
+  document.getElementById('d-days').textContent=days!==null?days+'d':'—';
+  // AI
+  runAI(l);
+}
+
+function backToList(){
+  document.getElementById('list-view').style.display='';
+  document.getElementById('detail-view').classList.remove('open');
+  document.getElementById('detail-actions').style.display='none';
+  document.getElementById('bc-sep').style.display='none';
+  document.getElementById('bc-name').style.display='none';
+  history.pushState({},'','/deals/');
+}
+
+async function runAI(l){
+  const key=window.__P714_CONFIG__?.anthropicKey;
+  if(!key){
+    renderAIStatic(l);
+    return;
+  }
+  document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><span>Analyzing deal with AI...</span></div>';
+  try{
+    const prompt=`You are a real estate investment analyst. Analyze this deal and respond in JSON only:\n\nProperty: ${l.property_address}, ${l.city} ${l.state}\nType: ${l.property_type}\nCondition: ${l.condition}\nAsking Price: $${l.asking_price}\nARV (After Repair Value): $${l.arv}\nRepairs Estimate: $${l.repairs}\nMAO (Max Allowable Offer): $${l.mao}\nEst. Profit: $${l.estimated_profit}\nROI: ${l.roi}%\nSeller Motivation: ${l.motivation_score}/10\nSource: ${l.source}\n\nRespond ONLY with this JSON (no markdown, no extra text):\n{\n  "recommendation": "BUY (Flip)" or "BUY (Rental)" or "Wholesale" or "PASS",\n  "confidence": 0-100,\n  "roi_flip": number,\n  "roi_rental": number,\n  "roi_wholesale": number,\n  "best_strategy": "flip" or "rental" or "wholesale",\n  "suggested_offer": number,\n  "arv_confidence": "High" or "Medium" or "Low",\n  "risks": ["risk1", "risk2", "risk3"],\n  "opportunities": ["opp1", "opp2"],\n  "summary": "2 sentence analysis",\n  "next_action": "specific next step",\n  "flip_margin": number\n}`;
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]}),});
+    const d=await res.json();
+    let ai;
+    try{ai=JSON.parse(d.content[0].text);}catch{ai=null;}
+    if(ai)renderAIResult(l,ai);
+    else renderAIStatic(l);
+  }catch(e){
+    console.error('AI error:',e);
+    renderAIStatic(l);
+  }
+}
+
+function renderAIResult(l,ai){
+  const sc=l.deal_score||0;
+  const recColor=ai.recommendation.startsWith('BUY')?'var(--green)':ai.recommendation==='Wholesale'?'var(--amber)':'var(--red)';
+  document.getElementById('ai-body').innerHTML=`
+    <div class="ai-rec" style="margin-bottom:14px">
+      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:42px;height:42px;font-size:15px;border-radius:10px">${ai.confidence}</div>
+      <div>
+        <div style="font-size:10px;color:var(--text-3);margin-bottom:2px">AI Confidence / 100</div>
+        <div style="font-size:13px;font-weight:700;color:${recColor}">✦ ${ai.recommendation}</div>
+      </div>
+    </div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Flip</span><span class="ai-detail-val" style="color:${(ai.roi_flip||0)>=15?'var(--green)':'var(--text-2)'}">${ai.roi_flip||0}%</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Rental</span><span class="ai-detail-val">${ai.roi_rental||0}%</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Wholesale</span><span class="ai-detail-val">${ai.roi_wholesale||0}%</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">Flip Margin</span><span class="ai-detail-val">${ai.flip_margin||0}%</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ARV Confidence</span><span class="ai-detail-val" style="color:${ai.arv_confidence==='High'?'var(--green)':ai.arv_confidence==='Medium'?'var(--amber)':'var(--red)'}">${ai.arv_confidence}</span></div>
+    <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal)">Analysis</div>
+    <div style="font-size:11px;color:var(--text-2);line-height:1.5;margin-bottom:10px">${esc(ai.summary)}</div>
+    <div style="margin-bottom:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Risks</div>
+    ${(ai.risks||[]).map(r=>`<div class="ai-bullet">${esc(r)}</div>`).join('')}
+    <div style="margin:10px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--green)">Opportunities</div>
+    ${(ai.opportunities||[]).map(o=>`<div class="ai-bullet" style="color:var(--green)">${esc(o)}</div>`).join('')}
+    <div style="margin:14px 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
+    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:8px">${fm(ai.suggested_offer)}</div>
+    <div style="font-size:11px;color:var(--teal);margin-bottom:12px">→ ${esc(ai.next_action||'')}</div>
+    <button class="ai-simulate-btn" onclick="rerunAI()">↻ Re-analyze</button>
   `;
-  document.getElementById('deal-modal').classList.add('open');
 }
 
-async function saveDeal(){
-  if(!_curId)return;
+function renderAIStatic(l){
+  const sc=l.deal_score||0;
+  const strat=l.deal_type==='fix_flip'?'BUY (Flip)':l.deal_type==='buy_hold'?'BUY (Rental)':'Wholesale';
+  const hasKey=!!window.__P714_CONFIG__?.anthropicKey;
+  document.getElementById('ai-body').innerHTML=`
+    <div class="ai-rec" style="margin-bottom:12px">
+      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:42px;height:42px;font-size:15px;border-radius:10px">${sc}</div>
+      <div><div style="font-size:10px;color:var(--text-3);margin-bottom:2px">Deal Score / 100</div>
+      <div style="font-size:13px;font-weight:700;color:${sc>=70?'var(--green)':sc>=50?'var(--amber)':'var(--red)'}">✦ ${strat}</div></div>
+    </div>
+    <div class="ai-detail-row"><span class="ai-detail-label">Est. Profit</span><span class="ai-detail-val" style="color:var(--green)">${fm(l.estimated_profit)}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">MAO</span><span class="ai-detail-val">${fm(l.mao)}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ARV</span><span class="ai-detail-val">${fm(l.arv)}</span></div>
+    <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">AI Analysis</div>
+    ${sc>=70?'<div class="ai-bullet">High confidence — score qualifies for offer</div><div class="ai-bullet">Verify ARV with comps before submitting offer</div><div class="ai-bullet">Strong deal — prioritize for negotiation</div>':sc>=50?'<div class="ai-bullet">Review needed before making offer</div><div class="ai-bullet">Validate comps and ARV accuracy</div><div class="ai-bullet">Negotiate price down or pass</div>':'<div class="ai-bullet">Score below threshold — high risk</div><div class="ai-bullet">ROI insufficient for target return</div><div class="ai-bullet">Consider passing on this deal</div>'}
+    <div style="margin:12px 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
+    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:12px">${fm(l.mao)}</div>
+    ${hasKey?'<button class="ai-simulate-btn" onclick="rerunAI()">✦ Run Full AI Analysis</button>':'<div style="background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text-3)">Add your Anthropic API key in <code>js/config.js</code> to enable full AI analysis with strategy comparison.</div>'}
+  `;
+}
+
+function rerunAI(){if(_curDeal)runAI(_curDeal);}
+
+function addComp(){document.getElementById('comp-modal').classList.add('open');['c-addr','c-sqft','c-beds','c-baths','c-price','c-dist'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('c-date').valueAsDate=new Date();}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function saveComp(){
+  const comp={address:document.getElementById('c-addr').value,sqft:parseFloat(document.getElementById('c-sqft').value)||null,beds:parseFloat(document.getElementById('c-beds').value)||null,baths:parseFloat(document.getElementById('c-baths').value)||null,price:parseFloat(document.getElementById('c-price').value)||null,distance:parseFloat(document.getElementById('c-dist').value)||null,date:document.getElementById('c-date').value};
+  if(!comp.address||!comp.price){toast('error','Missing fields','Address and price required');return;}
+  _comps.push(comp);closeModal('comp-modal');renderComps();
+}
+
+function renderComps(){
+  if(!_comps.length){document.getElementById('comp-tbody').innerHTML='<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-3);font-size:11px">No comps added yet</td></tr>';document.getElementById('comp-avg').textContent='—';document.getElementById('comp-ppsf').textContent='—';document.getElementById('comp-conf').textContent='—';return;}
+  document.getElementById('comp-tbody').innerHTML=_comps.map((c,i)=>{
+    const ppsf=c.sqft&&c.price?Math.round(c.price/c.sqft):null;
+    return `<tr>
+      <td style="font-size:11px;color:var(--text-2)">${esc(c.address)}</td>
+      <td class="price-cell">${c.sqft||'—'}</td>
+      <td class="price-cell">${c.beds||'—'}</td>
+      <td class="price-cell">${c.baths||'—'}</td>
+      <td class="price-cell bright">${fm(c.price)}</td>
+      <td class="price-cell">${ppsf?'$'+ppsf:'—'}</td>
+      <td class="price-cell">${c.distance||'—'}mi</td>
+      <td style="font-size:10px;color:var(--text-3)">${c.date||'—'}</td>
+      <td><button class="btn btn-danger btn-sm" style="padding:2px 7px;font-size:10px" onclick="removeComp(${i})">✕</button></td>
+    </tr>`;
+  }).join('');
+  const avgPrice=Math.round(_comps.filter(c=>c.price).reduce((s,c)=>s+c.price,0)/_comps.filter(c=>c.price).length);
+  const ppsfs=_comps.filter(c=>c.sqft&&c.price).map(c=>c.price/c.sqft);
+  const avgPpsf=ppsfs.length?Math.round(ppsfs.reduce((a,b)=>a+b)/ppsfs.length):null;
+  document.getElementById('comp-avg').textContent='$'+avgPrice.toLocaleString('en-US');
+  document.getElementById('comp-ppsf').textContent=avgPpsf?'$'+avgPpsf+'/sqft':'—';
+  const variance=_curDeal?.arv?Math.abs(avgPrice-Number(_curDeal.arv))/Number(_curDeal.arv)*100:null;
+  const conf=variance!==null?(variance<=5?'<span style="color:var(--green);font-weight:700">High ✓</span>':variance<=15?'<span style="color:var(--amber);font-weight:700">Medium ⚠</span>':'<span style="color:var(--red);font-weight:700">Low ✗</span>'):'—';
+  document.getElementById('comp-conf').innerHTML=conf;
+}
+
+function removeComp(i){_comps.splice(i,1);renderComps();}
+
+async function saveNotes(){
+  if(!_curDeal)return;
   try{
     const sb=P714Auth.getClient();
-    const{error}=await sb.from('acquisitions_leads').update({
-      closing_date:document.getElementById('dm-closing').value||null,
-      cash_buyer:document.getElementById('dm-buyer').value||null,
-      assignment_fee:parseFloat(document.getElementById('dm-fee').value)||null,
-      attorney_name:document.getElementById('dm-atty').value||null,
-      notes:document.getElementById('dm-notes').value||null,
-      updated_at:new Date().toISOString(),
-    }).eq('id',_curId);
-    if(error)throw error;
-    closeModal();
-    toast('success','Saved','Deal updated');
-    await load();
+    await sb.from('acquisitions_leads').update({notes:document.getElementById('d-notes').value,updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
+    toast('success','Notes saved','');
   }catch(e){toast('error','Error',e.message);}
 }
 
-async function markClosed(){
-  if(!_curId||!confirm('Mark this deal as Closed?'))return;
+async function approveAndSendOffer(){
+  if(!_curDeal||!confirm('Mark as Offer Ready and notify?'))return;
   try{
     const sb=P714Auth.getClient();
-    await sb.from('acquisitions_leads').update({status:'Closed',updated_at:new Date().toISOString()}).eq('id',_curId);
-    closeModal();
-    toast('success','Deal closed!','🎉 Congrats!');
-    await load();
+    await sb.from('acquisitions_leads').update({status:'Offer Ready',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
+    toast('success','✓ Approved','Status updated to Offer Ready');
+    _curDeal.status='Offer Ready';backToList();await load();
   }catch(e){toast('error','Error',e.message);}
 }
 
-function closeModal(){document.getElementById('deal-modal').classList.remove('open');_curId=null;}
-function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+async function approveDeal(){return approveAndSendOffer();}
+
+async function rejectDeal(){
+  if(!_curDeal||!confirm('Mark this deal as Pass?'))return;
+  try{
+    const sb=P714Auth.getClient();
+    await sb.from('acquisitions_leads').update({status:'Pass',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
+    toast('success','Deal passed','');
+    backToList();await load();
+  }catch(e){toast('error','Error',e.message);}
+}
+
+async function markReview(){
+  if(!_curDeal)return;
+  try{
+    const sb=P714Auth.getClient();
+    await sb.from('acquisitions_leads').update({status:'Analyzing',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
+    toast('info','Flagged for review','');
+    _curDeal.status='Analyzing';
+  }catch(e){toast('error','Error',e.message);}
+}
+
 function toast(l,t,m){
   const c=document.getElementById('toast-container');
-  const cols={success:'var(--green)',error:'var(--red)',info:'var(--accent)'};
-  const ic={success:'✓',error:'✕',info:'ℹ'};
+  const cols={success:'var(--green)',error:'var(--red)',info:'var(--teal)'};
+  const ic={success:'✓',error:'✕',info:'✦'};
   const el=document.createElement('div');el.className='toast';
   el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
-  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},4000);
+  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},5000);
 }
+function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body></html>

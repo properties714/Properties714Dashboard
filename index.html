@@ -8,114 +8,128 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="/css/app.css"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
+<style>
+.dash-grid{display:grid;grid-template-columns:1fr 300px;gap:20px;}
+@media(max-width:1100px){.dash-grid{grid-template-columns:1fr;}}
+.pipeline-bar{display:flex;align-items:stretch;border-radius:var(--radius);overflow:hidden;height:8px;margin-bottom:6px;gap:2px;}
+.pb-seg{border-radius:3px;transition:flex 0.5s;}
+.mini-trend{display:flex;align-items:flex-end;gap:2px;height:30px;}
+.mini-bar{flex:1;border-radius:2px 2px 0 0;min-height:4px;opacity:0.8;}
+</style>
 </head>
 <body>
 <div class="app-shell">
-
 <aside class="sidebar">
-  <div class="sidebar-brand">
-    <div class="sidebar-logo">P7</div>
-    <span class="sidebar-brand-name">Properties 714</span>
-  </div>
+  <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
     <a href="/" class="nav-item active"><span class="nav-icon">⬡</span>Dashboard</a>
     <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
-    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
-    <a href="/deals/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📋</span>Deals<span class="nav-badge">Soon</span></a>
-    <span class="nav-section-label">Analytics</span>
-    <a href="/reports/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📊</span>Reports<span class="nav-badge">Soon</span></a>
+    <span class="nav-section-label">Management</span>
+    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
+    <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
+    <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
-      <div class="user-avatar" id="s-av">--</div>
-      <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
-    </div>
-  </div>
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+    <div class="user-avatar" id="s-av">--</div>
+    <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
+  </div></div>
 </aside>
-
 <main class="app-main">
   <div class="top-bar">
-    <div class="breadcrumb">
-      <span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Dashboard</span>
-    </div>
+    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Dashboard</span></div>
     <div class="top-bar-actions">
-      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/#add'">➕ New Acquisition</button>
-      <button class="top-bar-btn" onclick="location.href='/settings/'" title="Settings">⚙️</button>
+      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono)" id="today-date"></span>
+      <button class="btn btn-primary btn-sm" onclick="location.href='/acquisitions/'" style="gap:4px">+ New Deal</button>
     </div>
   </div>
-
   <div class="page-content">
-    <div class="page-header">
-      <h1 class="page-title" id="dash-greeting">Loading...</h1>
-      <p class="page-subtitle" id="dash-sub">Here's what's happening across your portfolio today.</p>
+
+    <!-- Hero: Top Deal Today -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-3);margin-bottom:10px">Top Deal Today</div>
+      <div class="hero-deal" id="hero-card">
+        <div class="hero-deal-bg"></div>
+        <div class="hero-deal-body">
+          <div class="hero-deal-label">Highest Score Property</div>
+          <div class="hero-deal-price" id="h-price">—</div>
+          <div class="hero-deal-addr" id="h-addr">Loading best deal...</div>
+          <div class="hero-deal-meta">
+            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-profit">—</div><div class="hero-deal-stat-lbl">Est. Profit</div></div>
+            <div class="hero-sep"></div>
+            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-roi">—</div><div class="hero-deal-stat-lbl">ROI %</div></div>
+            <div class="hero-sep"></div>
+            <div class="hero-deal-stat"><div class="hero-deal-stat-val" id="h-score">—</div><div class="hero-deal-stat-lbl">Score</div></div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div id="h-strategy" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:11px;font-weight:700"></div>
+            <button class="btn btn-ghost btn-sm" onclick="location.href='/deals/'" style="font-size:11px">View Details →</button>
+          </div>
+        </div>
+      </div>
     </div>
 
+    <!-- KPIs -->
     <div class="kpi-row">
-      <div class="kpi-card accent-blue" onclick="location.href='/acquisitions/'">
+      <div class="kpi-card c-blue" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Active Deals</div>
-        <div class="kpi-value" id="k-leads">—</div>
-        <div class="kpi-sub">In acquisitions pipeline</div>
+        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#2563eb,transparent)"></div>
+        <div class="kpi-label">Deals Under Review</div>
+        <div class="kpi-value" id="k1">—</div>
+        <div class="kpi-sub" id="k1-sub">All stages</div>
       </div>
-      <div class="kpi-card accent-green" onclick="location.href='/acquisitions/'">
+      <div class="kpi-card c-teal" onclick="location.href='/acquisitions/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Pipeline Profit</div>
-        <div class="kpi-value" id="k-profit">—</div>
-        <div class="kpi-sub">Estimated total</div>
+        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#14b8a6,transparent)"></div>
+        <div class="kpi-label">High Confidence Deals</div>
+        <div class="kpi-value" id="k2">—</div>
+        <div class="kpi-sub">Score ≥ 70</div>
       </div>
-      <div class="kpi-card accent-amber" onclick="location.href='/acquisitions/'">
+      <div class="kpi-card c-green" onclick="location.href='/deals/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Hot Deals 🔥</div>
-        <div class="kpi-value" id="k-hot">—</div>
-        <div class="kpi-sub">Score ≥ 80</div>
+        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#22c55e,transparent)"></div>
+        <div class="kpi-label">Pipeline Value</div>
+        <div class="kpi-value" id="k3">—</div>
+        <div class="kpi-sub">Estimated profit</div>
       </div>
-      <div class="kpi-card accent-purple" onclick="location.href='/acquisitions/'">
+      <div class="kpi-card c-amber" onclick="location.href='/reports/'">
         <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Under Contract</div>
-        <div class="kpi-value" id="k-contract">—</div>
-        <div class="kpi-sub">Active closings</div>
+        <div class="kpi-card-bg" style="background:radial-gradient(circle at 80% 50%,#f59e0b,transparent)"></div>
+        <div class="kpi-label">Avg ROI This Month</div>
+        <div class="kpi-value" id="k4">—</div>
+        <div class="kpi-sub">Across active deals</div>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Recent Activity</span>
-          <a href="/acquisitions/" style="font-size:12px;color:var(--accent)">View all →</a>
+    <!-- Body grid -->
+    <div class="dash-grid">
+      <!-- Deal table -->
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:12px;font-weight:700;color:var(--text-2)">Deal Analysis <span style="color:var(--text-3);font-weight:400">— Latest</span></div>
+          <a href="/acquisitions/" style="font-size:11px;color:var(--blue)">View all →</a>
         </div>
-        <div id="activity-feed">
-          <div style="padding:40px;text-align:center;color:var(--text-3);font-size:13px;font-weight:300">No activity yet</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Score</th><th>Address</th><th>Price</th><th>ARV</th>
+              <th>ROI</th><th>Strategy</th><th>Status</th>
+            </tr></thead>
+            <tbody id="dash-tbody"><tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
+          </table>
         </div>
       </div>
-      <div style="display:flex;flex-direction:column;gap:16px">
-        <div class="card">
-          <div class="card-header"><span class="card-title">Quick Access</span></div>
-          <div style="padding:8px 0">
-            <a href="/acquisitions/" class="nav-item" style="border-radius:0"><span>🎯</span>Acquisitions</a>
-            <a href="/acquisitions/#add" class="nav-item" style="border-radius:0"><span>➕</span>Add new lead</a>
-            <a href="/leads/" class="nav-item" style="border-radius:0"><span>👥</span>Open CRM</a>
-            <a href="/settings/" class="nav-item" style="border-radius:0"><span>⚙️</span>Manage team</a>
-          </div>
+      <!-- AI Recommendation Panel -->
+      <div class="ai-panel" id="ai-rec-panel">
+        <div class="ai-panel-hdr">
+          <div class="ai-panel-dot"></div>
+          <span class="ai-panel-title">AI Recommendation</span>
         </div>
-        <div class="card">
-          <div class="card-header"><span class="card-title">System</span></div>
-          <div style="padding:4px 0">
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2);font-weight:300">Dashboard</span>
-              <span class="badge badge-closed"><span class="badge-dot"></span>Online</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2);font-weight:300">Database</span>
-              <span id="sys-db" class="badge badge-follow-up"><span class="badge-dot"></span>Connecting</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 18px;font-size:12px">
-              <span style="color:var(--text-2);font-weight:300">Auth</span>
-              <span id="sys-auth" class="badge badge-follow-up"><span class="badge-dot"></span>Pending</span>
-            </div>
-          </div>
+        <div style="padding:16px" id="ai-panel-body">
+          <div class="ai-loading"><div class="ai-spinner"></div><span>Loading best deal...</span></div>
         </div>
       </div>
     </div>
@@ -124,52 +138,100 @@
 </div>
 <div id="toast-container"></div>
 <script>
-(async () => {
-  const h = new Date().getHours();
-  const gr = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-  try {
-    const session = await P714Auth.init();
-    if (!session) { window.location.href = '/login/?next=/'; return; }
-    const p = P714Auth.getProfile();
-    const name = (p?.full_name || '').split(' ')[0] || 'there';
-    document.getElementById('dash-greeting').textContent = `${gr}, ${name} 👋`;
-    document.getElementById('dash-sub').textContent = P714Auth.isOwner()
-      ? "Here's what's happening across your full portfolio today."
-      : "Here's your pipeline for today.";
-    const av = document.getElementById('s-av');
-    av.textContent = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    document.getElementById('s-name').textContent = p?.full_name || 'User';
-    document.getElementById('s-role').textContent = p?.role === 'owner' ? 'Owner' : 'Acquisitionist';
-    document.getElementById('sys-auth').innerHTML = '<span class="badge-dot"></span>Active';
-    document.getElementById('sys-auth').className = 'badge badge-closed';
-    // Load KPIs
-    const sb = P714Auth.getClient();
-    const { data, error } = await sb.from('acquisitions_leads').select('id,status,hot_deal,estimated_profit');
-    if (!error && data) {
-      const active = data.filter(l => !['Dead', 'Closed'].includes(l.status)).length;
-      document.getElementById('k-leads').textContent = active;
-      document.getElementById('k-hot').textContent = data.filter(l => l.hot_deal).length;
-      document.getElementById('k-contract').textContent = data.filter(l => l.status === 'Under Contract').length;
-      const profit = data.reduce((s, l) => s + (Number(l.estimated_profit) || 0), 0);
-      document.getElementById('k-profit').textContent = profit >= 1e6 ? '$' + (profit / 1e6).toFixed(1) + 'M' : profit >= 1000 ? '$' + Math.round(profit / 1000) + 'K' : '$' + Math.round(profit);
-      document.getElementById('sys-db').innerHTML = '<span class="badge-dot"></span>Online';
-      document.getElementById('sys-db').className = 'badge badge-closed';
-    }
-    // Activity feed
-    const { data: act } = await sb.from('lead_activity').select('type,description,created_at').order('created_at', { ascending: false }).limit(8);
-    if (act?.length) {
-      const icons = { call: '📞', sms: '💬', email: '✉️', visit: '🏠', note: '📝', status_change: '🔄' };
-      document.getElementById('activity-feed').innerHTML = act.map(a =>
-        `<div style="display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid var(--border);align-items:flex-start">
-          <span style="font-size:14px;flex-shrink:0">${icons[a.type] || '•'}</span>
-          <div><div style="font-size:12px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:400px">${a.description || a.type}</div>
-          <div style="font-size:11px;font-weight:300;color:var(--text-3);margin-top:2px">${new Date(a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</div></div>
-        </div>`).join('');
-    }
-  } catch (e) {
-    document.getElementById('dash-greeting').textContent = `${gr} 👋`;
-    console.warn(e);
-  }
+const STRATEGY_STYLE={flip:'background:var(--purple-dim);color:var(--purple)',rental:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)',pass:'background:var(--red-dim);color:var(--red)'};
+const STATUS_BADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass',review:'b-review'};
+
+(async()=>{
+  document.getElementById('today-date').textContent=new Date().toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  try{
+    const s=await P714Auth.init();
+    if(!s){window.location.href='/login/?next=/';return;}
+    const p=P714Auth.getProfile();
+    document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('s-name').textContent=p?.full_name||'User';
+    document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agent';
+    await loadData();
+  }catch(e){console.warn(e);}
 })();
+
+async function loadData(){
+  const sb=P714Auth.getClient();
+  const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
+  const all=data||[];
+  const active=all.filter(l=>!['Dead','Closed','pass'].includes((l.status||'').toLowerCase()));
+  // KPIs
+  document.getElementById('k1').textContent=active.length;
+  document.getElementById('k2').textContent=all.filter(l=>(l.deal_score||0)>=70).length;
+  const profit=all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
+  document.getElementById('k3').textContent=profit>=1e6?'$'+(profit/1e6).toFixed(1)+'M':profit>=1000?'$'+Math.round(profit/1000)+'K':'$'+Math.round(profit);
+  const rois=active.map(l=>Number(l.roi)||0).filter(r=>r>0);
+  document.getElementById('k4').textContent=rois.length?Math.round(rois.reduce((a,b)=>a+b)/rois.length)+'%':'—';
+  // Hero deal
+  const top=all[0];
+  if(top){
+    document.getElementById('h-price').textContent=fm(top.asking_price);
+    document.getElementById('h-addr').textContent=top.property_address||'—';
+    const p2=Number(top.estimated_profit)||0;
+    document.getElementById('h-profit').textContent=p2?'$'+p2.toLocaleString('en-US'):'—';
+    const roi=top.arv&&top.asking_price?Math.round((p2/(Number(top.asking_price)||1))*100):null;
+    document.getElementById('h-roi').textContent=roi?roi+'%':'—';
+    document.getElementById('h-score').textContent=top.deal_score||'—';
+    const strat=(top.deal_type||'flip').toLowerCase();
+    document.getElementById('h-strategy').textContent=(strat==='fix_flip'?'BUY (Flip)':strat==='buy_hold'?'BUY (Rental)':strat==='wholesale'?'Wholesale':'Analyzing');
+    document.getElementById('h-strategy').style.cssText=STRATEGY_STYLE[strat==='fix_flip'?'flip':strat==='buy_hold'?'rental':'wholesale']||STRATEGY_STYLE.flip;
+    // AI Panel
+    renderAIPanel(top,roi);
+  }
+  // Table
+  const recent=all.slice(0,8);
+  document.getElementById('dash-tbody').innerHTML=recent.map(l=>{
+    const sc=l.deal_score||0;
+    const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
+    const strat=(l.deal_type||'fix_flip');
+    const stratLabel=strat==='fix_flip'?'Flip':strat==='buy_hold'?'Rental':strat==='wholesale'?'Wholesale':'—';
+    const stratStyle=STRATEGY_STYLE[strat==='fix_flip'?'flip':strat==='buy_hold'?'rental':'wholesale']||'';
+    const st=(l.status||'lead').toLowerCase();
+    const stBadge=STATUS_BADGE[st]||'b-analyzing';
+    const roi2=l.arv&&l.asking_price?Math.round(((Number(l.estimated_profit)||0)/(Number(l.asking_price)||1))*100):null;
+    return `<tr onclick="location.href='/deals/?id=${l.id}'">
+      <td><span class="score-badge sm ${scClass}">${sc}</span></td>
+      <td><div class="td-addr">${esc(l.property_address||'—')}</div><div class="td-sub">${l.city||''} ${l.state||''}</div></td>
+      <td class="price-cell">${fm(l.asking_price)}</td>
+      <td class="price-cell">${fm(l.arv)}</td>
+      <td class="price-cell${roi2&&roi2>0?' green':roi2&&roi2<0?' red':''}">${roi2!==null?roi2+'%':'—'}</td>
+      <td><span class="badge" style="${stratStyle};padding:2px 8px;font-size:9px">${stratLabel}</span></td>
+      <td><span class="badge ${stBadge}"><span class="badge-dot"></span>${l.status||'Lead'}</span></td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="7" style="padding:30px;text-align:center;color:var(--text-3)">No deals yet</td></tr>';
+}
+
+function renderAIPanel(l,roi){
+  const sc=l.deal_score||0;
+  const strat=l.deal_type==='fix_flip'?'Flip':l.deal_type==='buy_hold'?'Rental':'Wholesale';
+  const mao=l.mao?fm(l.mao):'—';
+  const hasKey=!!window.__P714_CONFIG__?.anthropicKey;
+  document.getElementById('ai-panel-body').innerHTML=`
+    <div style="font-size:12px;color:var(--text-3);margin-bottom:12px">${esc(l.property_address||'—')}</div>
+    <div class="ai-rec">
+      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:44px;height:44px;font-size:16px;border-radius:10px">${sc}</div>
+      <div style="flex:1">
+        <div class="ai-rec-label">Score / 100</div>
+        <div class="ai-rec-val">✦ Recommendation: ${strat} ${sc>=70?'✓':sc>=50?'⚠':'✗'}</div>
+      </div>
+    </div>
+    <div class="ai-detail-row"><span class="ai-detail-label">Est. Profit</span><span class="ai-detail-val" style="color:var(--green)">${fm(l.estimated_profit)}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ROI</span><span class="ai-detail-val">${roi!==null?roi+'%':'—'}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">MAO</span><span class="ai-detail-val">${mao}</span></div>
+    <div class="ai-detail-row"><span class="ai-detail-label">ARV</span><span class="ai-detail-val">${fm(l.arv)}</span></div>
+    <div style="margin:14px 0 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Analysis</div>
+    ${sc>=70?'<div class="ai-bullet">High confidence deal — score qualifies for offer</div><div class="ai-bullet">Verify ARV with recent comps within 0.5mi</div><div class="ai-bullet">Check repair estimate accuracy before offer</div>':sc>=50?'<div class="ai-bullet">Deal needs further validation before offer</div><div class="ai-bullet">Comps variance may affect ARV reliability</div><div class="ai-bullet">Moderate risk — negotiate price down</div>':'<div class="ai-bullet">Score below threshold — high risk deal</div><div class="ai-bullet">ROI insufficient for target return</div><div class="ai-bullet">Consider passing or renegotiating significantly</div>'}
+    <div style="margin:14px 0 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
+    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:12px">${mao}</div>
+    ${hasKey?'<button class="ai-simulate-btn" onclick="location.href=\'\'/deals/?id='+l.id+'\'\'" style="background:var(--teal);border-color:var(--teal)">✦ Run AI Analysis</button>':'<div style="font-size:11px;color:var(--text-3);text-align:center;padding:8px">Add Anthropic key in js/config.js to enable full AI analysis</div>'}
+  `;
+}
+
+function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body></html>

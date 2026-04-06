@@ -11,41 +11,29 @@
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
 <style>
-.sheet-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
-.sheet-wrap{overflow-x:auto;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);}
-.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12px;font-family:var(--font);}
-.sheet-table th{background:#0f0f14;padding:7px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid var(--border);text-align:left;position:sticky;top:0;z-index:2;}
-.sheet-table th:first-child{width:34px;text-align:center;position:sticky;left:0;z-index:3;background:#0f0f14;}
-.sheet-table td{border-bottom:1px solid var(--border);border-right:1px solid rgba(255,255,255,0.04);padding:0;vertical-align:middle;}
-.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:var(--bg-card);text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:10px;width:34px;border-right:2px solid var(--border);cursor:default;padding:0 6px;}
-.sheet-table tbody tr:hover td{background:rgba(59,130,246,0.04);}
-.sheet-table tbody tr:hover td:first-child{background:var(--bg-hover);}
-.cv{display:block;padding:8px 10px;cursor:text;min-height:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px;color:var(--text-1);}
+.sheet-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);}
+.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12px;}
+.sheet-table th{background:#0e1929;padding:8px 12px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-3);white-space:nowrap;border-bottom:2px solid var(--border);border-right:1px solid var(--border);text-align:left;position:sticky;top:0;z-index:2;}
+.sheet-table th:first-child{width:36px;text-align:center;position:sticky;left:0;z-index:3;background:#0e1929;}
+.sheet-table td{border-bottom:1px solid rgba(255,255,255,0.04);border-right:1px solid rgba(255,255,255,0.03);padding:0;vertical-align:middle;}
+.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:var(--card);text-align:center;color:var(--text-3);font-family:var(--font-mono);font-size:10px;width:36px;border-right:2px solid var(--border);cursor:default;padding:0 6px;}
+.sheet-table tbody tr:hover td{background:rgba(37,99,235,0.04);}
+.sheet-table tbody tr:hover td:first-child{background:rgba(37,99,235,0.08);}
+.cv{display:block;padding:8px 11px;cursor:text;min-height:36px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:20px;color:var(--text-1);}
 .cv.muted{color:var(--text-2);}
-.cv.ph{color:var(--text-3);}
-.cv:not(.ro):hover{background:rgba(255,255,255,0.04);}
 .cv.ro{cursor:default;}
-.ci{width:100%;background:#1a2744;border:2px solid var(--accent);outline:none;padding:7px 9px;font-size:12px;color:var(--text-1);font-family:var(--font);min-height:36px;display:block;box-sizing:border-box;}
+.cv:not(.ro):hover{background:rgba(255,255,255,0.03);}
+.ci{width:100%;background:#0d2040;border:2px solid var(--blue);outline:none;padding:7px 10px;font-size:12px;color:var(--text-1);font-family:var(--font);min-height:36px;display:block;box-sizing:border-box;}
 select.ci{cursor:pointer;}
 .ci[type=number]{font-family:var(--font-mono);}
-tr.s-new td:first-child{box-shadow:inset 3px 0 0 #818cf8;}
-tr.s-contacted td:first-child{box-shadow:inset 3px 0 0 #60a5fa;}
-tr.s-followup td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
-tr.s-negotiation td:first-child{box-shadow:inset 3px 0 0 var(--purple);}
-tr.s-offer td:first-child{box-shadow:inset 3px 0 0 #38bdf8;}
-tr.s-contract td:first-child{box-shadow:inset 3px 0 0 var(--green);}
-tr.s-closed td:first-child{box-shadow:inset 3px 0 0 #34d399;}
-tr.s-dead{opacity:0.5;}
-tr.s-dead td:first-child{box-shadow:inset 3px 0 0 var(--red);}
-.sp{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:600;white-space:nowrap;}
-.sc-pill{display:inline-block;padding:2px 7px;border-radius:99px;font-family:var(--font-mono);font-size:11px;font-weight:700;}
-.sc-hi{background:var(--green-dim);color:var(--green);}
-.sc-mid{background:var(--amber-dim);color:var(--amber);}
-.sc-lo{background:rgba(255,255,255,0.06);color:var(--text-3);}
-.pp{color:var(--green)!important;font-family:var(--font-mono);}
-.pn{color:var(--red)!important;font-family:var(--font-mono);}
-.add-row{display:flex;align-items:center;gap:8px;padding:10px 14px;color:var(--text-3);font-size:12px;cursor:pointer;transition:background 140ms,color 140ms;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid var(--border);}
-.add-row:hover{background:var(--bg-hover);color:var(--accent);}
+.add-row-btn{display:flex;align-items:center;gap:8px;padding:9px 14px;color:var(--text-3);font-size:12px;cursor:pointer;transition:all 130ms;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid var(--border);font-family:var(--font);}
+.add-row-btn:hover{background:rgba(37,99,235,0.06);color:var(--blue);}
+.score-col{font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:center;padding:6px 10px;border-radius:6px;display:inline-block;}
+tr.row-hi td:first-child{box-shadow:inset 3px 0 0 var(--green);}
+tr.row-mid td:first-child{box-shadow:inset 3px 0 0 var(--amber);}
+tr.row-lo td:first-child{box-shadow:inset 3px 0 0 var(--red);}
+tr.row-dead{opacity:0.4;}
+.strat-pill{display:inline-flex;align-items:center;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em;}
 </style>
 </head>
 <body>
@@ -55,13 +43,13 @@ tr.s-dead td:first-child{box-shadow:inset 3px 0 0 var(--red);}
   <nav class="sidebar-nav">
     <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
     <a href="/acquisitions/" class="nav-item active"><span class="nav-icon">🎯</span>Acquisitions</a>
-    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads / CRM</a>
+    <span class="nav-section-label">Management</span>
+    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
     <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
-    <span class="nav-section-label">Analytics</span>
     <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
-  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
+  <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()">
     <div class="user-avatar" id="s-av">--</div>
     <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
   </div></div>
@@ -70,54 +58,35 @@ tr.s-dead td:first-child{box-shadow:inset 3px 0 0 var(--red);}
   <div class="top-bar">
     <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Acquisitions</span></div>
     <div class="top-bar-actions">
-      <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)" id="save-st"></span>
+      <span style="font-size:10px;color:var(--text-3);font-family:var(--font-mono)" id="save-st"></span>
       <button class="btn btn-ghost btn-sm" onclick="doExport()">⬇ Export</button>
-      <button class="btn btn-primary btn-sm" onclick="addRow()">＋ Add Property</button>
+      <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ New Deal</button>
     </div>
   </div>
   <div class="page-content">
     <div class="page-header">
       <h1 class="page-title">Acquisitions</h1>
-      <p class="page-subtitle" id="sheet-sub">Loading...</p>
+      <p class="page-subtitle" id="sheet-sub">Deal pipeline — click any cell to edit inline</p>
     </div>
-    <div class="kpi-row" style="margin-bottom:20px">
-      <div class="kpi-card accent-blue" onclick="setFilter('')" style="cursor:pointer">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Total Leads</div>
-        <div class="kpi-value" id="k1">—</div>
-        <div class="kpi-sub">All stages</div>
-      </div>
-      <div class="kpi-card accent-amber" onclick="setFilter('hot')" style="cursor:pointer">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-label">🔥 Hot Deals</div>
-        <div class="kpi-value" id="k2">—</div>
-        <div class="kpi-sub">Score ≥ 80</div>
-      </div>
-      <div class="kpi-card accent-green" onclick="setFilter('Under Contract')" style="cursor:pointer">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Under Contract</div>
-        <div class="kpi-value" id="k3">—</div>
-        <div class="kpi-sub">Active closings</div>
-      </div>
-      <div class="kpi-card accent-purple">
-        <div class="kpi-card-accent"></div>
-        <div class="kpi-label">Pipeline Profit</div>
-        <div class="kpi-value" id="k4">—</div>
-        <div class="kpi-sub">Estimated</div>
-      </div>
+    <div class="kpi-row" style="margin-bottom:16px">
+      <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Deals</div><div class="kpi-value" id="k1">—</div><div class="kpi-sub">All stages</div></div>
+      <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">High Confidence</div><div class="kpi-value" id="k2">—</div><div class="kpi-sub">Score ≥ 70</div></div>
+      <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Est. Pipeline</div><div class="kpi-value" id="k3">—</div><div class="kpi-sub">Profit potential</div></div>
+      <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Avg Score</div><div class="kpi-value" id="k4">—</div><div class="kpi-sub">Portfolio quality</div></div>
     </div>
-    <div class="sheet-toolbar">
-      <input class="search-input" id="sq" placeholder="🔍 Search..." oninput="doFilter()" style="width:220px"/>
-      <select class="search-input" id="ss" onchange="doFilter()" style="width:140px">
-        <option value="">All Statuses</option>
-        <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
-        <option>Negotiation</option><option>Offer Sent</option><option>Under Contract</option>
-        <option>Closed</option><option>Dead</option>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <input class="search-input" id="sq" placeholder="🔍 Search address, seller..." oninput="doFilter()" style="width:240px"/>
+      <select class="search-input" id="ss" onchange="doFilter()" style="width:130px">
+        <option value="">All Status</option>
+        <option>New Lead</option><option>Analyzing</option><option>Offer Ready</option>
+        <option>Under Contract</option><option>Closed</option><option>Pass</option>
       </select>
-      <select class="search-input" id="sa" onchange="doFilter()" style="width:140px"><option value="">All Agents</option></select>
-      <select class="search-input" id="st" onchange="doFilter()" style="width:125px">
-        <option value="">All Types</option>
-        <option>SFR</option><option>Duplex</option><option>Multi-Family</option><option>Commercial</option><option>Land</option>
+      <select class="search-input" id="sa" onchange="doFilter()" style="width:130px"><option value="">All Agents</option></select>
+      <select class="search-input" id="sd" onchange="doFilter()" style="width:130px">
+        <option value="">All Strategies</option>
+        <option value="fix_flip">Fix &amp; Flip</option>
+        <option value="buy_hold">Rental</option>
+        <option value="wholesale">Wholesale</option>
       </select>
       <span style="margin-left:auto;font-size:11px;color:var(--text-3)" id="rc"></span>
     </div>
@@ -125,40 +94,116 @@ tr.s-dead td:first-child{box-shadow:inset 3px 0 0 var(--red);}
       <table class="sheet-table">
         <thead><tr>
           <th>#</th>
-          <th style="min-width:140px">Seller</th>
-          <th style="min-width:120px">Phone</th>
-          <th style="min-width:200px">Property Address</th>
-          <th style="min-width:100px">City</th>
-          <th style="min-width:50px">ST</th>
-          <th style="min-width:100px">Type</th>
-          <th style="min-width:110px">Condition</th>
-          <th style="min-width:110px">Asking $</th>
-          <th style="min-width:110px">ARV $</th>
-          <th style="min-width:100px">Repairs $</th>
-          <th style="min-width:110px">MAO $</th>
-          <th style="min-width:110px">Est. Profit</th>
-          <th style="min-width:130px">Status</th>
-          <th style="min-width:60px">Score</th>
-          <th style="min-width:110px">Agent</th>
-          <th style="min-width:110px">Follow-Up</th>
-          <th style="min-width:190px">Source</th>
-          <th style="min-width:220px">Notes</th>
+          <th style="min-width:36px">Score</th>
+          <th style="min-width:160px">Property Address</th>
+          <th style="min-width:110px">City / ST</th>
+          <th style="min-width:100px">Seller</th>
+          <th style="min-width:100px">Asking $</th>
+          <th style="min-width:100px">ARV $</th>
+          <th style="min-width:90px">Repairs $</th>
+          <th style="min-width:100px">MAO $</th>
+          <th style="min-width:100px">Est. Profit</th>
+          <th style="min-width:40px">ROI %</th>
+          <th style="min-width:110px">Strategy</th>
+          <th style="min-width:120px">Status</th>
+          <th style="min-width:100px">Agent</th>
+          <th style="min-width:90px">Type</th>
+          <th style="min-width:100px">Condition</th>
+          <th style="min-width:100px">Source</th>
+          <th style="min-width:90px">Follow-Up</th>
+          <th style="min-width:200px">Notes</th>
         </tr></thead>
         <tbody id="tbody"><tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
       </table>
-      <button class="add-row" onclick="addRow()">＋ Add property</button>
+      <button class="add-row-btn" onclick="addRow()">＋ Add deal</button>
     </div>
   </div>
 </main>
 </div>
+
+<!-- Add Deal Modal -->
+<div class="modal-backdrop" id="add-modal">
+<div class="modal" style="max-width:600px">
+  <div class="modal-hdr">
+    <span class="modal-title">New Deal</span>
+    <button class="modal-close-btn" onclick="closeModal('add-modal')">×</button>
+  </div>
+  <div class="modal-body">
+    <div style="display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:14px">
+      <button class="btn btn-sm" id="tab-contact" onclick="switchTab('contact')" style="background:var(--blue);color:#fff">Contact</button>
+      <button class="btn btn-ghost btn-sm" id="tab-property" onclick="switchTab('property')">Property</button>
+      <button class="btn btn-ghost btn-sm" id="tab-financials" onclick="switchTab('financials')">Financials</button>
+    </div>
+    <!-- Contact -->
+    <div id="panel-contact">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Seller Name *</label><input class="form-input" id="n-name" placeholder="John Smith"/></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="n-phone" placeholder="+1 (404) 000-0000"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="n-email" type="email"/></div>
+        <div class="form-group"><label class="form-label">Lead Source</label>
+          <select class="form-input" id="n-source"><option>Driving for Dollars</option><option>Direct Mail</option><option>Cold Call</option><option>Pre-Foreclosure</option><option>Probate</option><option>Tax Default</option><option>Facebook Ads</option><option>Referral</option><option>Other</option></select>
+        </div>
+      </div>
+    </div>
+    <!-- Property -->
+    <div id="panel-property" style="display:none">
+      <div class="form-group"><label class="form-label">Property Address *</label><input class="form-input" id="n-addr" placeholder="123 Main St, Atlanta, GA"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">City</label><input class="form-input" id="n-city" placeholder="Atlanta"/></div>
+        <div class="form-group"><label class="form-label">State</label><input class="form-input" id="n-state" placeholder="GA" maxlength="2"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Property Type</label>
+          <select class="form-input" id="n-type"><option>SFR</option><option>Duplex</option><option>Multi-Family</option><option>Commercial</option><option>Land</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Condition</label>
+          <select class="form-input" id="n-cond"><option value="">Select...</option><option>Excellent</option><option>Good</option><option>Fair</option><option>Distressed</option><option>Tear-Down</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sqft</label><input class="form-input" id="n-sqft" type="number" placeholder="1500"/></div>
+        <div class="form-group"><label class="form-label">Beds / Baths</label><div style="display:flex;gap:6px"><input class="form-input" id="n-beds" type="number" placeholder="3" style="width:50%"/><input class="form-input" id="n-baths" type="number" step="0.5" placeholder="2" style="width:50%"/></div></div>
+      </div>
+    </div>
+    <!-- Financials -->
+    <div id="panel-financials" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Asking Price $</label><input class="form-input" id="n-ask" type="number" placeholder="180000"/></div>
+        <div class="form-group"><label class="form-label">ARV $</label><input class="form-input" id="n-arv" type="number" placeholder="300000" oninput="calcMAO()"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Repairs Est. $</label><input class="form-input" id="n-rep" type="number" placeholder="40000" oninput="calcMAO()"/></div>
+        <div class="form-group"><label class="form-label">MAO (auto)</label>
+          <div style="background:rgba(20,184,166,0.1);border:1px solid var(--teal-dim);border-radius:var(--radius);padding:8px 11px;font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--teal)" id="n-mao">—</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Strategy</label>
+          <select class="form-input" id="n-dtype"><option value="fix_flip">Fix &amp; Flip</option><option value="buy_hold">Buy &amp; Hold (Rental)</option><option value="wholesale">Wholesale</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Motivation (1-10)</label><input class="form-input" id="n-mot" type="number" min="1" max="10" placeholder="7"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Next Follow-Up</label><input class="form-input" id="n-fu" type="date"/></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+      <button class="btn btn-primary" style="flex:1" onclick="saveDeal()">Save Deal</button>
+      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+</div>
+
 <div id="toast-container"></div>
 <script>
-const STATUSES=['New Lead','Contacted','Follow-Up','Negotiation','Offer Sent','Under Contract','Closed','Dead'];
+const STATUSES=['New Lead','Analyzing','Offer Ready','Under Contract','Closed','Pass'];
 const TYPES=['SFR','Duplex','Multi-Family','Condo','Commercial','Land','Mobile'];
 const CONDITIONS=['','Excellent','Good','Fair','Distressed','Tear-Down'];
-const SOURCES=['','Driving for Dollars','Direct Mail','Cold Call','PPC / Google','Facebook Ads','Referral','MLS','Probate','Pre-Foreclosure','Tax Default','Wholesale','Other'];
-const ST_STYLE={'New Lead':'background:rgba(99,102,241,.15);color:#818cf8','Contacted':'background:rgba(59,130,246,.15);color:#60a5fa','Follow-Up':'background:rgba(245,158,11,.15);color:#fbbf24','Negotiation':'background:rgba(168,85,247,.15);color:#c084fc','Offer Sent':'background:rgba(56,189,248,.15);color:#38bdf8','Under Contract':'background:rgba(34,197,94,.15);color:#4ade80','Closed':'background:rgba(52,211,153,.15);color:#34d399','Dead':'background:rgba(239,68,68,.15);color:#f87171'};
-const ST_ROW={'New Lead':'s-new','Contacted':'s-contacted','Follow-Up':'s-followup','Negotiation':'s-negotiation','Offer Sent':'s-offer','Under Contract':'s-contract','Closed':'s-closed','Dead':'s-dead'};
+const SOURCES=['','Driving for Dollars','Direct Mail','Cold Call','PPC/Google','Facebook Ads','Referral','MLS','Probate','Pre-Foreclosure','Tax Default','Wholesale','Other'];
+const ST_BADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass',review:'b-review'};
+const STRAT_LABEL={fix_flip:'Flip',buy_hold:'Rental',wholesale:'Wholesale'};
+const STRAT_STYLE={fix_flip:'background:var(--purple-dim);color:var(--purple)',buy_hold:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)'};
 let _all=[],_uid=null,_isOwner=false;
 
 (async()=>{
@@ -168,141 +213,122 @@ let _all=[],_uid=null,_isOwner=false;
     const p=P714Auth.getProfile();
     _isOwner=P714Auth.isOwner();
     _uid=P714Auth.getUser().id;
-    const init=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('s-av').textContent=init;
+    document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
-    document.getElementById('s-role').textContent=_isOwner?'Owner':'Acquisitionist';
-    await loadData();
+    document.getElementById('s-role').textContent=_isOwner?'Owner':'Agent';
+    await load();
   }catch(e){console.error(e);}
 })();
 
-async function loadData(){
+async function load(){
   const sb=P714Auth.getClient();
-  const{data,error}=await sb.from('acquisitions_leads').select('*').order('created_at',{ascending:false});
-  if(error){console.error(error);return;}
+  const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
   _all=data||[];
   const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
-  const af=document.getElementById('sa');
-  const cur=af.value;
+  const af=document.getElementById('sa');const cur=af.value;
   af.innerHTML='<option value="">All Agents</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
-  updateKPIs();
-  doFilter();
+  updateKPIs();doFilter();
 }
 
 function updateKPIs(){
-  const active=_all.filter(l=>!['Dead','Closed'].includes(l.status));
-  document.getElementById('k1').textContent=active.length;
-  document.getElementById('k2').textContent=_all.filter(l=>l.hot_deal||l.deal_score>=80).length;
-  document.getElementById('k3').textContent=_all.filter(l=>l.status==='Under Contract').length;
+  const active=_all.filter(l=>!['Pass','Closed','Dead'].includes(l.status));
+  document.getElementById('k1').textContent=_all.length;
+  document.getElementById('k2').textContent=_all.filter(l=>(l.deal_score||0)>=70).length;
   const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
-  document.getElementById('k4').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
-  document.getElementById('sheet-sub').textContent=_isOwner?`${_all.length} total properties — all agents`:`${_all.filter(l=>l.user_id===_uid).length} your properties`;
-}
-
-function setFilter(v){
-  if(v==='hot'){
-    document.getElementById('ss').value='';
-    render(_all.filter(l=>l.hot_deal||l.deal_score>=80));
-    document.getElementById('rc').textContent=_all.filter(l=>l.hot_deal||l.deal_score>=80).length+' properties';
-    return;
-  }
-  document.getElementById('ss').value=v;
-  doFilter();
+  document.getElementById('k3').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
+  const scores=active.map(l=>l.deal_score||0).filter(s=>s>0);
+  document.getElementById('k4').textContent=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):'—';
+  document.getElementById('sheet-sub').textContent=`${_all.length} deals — click any cell to edit • ${_all.filter(l=>(l.deal_score||0)>=70).length} high confidence`;
 }
 
 function doFilter(){
   const q=document.getElementById('sq').value.toLowerCase();
   const ss=document.getElementById('ss').value;
   const sa=document.getElementById('sa').value;
-  const st=document.getElementById('st').value;
+  const sd=document.getElementById('sd').value;
   const list=_all.filter(l=>{
-    const txt=`${l.name||''} ${l.property_address||''} ${l.city||''} ${l.phone||''}`.toLowerCase();
-    return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa)&&(!st||l.property_type===st);
+    const txt=`${l.property_address||''} ${l.name||''} ${l.city||''}`.toLowerCase();
+    return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa)&&(!sd||l.deal_type===sd);
   });
   render(list);
-  document.getElementById('rc').textContent=list.length+' properties';
+  document.getElementById('rc').textContent=list.length+' deals';
 }
 
-function mao(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*0.7)-r:null;}
+function mao(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*.7)-r:null;}
 function profit(l){const m=mao(l),ask=Number(l.asking_price)||0;return m!==null&&ask?m-ask:null;}
-function fm(n){if(n===null||n===''||n===undefined)return '';const v=Number(n);return isNaN(v)?'':'$'+v.toLocaleString('en-US');}
+function roi(l){const p2=profit(l),ask=Number(l.asking_price)||1;return p2!==null?Math.round(p2/ask*100):null;}
+function fm(n){if(n===null||n===undefined||n==='')return '';const v=Number(n);return isNaN(v)?'':'$'+v.toLocaleString('en-US');}
 function fd(d){return d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}):''}
-
-function cv(id,f,val,type,ml){
-  const disp=type==='number'?fm(val):esc(val||'');
-  return `<span class="cv${!val?' ph':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}"${ml?` data-ml="${ml}"`:''} title="${esc(String(val||''))}"> ${disp||'—'}</span>`;
-}
-function sv(id,f,val,opts,style){
-  const d=val?`<span class="sp" style="${style||''}">${esc(val)}</span>`:'<span style="color:var(--text-3)">—</span>';
-  return `<span class="cs" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" style="display:block;padding:6px 10px;cursor:pointer;min-height:36px">${d}</span>`;
-}
 
 function render(list){
   const tb=document.getElementById('tbody');
-  if(!list.length){
-    tb.innerHTML='<tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">No properties found. Click “+ Add property” to start.</td></tr>';
-    return;
-  }
+  if(!list.length){tb.innerHTML='<tr><td colspan="19" style="padding:40px;text-align:center;color:var(--text-3)">No deals found. Click "+ New Deal" to start.</td></tr>';return;}
   tb.innerHTML=list.map((l,i)=>{
-    const m=mao(l),pr=profit(l),sc=l.deal_score||0;
-    const scc=sc>=80?'sc-hi':sc>=60?'sc-mid':'sc-lo';
-    const styl=ST_STYLE[l.status]||'background:rgba(255,255,255,0.08);color:var(--text-2)';
-    const rc=ST_ROW[l.status]||'';
+    const sc=l.deal_score||0,m=mao(l),pr=profit(l),r=roi(l);
+    const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
+    const rowClass=sc>=70?'row-hi':sc>=50?'row-mid':sc>0?'row-lo':'';
+    const st=(l.status||'new lead').toLowerCase();
+    const stBadge=ST_BADGE[st]||'b-analyzing';
+    const strat=l.deal_type||'fix_flip';
+    const stratStyle=STRAT_STYLE[strat]||'';
     const fu=fd(l.next_followup);
     const fuOv=l.next_followup&&new Date(l.next_followup)<new Date();
-    return `<tr data-id="${l.id}" class="${rc}">
-      <td>${i+1}</td>
-      <td>${cv(l.id,'name',l.name,'text')}</td>
-      <td>${cv(l.id,'phone',l.phone,'text')}</td>
-      <td>${cv(l.id,'property_address',l.property_address,'text')}</td>
-      <td>${cv(l.id,'city',l.city,'text')}</td>
-      <td>${cv(l.id,'state',l.state,'text',2)}</td>
-      <td>${sv(l.id,'property_type',l.property_type,TYPES)}</td>
-      <td>${sv(l.id,'condition',l.condition,CONDITIONS)}</td>
-      <td>${cv(l.id,'asking_price',l.asking_price,'number')}</td>
-      <td>${cv(l.id,'arv',l.arv,'number')}</td>
-      <td>${cv(l.id,'repairs',l.repairs,'number')}</td>
-      <td><span class="cv ro muted">${fm(m)}</span></td>
-      <td><span class="cv ro ${pr!==null?(pr>=0?'pp':'pn'):''}">${fm(pr)}</span></td>
-      <td>${sv(l.id,'status',l.status,STATUSES,styl)}</td>
-      <td><span class="cv ro"><span class="sc-pill ${scc}">${sc}</span></span></td>
-      <td>${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
-      <td><span class="cv ro${fuOv?' pn':''}">${fu}</span></td>
-      <td>${sv(l.id,'source',l.source,SOURCES)}</td>
-      <td>${cv(l.id,'notes',l.notes,'text')}</td>
+    return `<tr data-id="${l.id}" class="${rowClass}" onclick="location.href='/deals/?id=${l.id}'" style="cursor:pointer">
+      <td onclick="event.stopPropagation()">${i+1}</td>
+      <td onclick="event.stopPropagation()"><span class="score-badge sm ${scClass}" style="margin:auto;display:flex;align-items:center;justify-content:center">${sc||'—'}</span></td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'property_address',l.property_address,'text')}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'city',l.city,'text')}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'name',l.name,'text')}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'asking_price',l.asking_price,'number')}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'arv',l.arv,'number')}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'repairs',l.repairs,'number')}</td>
+      <td onclick="event.stopPropagation()"><span class="cv ro muted">${fm(m)||'—'}</span></td>
+      <td onclick="event.stopPropagation()"><span class="cv ro" style="color:${pr!==null&&pr>=0?'var(--green)':'var(--red)'}">${fm(pr)||'—'}</span></td>
+      <td onclick="event.stopPropagation()"><span class="cv ro" style="color:${r!==null&&r>=0?'var(--green)':'var(--red)'}">${r!==null?r+'%':'—'}</span></td>
+      <td onclick="event.stopPropagation()">${svc(l.id,'deal_type',l.deal_type,['fix_flip','buy_hold','wholesale'],stratStyle,v=>STRAT_LABEL[v]||v)}</td>
+      <td onclick="event.stopPropagation()">${svc(l.id,'status',l.status,STATUSES,'',null,stBadge)}</td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
+      <td onclick="event.stopPropagation()">${svc(l.id,'property_type',l.property_type,TYPES)}</td>
+      <td onclick="event.stopPropagation()">${svc(l.id,'condition',l.condition,CONDITIONS)}</td>
+      <td onclick="event.stopPropagation()">${svc(l.id,'source',l.source,SOURCES)}</td>
+      <td onclick="event.stopPropagation()"><span class="cv ro ${fuOv?'':'muted'}" style="${fuOv?'color:var(--red)':''}">${fu||'—'}</span></td>
+      <td onclick="event.stopPropagation()">${cv(l.id,'notes',l.notes,'text')}</td>
     </tr>`;
   }).join('');
-
-  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>el.addEventListener('click',()=>{
-    startEdit(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t,el.dataset.ml);
-  }));
-  tb.querySelectorAll('.cs').forEach(el=>el.addEventListener('click',()=>{
-    startSel(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'));
-  }));
+  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();startEdit(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t);}));
+  tb.querySelectorAll('.cs').forEach(el=>el.addEventListener('click',e=>{e.stopPropagation();startSel(el.parentElement,el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'),el.dataset.style||'');}));
 }
 
-function startEdit(td,id,field,cur,type,ml){
+function cv(id,f,val,type){
+  const disp=type==='number'?fm(val):esc(val||'');
+  return `<span class="cv${!val?' muted':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}">${disp||'—'}</span>`;
+}
+
+function svc(id,f,val,opts,style='',labelFn=null,badgeClass=''){
+  let inner;
+  if(badgeClass&&val)inner=`<span class="badge ${badgeClass}"><span class="badge-dot"></span>${val}</span>`;
+  else if(style&&val)inner=`<span class="strat-pill" style="${style}">${labelFn?labelFn(val):val}</span>`;
+  else inner=`<span style="color:${val?'var(--text-1)':'var(--text-3)'}">${val||'—'}</span>`;
+  return `<span class="cs cv" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" data-style="${esc(style)}" style="display:block;min-height:36px;padding:8px 11px;cursor:pointer">${inner}</span>`;
+}
+
+function startEdit(td,id,field,cur,type){
   if(td.querySelector('input,textarea'))return;
   const inp=document.createElement('input');
-  inp.className='ci';
-  inp.type=type==='number'?'number':'text';
-  inp.value=cur||'';
-  if(ml)inp.maxLength=parseInt(ml);
+  inp.className='ci';inp.type=type==='number'?'number':'text';inp.value=cur||'';
   td.innerHTML='';td.appendChild(inp);inp.focus();inp.select();
-  const save=async()=>{await saveF(id,field,inp.value.trim()||null);await loadData();};
+  const save=async()=>{await saveF(id,field,inp.value.trim()||null);await load();};
   inp.addEventListener('blur',save);
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')loadData();});
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')load();});
 }
 
-function startSel(td,id,field,cur,opts){
+function startSel(td,id,field,cur,opts,style){
   if(td.querySelector('select'))return;
-  const sel=document.createElement('select');
-  sel.className='ci';
+  const sel=document.createElement('select');sel.className='ci';
   sel.innerHTML=opts.map(o=>`<option value="${o}"${o===cur?' selected':''}>${o||'(none)'}</option>`).join('');
   td.innerHTML='';td.appendChild(sel);sel.focus();
-  const save=async()=>{await saveF(id,field,sel.value||null);await loadData();};
-  sel.addEventListener('change',save);
-  sel.addEventListener('blur',save);
+  const save=async()=>{await saveF(id,field,sel.value||null);await load();};
+  sel.addEventListener('change',save);sel.addEventListener('blur',save);
 }
 
 async function saveF(id,field,value){
@@ -313,14 +339,32 @@ async function saveF(id,field,value){
     const lead=_all.find(l=>l.id===id);
     if(lead&&['arv','repairs','asking_price'].includes(field)){
       const nl={...lead,[field]:value};
-      const m=mao(nl),pr=profit(nl);
+      const m=mao(nl),pr=profit(nl),r=roi(nl);
       if(m!==null)upd.mao=m;
       if(pr!==null)upd.estimated_profit=pr;
+      if(r!==null)upd.roi=r;
+      // Auto-score
+      const sc=calcScore({...nl,mao:m,estimated_profit:pr,roi:r});
+      upd.deal_score=sc;
     }
     const{error}=await sb.from('acquisitions_leads').update(upd).eq('id',id);
     if(error)throw error;
     setSt('saved');
   }catch(e){setSt('error');toast('error','Save failed',e.message);}
+}
+
+function calcScore(l){
+  let sc=0;
+  const r=Number(l.roi)||0;const pr=Number(l.estimated_profit)||0;
+  const mot=Number(l.motivation_score)||5;
+  if(r>=20)sc+=30;else if(r>=15)sc+=22;else if(r>=10)sc+=14;else if(r>=5)sc+=6;
+  if(pr>=50000)sc+=25;else if(pr>=30000)sc+=18;else if(pr>=15000)sc+=10;else if(pr>=5000)sc+=4;
+  if(mot>=9)sc+=20;else if(mot>=7)sc+=14;else if(mot>=5)sc+=8;else sc+=2;
+  if(l.condition==='Distressed')sc+=10;else if(l.condition==='Fair')sc+=7;else if(l.condition==='Tear-Down')sc+=12;
+  if(l.source==='Pre-Foreclosure'||l.source==='Probate'||l.source==='Tax Default')sc+=15;
+  else if(l.source==='Driving for Dollars'||l.source==='Direct Mail')sc+=10;
+  else sc+=5;
+  return Math.min(100,sc);
 }
 
 function setSt(s){
@@ -334,32 +378,80 @@ async function addRow(){
   try{
     const sb=P714Auth.getClient();
     const user=P714Auth.getUser(),p=P714Auth.getProfile();
-    const{error}=await sb.from('acquisitions_leads').insert({
-      user_id:user.id,assigned_to:p?.full_name||'Unknown',
-      name:'',property_address:'New Property',status:'New Lead',state:'GA',
-    });
-    if(error)throw error;
-    await loadData();
-    document.querySelector('.sheet-wrap').scrollTop=99999;
-    toast('success','Row added','Click any cell to edit');
+    await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',property_address:'New Property',status:'New Lead',state:'GA',deal_type:'fix_flip',deal_score:0});
+    await load();
+    toast('success','Deal added','Click cells to fill in details');
   }catch(e){toast('error','Error',e.message);}
 }
 
-function doExport(){
-  const cols=['name','phone','property_address','city','state','property_type','condition','asking_price','arv','repairs','mao','estimated_profit','status','deal_score','assigned_to','next_followup','source','notes'];
-  const h=['Seller','Phone','Address','City','ST','Type','Condition','Asking','ARV','Repairs','MAO','Est Profit','Status','Score','Agent','Follow-Up','Source','Notes'];
+async function doExport(){
+  const cols=['property_address','city','state','name','asking_price','arv','repairs','mao','estimated_profit','roi','deal_score','deal_type','status','assigned_to','source','condition','notes'];
+  const h=['Address','City','ST','Seller','Asking','ARV','Repairs','MAO','Profit','ROI%','Score','Strategy','Status','Agent','Source','Condition','Notes'];
   const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='acquisitions_p714.csv';a.click();
-  toast('success','Exported',`${_all.length} properties`);
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='deals_p714.csv';a.click();
+  toast('success','Exported',`${_all.length} deals`);
+}
+
+// Modal
+let _curTab='contact';
+function switchTab(t){
+  _curTab=t;
+  ['contact','property','financials'].forEach(tab=>{
+    document.getElementById('panel-'+tab).style.display=tab===t?'':'none';
+    const btn=document.getElementById('tab-'+tab);
+    btn.style.background=tab===t?'var(--blue)':'transparent';
+    btn.style.color=tab===t?'#fff':'var(--text-2)';
+    btn.style.borderColor=tab===t?'var(--blue)':'var(--border)';
+  });
+}
+
+function calcMAO(){
+  const arv=parseFloat(document.getElementById('n-arv').value)||0;
+  const rep=parseFloat(document.getElementById('n-rep').value)||0;
+  const m=arv?Math.floor(arv*.7)-rep:null;
+  document.getElementById('n-mao').textContent=m!==null?'$'+m.toLocaleString('en-US'):'—';
+}
+
+function openAddModal(){
+  ['n-name','n-phone','n-email','n-addr','n-city','n-sqft','n-ask','n-arv','n-rep'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('n-mao').textContent='—';
+  document.getElementById('n-fu').valueAsDate=new Date(Date.now()+3*86400000);
+  switchTab('contact');
+  document.getElementById('add-modal').classList.add('open');
+}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+async function saveDeal(){
+  const addr=document.getElementById('n-addr').value.trim();
+  if(!addr){toast('error','Address required','');return;}
+  try{
+    const sb=P714Auth.getClient();
+    const user=P714Auth.getUser(),p=P714Auth.getProfile();
+    const arv=parseFloat(document.getElementById('n-arv').value)||0;
+    const ask=parseFloat(document.getElementById('n-ask').value)||0;
+    const rep=parseFloat(document.getElementById('n-rep').value)||0;
+    const m=arv?Math.floor(arv*.7)-rep:null;
+    const pr=m&&ask?m-ask:null;
+    const r=pr&&ask?Math.round(pr/ask*100):null;
+    const mot=parseInt(document.getElementById('n-mot').value)||5;
+    const dtype=document.getElementById('n-dtype').value;
+    const tmp={arv,asking_price:ask,repairs:rep,mao:m,estimated_profit:pr,roi:r,motivation_score:mot,condition:document.getElementById('n-cond').value,source:document.getElementById('n-source').value,deal_type:dtype};
+    const sc=calcScore(tmp);
+    const{error}=await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',name:document.getElementById('n-name').value||null,phone:document.getElementById('n-phone').value||null,email:document.getElementById('n-email').value||null,source:tmp.source,property_address:addr,city:document.getElementById('n-city').value||null,state:document.getElementById('n-state').value||'GA',property_type:document.getElementById('n-type').value,condition:tmp.condition,...tmp,deal_score:sc,status:'New Lead',next_followup:document.getElementById('n-fu').value||null});
+    if(error)throw error;
+    closeModal('add-modal');
+    toast('success','Deal saved',`Score: ${sc} — ${sc>=70?'🟢 High confidence':sc>=50?'🟡 Review needed':'🔴 Pass or renegotiate'}`);
+    await load();
+  }catch(e){toast('error','Error',e.message);}
 }
 
 function toast(l,t,m){
   const c=document.getElementById('toast-container');
-  const cols={success:'var(--green)',error:'var(--red)',info:'var(--accent)'};
-  const ic={success:'✓',error:'✕',info:'ℹ'};
+  const cols={success:'var(--green)',error:'var(--red)',info:'var(--teal)'};
+  const ic={success:'✓',error:'✕',info:'✦'};
   const el=document.createElement('div');el.className='toast';
   el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
-  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},4000);
+  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},5000);
 }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 </script>
