@@ -17,11 +17,11 @@
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
     <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
-    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
-    <a href="/leads/" class="nav-item active"><span class="nav-icon">👥</span>Leads / CRM</a>
-    <a href="/deals/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📋</span>Deals<span class="nav-badge">Soon</span></a>
-    <span class="nav-section-label">Analytics</span>
-    <a href="/reports/" class="nav-item" style="opacity:.4;pointer-events:none"><span class="nav-icon">📊</span>Reports<span class="nav-badge">Soon</span></a>
+    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Adquisiciones</a>
+    <span class="nav-section-label">Management</span>
+    <a href="/leads/" class="nav-item active"><span class="nav-icon">👥</span>Leads</a>
+    <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
+    <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
     <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
   </nav>
   <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()" title="Sign out">
@@ -32,35 +32,40 @@
 <main class="app-main">
   <div class="top-bar">
     <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Leads / CRM</span></div>
-    <div class="top-bar-actions"><button class="btn btn-primary btn-sm" onclick="openAdd()">➕ Add Lead</button></div>
+    <div class="top-bar-actions">
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Exportar</button>
+      <button class="btn btn-primary btn-sm" onclick="openAdd()">+ Add Lead</button>
+    </div>
   </div>
   <div class="page-content">
     <div class="page-header">
       <h1 class="page-title">Leads / CRM</h1>
-      <p class="page-subtitle">All your contacts and seller leads in one place</p>
+      <p class="page-subtitle">Todos tus contactos y leads de vendedores</p>
     </div>
-    <div class="toolbar">
-      <input class="search-input" id="q" placeholder="🔍  Search leads..." oninput="applyFilter()" style="width:260px"/>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <input class="search-input" id="q" placeholder="🔍 Buscar leads..." oninput="applyFilter()" style="width:260px"/>
       <select class="search-input" id="fs" onchange="applyFilter()" style="width:150px">
-        <option value="">All Statuses</option>
+        <option value="">Todos los Estatus</option>
+        <option>Nuevo Lead</option><option>Contactado</option><option>Follow-Up</option>
+        <option>Negociación</option><option>Oferta Enviada</option><option>Bajo Contrato</option>
         <option>New Lead</option><option>Contacted</option><option>Follow-Up</option>
-        <option>Negotiation</option><option>Offer Sent</option><option>Under Contract</option><option>Dead</option>
+        <option>Negotiation</option><option>Offer Sent</option><option>Under Contract</option>
+        <option>Dead</option><option>Descartado</option>
       </select>
-      <select class="search-input" id="fa" onchange="applyFilter()" style="width:160px"><option value="">All Agents</option></select>
-      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+      <select class="search-input" id="fa" onchange="applyFilter()" style="width:160px"><option value="">Todos los Agentes</option></select>
+      <span style="margin-left:auto;font-size:11px;color:var(--text-3)" id="lead-sync"></span>
     </div>
     <div class="table-wrap">
-      <div class="table-header">
-        <span class="table-count" id="lead-count">Loading...</span>
-        <span style="font-size:11px;color:var(--text-3)" id="lead-sync"></span>
+      <div class="table-hdr">
+        <span class="table-count" id="lead-count">Cargando...</span>
       </div>
       <div style="overflow-x:auto">
         <table>
           <thead><tr>
-            <th>Contact</th><th>Source</th><th>Property</th>
-            <th>Status</th><th>Score</th><th>Follow-Up</th><th>Agent</th><th>Actions</th>
+            <th>Contacto</th><th>Fuente</th><th>Propiedad</th>
+            <th>Estatus</th><th>Score</th><th>Seguimiento</th><th>Agente</th><th>Acciones</th>
           </tr></thead>
-          <tbody id="tbody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3)">Loading...</td></tr></tbody>
+          <tbody id="tbody"><tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3)">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -68,36 +73,39 @@
 </main>
 </div>
 
-<!-- Add Lead Modal -->
+<!-- Modal Add Lead -->
 <div class="modal-backdrop" id="add-modal">
 <div class="modal">
-  <div class="modal-header"><span class="modal-title">Add New Lead</span><button class="modal-close" onclick="closeModal('add-modal')">×</button></div>
+  <div class="modal-hdr">
+    <span class="modal-title">👤 Agregar Lead</span>
+    <button class="modal-close-btn" onclick="closeModal('add-modal')">×</button>
+  </div>
   <div class="modal-body">
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Name *</label><input class="form-input" id="l-name" placeholder="Seller name"/></div>
-      <div class="form-group"><label class="form-label">Phone</label><input class="form-input" id="l-phone" placeholder="+1 (000) 000-0000"/></div>
+      <div class="form-group"><label class="form-label">Nombre *</label><input class="form-input" id="l-name" placeholder="Nombre del vendedor"/></div>
+      <div class="form-group"><label class="form-label">Teléfono</label><input class="form-input" id="l-phone" placeholder="+1 (404) 000-0000"/></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="l-email" type="email"/></div>
-      <div class="form-group"><label class="form-label">Source</label>
+      <div class="form-group"><label class="form-label">Fuente</label>
         <select class="form-input" id="l-src"><option>Direct Mail</option><option>Driving for Dollars</option><option>Cold Call</option><option>Pre-Foreclosure</option><option>Probate</option><option>Tax Default</option><option>Facebook Ads</option><option>Referral</option><option>Other</option></select>
       </div>
     </div>
-    <div class="form-group"><label class="form-label">Property Address *</label><input class="form-input" id="l-addr" placeholder="123 Main St, Atlanta, GA"/></div>
+    <div class="form-group"><label class="form-label">Dirección de la Propiedad *</label><input class="form-input" id="l-addr" placeholder="123 Main St, Atlanta, GA"/></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Asking Price</label><input class="form-input" id="l-ask" type="number" placeholder="0"/></div>
-      <div class="form-group"><label class="form-label">ARV</label><input class="form-input" id="l-arv" type="number" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">Precio Pedido $</label><input class="form-input" id="l-ask" type="number" placeholder="0"/></div>
+      <div class="form-group"><label class="form-label">ARV $</label><input class="form-input" id="l-arv" type="number" placeholder="0"/></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Deal Type</label>
-        <select class="form-input" id="l-dtype"><option value="wholesale">Wholesale</option><option value="fix_flip">Fix &amp; Flip</option><option value="buy_hold">Buy &amp; Hold</option></select>
+      <div class="form-group"><label class="form-label">Tipo de Deal</label>
+        <select class="form-input" id="l-dtype"><option value="fix_flip">Fix &amp; Flip</option><option value="buy_hold">Buy &amp; Hold</option><option value="wholesale">Wholesale</option></select>
       </div>
-      <div class="form-group"><label class="form-label">Next Follow-Up</label><input class="form-input" id="l-fu" type="date"/></div>
+      <div class="form-group"><label class="form-label">Próximo Seguimiento</label><input class="form-input" id="l-fu" type="date"/></div>
     </div>
-    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input" id="l-notes" rows="3" placeholder="Seller motivation, property condition, next steps..."></textarea></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-input" id="l-notes" rows="3" placeholder="Motivación del vendedor, condición, próximos pasos..."></textarea></div>
     <div style="display:flex;gap:10px;margin-top:8px">
-      <button class="btn btn-primary" style="flex:1" onclick="saveLead()">Save Lead</button>
-      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="saveLead()">Guardar Lead</button>
+      <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancelar</button>
     </div>
   </div>
 </div>
@@ -105,121 +113,147 @@
 
 <div id="toast-container"></div>
 <script>
-let _all = [];
-(async () => {
-  try {
-    const s = await P714Auth.init();
-    if (!s) { window.location.href = '/login/?next=/leads/'; return; }
-    const p = P714Auth.getProfile();
-    document.getElementById('s-av').textContent = (p?.full_name || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    document.getElementById('s-name').textContent = p?.full_name || 'User';
-    document.getElementById('s-role').textContent = p?.role === 'owner' ? 'Owner' : 'Acquisitionist';
+let _all=[];
+(async()=>{
+  try{
+    const s=await P714Auth.init();
+    if(!s){window.location.href='/login/?next=/leads/';return;}
+    const p=P714Auth.getProfile();
+    document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('s-name').textContent=p?.full_name||'User';
+    document.getElementById('s-role').textContent=p?.role==='owner'?'Owner':'Agente';
     await loadLeads();
-  } catch (e) { console.error(e); }
+  }catch(e){console.error(e);}
 })();
 
-async function loadLeads() {
-  try {
-    const { data, error } = await P714Auth.getClient().from('acquisitions_leads').select('*').order('created_at', { ascending: false });
-    if (error) throw error;
-    _all = data || [];
-    const agents = [...new Set(_all.map(l => l.assigned_to).filter(Boolean))];
-    document.getElementById('fa').innerHTML = '<option value="">All Agents</option>' + agents.map(a => `<option>${a}</option>`).join('');
+async function loadLeads(){
+  try{
+    const{data,error}=await P714Auth.getClient().from('acquisitions_leads').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    _all=data||[];
+    const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
+    document.getElementById('fa').innerHTML='<option value="">Todos los Agentes</option>'+agents.map(a=>`<option>${a}</option>`).join('');
     render(_all);
-    document.getElementById('lead-sync').textContent = 'Updated ' + new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-  } catch (e) {
-    document.getElementById('tbody').innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3)">Error: ${e.message}</td></tr>`;
+    document.getElementById('lead-sync').textContent='Actualizado '+new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    document.getElementById('tbody').innerHTML=`<tr><td colspan="8" style="padding:30px;text-align:center;color:var(--red)">Error: ${e.message}</td></tr>`;
   }
 }
 
-const STATUS_CLASS = { 'New Lead': 'badge-new-lead', 'Contacted': 'badge-contacted', 'Follow-Up': 'badge-follow-up', 'Negotiation': 'badge-negotiation', 'Offer Sent': 'badge-offer-sent', 'Under Contract': 'badge-under-contract', 'Dead': 'badge-dead', 'Closed': 'badge-closed' };
+const BADGE_MAP={
+  'new lead':'b-new-lead','nuevo lead':'b-new-lead',
+  'contacted':'b-analyzing','contactado':'b-analyzing',
+  'follow-up':'b-review','follow-up':'b-review',
+  'negotiation':'b-review','negociación':'b-review',
+  'offer sent':'b-offer','oferta enviada':'b-offer',
+  'under contract':'b-under-contract','bajo contrato':'b-under-contract',
+  'closed':'b-closed','cerrado':'b-closed',
+  'dead':'b-pass','descartado':'b-pass','pass':'b-pass'
+};
 
-function render(list) {
-  document.getElementById('lead-count').textContent = `Showing ${list.length} of ${_all.length} leads`;
-  if (!list.length) { document.getElementById('tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-3)">No leads found</td></tr>'; return; }
-  document.getElementById('tbody').innerHTML = list.map(l => {
-    const fu = l.next_followup ? new Date(l.next_followup).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
-    const ov = l.next_followup && new Date(l.next_followup) < new Date();
-    const sc = l.deal_score || 0;
-    const sc_col = sc >= 80 ? 'var(--green)' : sc >= 60 ? 'var(--amber)' : 'var(--text-3)';
-    const init = (l.assigned_to || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
-    const bclass = STATUS_CLASS[l.status] || 'badge-contacted';
-    return `<tr>
-      <td><div style="font-weight:500">${esc(l.name)}</div><div style="font-size:11px;color:var(--text-3)">${l.phone || l.email || 'No contact'}</div></td>
-      <td style="font-size:12px;color:var(--text-2)">${esc(l.source || '—')}</td>
-      <td><div class="addr-main">${esc(l.property_address || '—')}</div><div class="addr-sub">${l.city || ''} ${l.state || ''}</div></td>
-      <td><span class="badge ${bclass}"><span class="badge-dot"></span>${l.status || '—'}</span></td>
-      <td><span style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:${sc_col}">${sc}</span></td>
-      <td><span style="font-size:12px;color:${ov ? 'var(--red)' : 'var(--text-2)'}">${ov ? '⚠ ' : ''}${fu}</span></td>
-      <td><div style="display:flex;align-items:center;gap:6px"><div class="user-avatar sm">${init}</div><span style="font-size:12px">${esc(l.assigned_to || '—')}</span></div></td>
-      <td onclick="event.stopPropagation()"><div class="actions-cell">
-        ${l.phone ? `<a class="action-btn" href="tel:${l.phone}" title="Call">📞</a>` : ''}
-        ${l.phone ? `<a class="action-btn" href="sms:${l.phone}" title="SMS">💬</a>` : ''}
-      </div></td>
+function render(list){
+  document.getElementById('lead-count').textContent=`Mostrando ${list.length} de ${_all.length} leads`;
+  if(!list.length){
+    document.getElementById('tbody').innerHTML='<tr><td colspan="8" style="padding:40px;text-align:center;color:var(--text-3)">No se encontraron leads</td></tr>';
+    return;
+  }
+  document.getElementById('tbody').innerHTML=list.map(l=>{
+    const fu=l.next_followup?new Date(l.next_followup).toLocaleDateString('es-MX',{month:'short',day:'numeric'}):'—';
+    const ov=l.next_followup&&new Date(l.next_followup)<new Date();
+    const sc=l.deal_score||0;
+    const scColor=sc>=70?'var(--green)':sc>=50?'var(--amber)':'var(--text-3)';
+    const init=(l.assigned_to||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const st=(l.status||'nuevo lead').toLowerCase();
+    const bclass=BADGE_MAP[st]||'b-analyzing';
+    const addr=esc(l.property_address||'—');
+    const city=esc(`${l.city||''} ${l.state||''}`.trim());
+    return `<tr style="cursor:pointer" onclick="location.href='/deals/?id=${l.id}'">
+      <td>
+        <div style="font-weight:600;font-size:13px;color:var(--text-1)">${esc(l.name||'—')}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:1px">${l.phone||l.email||'Sin contacto'}</div>
+      </td>
+      <td style="font-size:12px;color:var(--text-2)">${esc(l.source||'—')}</td>
+      <td>
+        <div style="font-weight:500;font-size:13px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${addr}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:1px">${city}</div>
+      </td>
+      <td><span class="badge ${bclass}"><span class="badge-dot"></span>${l.status||'—'}</span></td>
+      <td><span style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:${scColor}">${sc||'—'}</span></td>
+      <td><span style="font-size:12px;color:${ov?'var(--red)':'var(--text-2)'}">${ov?'⚠ ':''}${fu}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="user-avatar sm">${init}</div>
+          <span style="font-size:12px;color:var(--text-2)">${esc(l.assigned_to||'—')}</span>
+        </div>
+      </td>
+      <td onclick="event.stopPropagation()">
+        <div style="display:flex;align-items:center;gap:4px">
+          ${l.phone?`<a style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--text-2);font-size:13px;text-decoration:none;transition:all 120ms" href="tel:${l.phone}" title="Llamar" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">📞</a>`:''}
+          ${l.phone?`<a style="width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--border);color:var(--text-2);font-size:13px;text-decoration:none;transition:all 120ms" href="sms:${l.phone}" title="SMS" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background='transparent'">💬</a>`:''}
+        </div>
+      </td>
     </tr>`;
   }).join('');
 }
 
-function applyFilter() {
-  const q = document.getElementById('q').value.toLowerCase();
-  const st = document.getElementById('fs').value;
-  const ag = document.getElementById('fa').value;
-  render(_all.filter(l => {
-    const txt = `${l.name} ${l.phone || ''} ${l.property_address || ''} ${l.email || ''}`.toLowerCase();
-    return (!q || txt.includes(q)) && (!st || l.status === st) && (!ag || l.assigned_to === ag);
+function applyFilter(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const st=document.getElementById('fs').value;
+  const ag=document.getElementById('fa').value;
+  render(_all.filter(l=>{
+    const txt=`${l.name||''} ${l.phone||''} ${l.property_address||''} ${l.email||''}`.toLowerCase();
+    return(!q||txt.includes(q))&&(!st||l.status===st)&&(!ag||l.assigned_to===ag);
   }));
 }
 
-function openAdd() { document.getElementById('add-modal').classList.add('open'); document.getElementById('l-fu').valueAsDate = new Date(Date.now() + 3 * 86400000); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openAdd(){document.getElementById('add-modal').classList.add('open');document.getElementById('l-fu').valueAsDate=new Date(Date.now()+3*86400000);}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 
-async function saveLead() {
-  const name = document.getElementById('l-name').value.trim();
-  const addr = document.getElementById('l-addr').value.trim();
-  if (!name || !addr) { toast('error', 'Missing fields', 'Name and address required.'); return; }
-  try {
-    const user = P714Auth.getUser();
-    const profile = P714Auth.getProfile();
-    const arv = parseFloat(document.getElementById('l-arv').value) || 0;
-    const asking = parseFloat(document.getElementById('l-ask').value) || 0;
-    const mao = arv * 0.7;
-    const { error } = await P714Auth.getClient().from('acquisitions_leads').insert({
-      user_id: user.id,
-      assigned_to: profile?.full_name || 'Unknown',
-      name,
-      phone: document.getElementById('l-phone').value || null,
-      email: document.getElementById('l-email').value || null,
-      source: document.getElementById('l-src').value,
-      property_address: addr,
-      deal_type: document.getElementById('l-dtype').value,
-      asking_price: asking, arv, mao,
-      estimated_profit: mao - asking > 0 ? mao - asking : null,
-      status: 'New Lead',
-      next_followup: document.getElementById('l-fu').value || null,
+async function saveLead(){
+  const name=document.getElementById('l-name').value.trim();
+  const addr=document.getElementById('l-addr').value.trim();
+  if(!name||!addr){toast('error','Campos faltantes','Nombre y dirección son requeridos.');return;}
+  try{
+    const user=P714Auth.getUser();
+    const profile=P714Auth.getProfile();
+    const arv=parseFloat(document.getElementById('l-arv').value)||0;
+    const asking=parseFloat(document.getElementById('l-ask').value)||0;
+    const mao=arv*0.7;
+    const{error}=await P714Auth.getClient().from('acquisitions_leads').insert({
+      user_id:user.id,assigned_to:profile?.full_name||'Agente',
+      name,phone:document.getElementById('l-phone').value||null,
+      email:document.getElementById('l-email').value||null,
+      source:document.getElementById('l-src').value,
+      property_address:addr,deal_type:document.getElementById('l-dtype').value,
+      asking_price:asking,arv,mao,
+      estimated_profit:mao-asking>0?mao-asking:null,
+      status:'Nuevo Lead',
+      next_followup:document.getElementById('l-fu').value||null,
+      state:'GA'
     });
-    if (error) throw error;
+    if(error)throw error;
     closeModal('add-modal');
-    toast('success', 'Lead added', `${name} added to pipeline`);
+    toast('success','Lead agregado',`${name} agregado al pipeline`);
     await loadLeads();
-  } catch (e) { toast('error', 'Error', e.message); }
+  }catch(e){toast('error','Error',e.message);}
 }
 
-function exportCSV() {
-  const cols = ['name', 'phone', 'email', 'source', 'property_address', 'city', 'state', 'deal_type', 'status', 'deal_score', 'next_followup', 'assigned_to', 'arv', 'asking_price', 'mao', 'estimated_profit'];
-  const rows = [cols.join(','), ..._all.map(l => cols.map(c => `"${(l[c] || '').toString().replace(/"/g, '""')}"`).join(','))];
-  const a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('\n')); a.download = 'leads_p714.csv'; a.click();
-  toast('success', 'Exported', `${_all.length} leads`);
+function exportCSV(){
+  const cols=['name','phone','email','source','property_address','city','state','status','deal_score','next_followup','assigned_to','arv','asking_price','mao','estimated_profit'];
+  const h=['Nombre','Teléfono','Email','Fuente','Dirección','Ciudad','Estado','Estatus','Score','Seguimiento','Agente','ARV','Precio','MAO','Ganancia Est.'];
+  const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\n'));a.download='leads_p714.csv';a.click();
+  toast('success','Exportado',`${_all.length} leads`);
 }
 
-function toast(level, title, msg) {
-  const c = document.getElementById('toast-container');
-  const colors = { success: 'var(--green)', error: 'var(--red)', info: 'var(--accent)' };
-  const icons = { success: '✓', error: '✕', info: 'ℹ' };
-  const t = document.createElement('div'); t.className = 'toast';
-  t.innerHTML = `<span class="toast-icon" style="color:${colors[level]}">${icons[level]}</span><div><div class="toast-title">${title}</div>${msg ? `<div class="toast-msg">${msg}</div>` : ''}</div>`;
-  c.appendChild(t);
-  setTimeout(() => { t.style.animation = 'toastOut 0.3s ease forwards'; setTimeout(() => t.remove(), 300); }, 4000);
+function toast(l,t,m){
+  const c=document.getElementById('toast-container');
+  const col={success:'var(--green)',error:'var(--red)',info:'var(--blue)'};
+  const ic={success:'\u2713',error:'\u2715',info:'\u2139'};
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<span class="toast-icon" style="color:${col[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
+  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},4500);
 }
-function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
 </body></html>

@@ -10,47 +10,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="/js/config.js"></script>
 <script src="/js/auth.js"></script>
-<style>
-/* ─ Sheet table ─ White theme */
-.sheet-wrap{overflow-x:auto;background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);}
-.sheet-table{width:max-content;min-width:100%;border-collapse:collapse;font-size:12.5px;}
-.sheet-table thead tr{background:#F8FAFC;}
-.sheet-table th{padding:9px 13px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#64748B;white-space:nowrap;border-bottom:2px solid #E2E8F0;border-right:1px solid #E2E8F0;text-align:left;position:sticky;top:0;z-index:2;background:#F8FAFC;}
-.sheet-table th:first-child{width:38px;text-align:center;position:sticky;left:0;z-index:3;background:#F8FAFC;border-right:2px solid #E2E8F0;}
-.sheet-table td{border-bottom:1px solid #F1F5F9;border-right:1px solid #F8FAFC;padding:0;vertical-align:middle;}
-.sheet-table td:first-child{position:sticky;left:0;z-index:1;background:#fff;text-align:center;color:#CBD5E1;font-family:var(--font-mono);font-size:10px;width:38px;border-right:2px solid #E2E8F0;padding:0 6px;cursor:default;}
-.sheet-table tbody tr:hover td{background:#F0F7FF;}
-.sheet-table tbody tr:hover td:first-child{background:#E0EFFF;color:#94A3B8;}
-/* Editable cell */
-.cv{display:block;padding:8px 12px;cursor:text;min-height:38px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:22px;color:#0F172A;transition:background 100ms;}
-.cv.muted{color:#94A3B8;}
-.cv.ro{cursor:default;}
-.cv:not(.ro):hover{background:#EFF6FF;}
-.ci{width:100%;background:#fff;border:2px solid #2563EB;border-radius:4px;outline:none;padding:7px 11px;font-size:12.5px;color:#0F172A;font-family:var(--font);min-height:38px;display:block;box-sizing:border-box;}
-select.ci{cursor:pointer;}
-.ci[type=number]{font-family:var(--font-mono);}
-/* Row highlight by score */
-tr.row-hi td:first-child{box-shadow:inset 3px 0 0 #16A34A;}
-tr.row-mid td:first-child{box-shadow:inset 3px 0 0 #D97706;}
-tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
-/* Col group headers */
-.th-group{background:#EFF6FF!important;color:#2563EB!important;border-bottom:2px solid #BFDBFE!important;letter-spacing:0.04em;}
-.th-comp{background:#FFF7ED!important;color:#C2410C!important;border-bottom:2px solid #FED7AA!important;}
-.th-fin{background:#F0FDF4!important;color:#166534!important;border-bottom:2px solid #BBF7D0!important;}
-/* Strat pill */
-.sp-flip{background:#F5F3FF;color:#7C3AED;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
-.sp-rental{background:#EFF6FF;color:#2563EB;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
-.sp-wholesale{background:#FFFBEB;color:#D97706;border-radius:99px;padding:2px 9px;font-size:10px;font-weight:700;display:inline-block;}
-/* Add row */
-.add-row-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;color:#94A3B8;font-size:12px;cursor:pointer;width:100%;background:transparent;border:none;text-align:left;border-top:1px solid #E2E8F0;font-family:var(--font);transition:all 130ms;}
-.add-row-btn:hover{background:#EFF6FF;color:#2563EB;}
-/* Link cell */
-.link-cell{display:flex;align-items:center;gap:5px;padding:8px 12px;min-height:38px;}
-.link-icon{color:#2563EB;font-size:13px;text-decoration:none;flex-shrink:0;}
-.link-icon:hover{color:#1D4ED8;}
-</style>
 </head>
-<body style="background:#F1F5F9">
+<body>
 <div class="app-shell">
 <aside class="sidebar">
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
@@ -68,80 +29,83 @@ tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
     <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
   </div></div>
 </aside>
-<main class="app-main" style="background:#F1F5F9">
-  <div class="top-bar" style="background:#fff">
-    <div class="breadcrumb"><span style="color:#94A3B8">Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Adquisiciones</span></div>
+<main class="app-main">
+  <div class="top-bar">
+    <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Adquisiciones</span></div>
     <div class="top-bar-actions">
-      <span style="font-size:11px;color:#94A3B8;font-family:var(--font-mono)" id="save-st"></span>
+      <span style="font-size:11px;color:var(--text-3);font-family:var(--font-mono)" id="save-st"></span>
       <button class="btn btn-ghost btn-sm" onclick="doExport()">⬇ Exportar</button>
       <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Nueva Propiedad</button>
     </div>
   </div>
   <div class="page-content">
     <div class="page-header">
-      <h1 class="page-title" style="color:#0F172A">Adquisiciones</h1>
-      <p class="page-subtitle" id="sheet-sub">Haz click en cualquier celda para editar</p>
+      <h1 class="page-title">Adquisiciones</h1>
+      <p class="page-subtitle" id="sheet-sub">Haz click en cualquier celda para editar directamente</p>
     </div>
-    <!-- KPIs -->
-    <div class="kpi-row" style="margin-bottom:18px">
-      <div class="kpi-card c-blue" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Total Propiedades</div><div class="kpi-value" id="k1">—</div><div class="kpi-sub">Todas las etapas</div></div>
-      <div class="kpi-card c-teal" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Alta Confianza</div><div class="kpi-value" id="k2">—</div><div class="kpi-sub">Score ≥ 70</div></div>
-      <div class="kpi-card c-green" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Pipeline Estimado</div><div class="kpi-value" id="k3">—</div><div class="kpi-sub">Ganancia potencial</div></div>
-      <div class="kpi-card c-amber" style="background:#fff"><div class="kpi-card-accent"></div><div class="kpi-label">Bajo Contrato</div><div class="kpi-value" id="k4">—</div><div class="kpi-sub">Cierres activos</div></div>
+    <div class="kpi-row" style="margin-bottom:16px">
+      <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total</div><div class="kpi-value" id="k1">0</div><div class="kpi-sub">Propiedades</div></div>
+      <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">Alta Confianza</div><div class="kpi-value" id="k2">0</div><div class="kpi-sub">Score ≥ 70</div></div>
+      <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Pipeline Est.</div><div class="kpi-value" id="k3">—</div><div class="kpi-sub">Ganancia potencial</div></div>
+      <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Bajo Contrato</div><div class="kpi-value" id="k4">0</div><div class="kpi-sub">Cierres activos</div></div>
     </div>
-    <!-- Filters -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <input class="search-input" id="sq" placeholder="🔍 Buscar dirección, ciudad..." oninput="doFilter()" style="width:260px;background:#fff"/>
-      <select class="search-input" id="ss" onchange="doFilter()" style="width:140px;background:#fff">
+      <input class="search-input" id="sq" placeholder="🔍 Buscar dirección, ciudad..." oninput="doFilter()" style="width:260px"/>
+      <select class="search-input" id="ss" onchange="doFilter()" style="width:145px">
         <option value="">Todos los Estatus</option>
         <option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option>
         <option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option>
       </select>
-      <select class="search-input" id="sa" onchange="doFilter()" style="width:140px;background:#fff"><option value="">Todos los Agentes</option></select>
-      <span style="margin-left:auto;font-size:11px;color:#94A3B8" id="rc"></span>
+      <select class="search-input" id="sa" onchange="doFilter()" style="width:145px"><option value="">Todos los Agentes</option></select>
+      <button class="btn btn-ghost btn-sm" onclick="location.href='/deals/'">📋 Ver Deals</button>
+      <span style="margin-left:auto;font-size:11px;color:var(--text-3)" id="rc"></span>
     </div>
-    <!-- Sheet -->
+    <!-- INFO BOX -->
+    <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:8px;padding:10px 16px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12px;color:#1D4ED8">
+      <span style="font-size:16px">✏️</span>
+      <span><strong>Cómo editar:</strong> Haz click en cualquier celda para editarla. Presiona Enter para guardar, Escape para cancelar.</span>
+    </div>
     <div class="sheet-wrap">
       <table class="sheet-table">
         <thead>
-          <!-- Group headers -->
-          <tr>
-            <th class="th-group" style="border-right:none">#</th>
-            <th class="th-group" colspan="5">Información de la Propiedad</th>
-            <th class="th-group" style="border-right:2px solid #BFDBFE">Estatus</th>
-            <th class="th-fin" colspan="4">Financieros</th>
-            <th class="th-group" style="border-right:2px solid #BFDBFE">Dueño</th>
-            <th class="th-group" colspan="2">Detalles</th>
-            <th class="th-group" style="border-right:2px solid #BFDBFE">Agente</th>
-            <th class="th-comp" colspan="6">Comparables</th>
+          <tr class="group-row">
+            <th style="background:#F0F4F8;border-right:2px solid #CBD5E1">#</th>
+            <th colspan="5" class="th-prop">Información de la Propiedad</th>
+            <th class="th-status" style="border-right:2px solid #BBF7D0">Estatus</th>
+            <th colspan="4" class="th-fin">Financieros</th>
+            <th class="th-owner" style="border-right:2px solid #E2E8F0">Dueño</th>
+            <th colspan="2" class="th-owner">Detalles</th>
+            <th class="th-owner" style="border-right:2px solid #E2E8F0">Agente</th>
+            <th colspan="6" class="th-comp">Comparables</th>
           </tr>
-          <!-- Column headers -->
-          <tr>
+          <tr class="col-row">
             <th>#</th>
             <th style="min-width:90px">Fecha</th>
-            <th style="min-width:200px">Dirección</th>
-            <th style="min-width:110px">Ciudad</th>
-            <th style="min-width:70px">Código Postal</th>
+            <th style="min-width:210px">Dirección *</th>
+            <th style="min-width:120px">Ciudad</th>
+            <th style="min-width:80px">Cód. Postal</th>
             <th style="min-width:60px">Link</th>
-            <th style="min-width:130px;border-right:2px solid #E2E8F0">Estatus</th>
-            <th style="min-width:110px">Precio Vendedor</th>
-            <th style="min-width:110px">ARV Estimado</th>
-            <th style="min-width:110px">Costo Reparación</th>
-            <th style="min-width:110px;border-right:2px solid #E2E8F0">Oferta Inicial</th>
-            <th style="min-width:130px;border-right:2px solid #E2E8F0">Dueño (Vendedor)</th>
-            <th style="min-width:60px">Cuartos</th>
-            <th style="min-width:60px">Baños</th>
-            <th style="min-width:130px;border-right:2px solid #E2E8F0">Agente</th>
-            <th style="min-width:200px">Comparable 1</th>
-            <th style="min-width:90px">Distancia 1</th>
-            <th style="min-width:200px">Comparable 2</th>
-            <th style="min-width:90px">Distancia 2</th>
-            <th style="min-width:200px">Comparable 3</th>
-            <th style="min-width:90px">Distancia 3</th>
+            <th style="min-width:130px;border-right:2px solid #CBD5E1">Estatus</th>
+            <th style="min-width:120px">Precio Vendedor</th>
+            <th style="min-width:120px">ARV Estimado</th>
+            <th style="min-width:120px">Costo Reparación</th>
+            <th style="min-width:120px;border-right:2px solid #CBD5E1">Oferta Inicial (MAO)</th>
+            <th style="min-width:140px;border-right:2px solid #CBD5E1">Dueño / Vendedor</th>
+            <th style="min-width:70px">Cuartos</th>
+            <th style="min-width:70px">Baños</th>
+            <th style="min-width:130px;border-right:2px solid #CBD5E1">Agente</th>
+            <th style="min-width:210px">Comparable 1</th>
+            <th style="min-width:100px">Distancia 1</th>
+            <th style="min-width:210px">Comparable 2</th>
+            <th style="min-width:100px">Distancia 2</th>
+            <th style="min-width:210px">Comparable 3</th>
+            <th style="min-width:100px">Distancia 3</th>
           </tr>
         </thead>
         <tbody id="tbody">
-          <tr><td colspan="21" style="padding:50px;text-align:center;color:#94A3B8">Cargando propiedades...</td></tr>
+          <tr><td colspan="21" style="padding:60px;text-align:center;color:#94A3B8;font-size:13px">
+            Cargando propiedades...
+          </td></tr>
         </tbody>
       </table>
       <button class="add-row-btn" onclick="addRow()">＋ Agregar propiedad</button>
@@ -150,35 +114,30 @@ tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
 </main>
 </div>
 
-<!-- Add Property Modal -->
+<!-- Modal Nueva Propiedad -->
 <div class="modal-backdrop" id="add-modal">
-<div class="modal" style="max-width:640px;background:#fff">
-  <div class="modal-hdr" style="border-bottom:1px solid #E2E8F0;padding-bottom:14px;margin-bottom:0">
-    <span class="modal-title" style="color:#0F172A">🏠 Nueva Propiedad</span>
-    <button class="modal-close-btn" onclick="closeModal('add-modal')" style="background:#F1F5F9;border-color:#E2E8F0;color:#64748B">×</button>
+<div class="modal" style="max-width:640px">
+  <div class="modal-hdr">
+    <span class="modal-title">🏠 Nueva Propiedad</span>
+    <button class="modal-close-btn" onclick="closeModal('add-modal')">×</button>
   </div>
   <div class="modal-body">
-    <!-- Tabs -->
-    <div style="display:flex;gap:6px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #E2E8F0">
+    <div style="display:flex;gap:6px;margin-bottom:18px">
       <button class="btn btn-sm" id="tb1" onclick="sw(1)" style="background:#2563EB;color:#fff;border-color:#2563EB">1 • Propiedad</button>
       <button class="btn btn-ghost btn-sm" id="tb2" onclick="sw(2)">2 • Financieros</button>
       <button class="btn btn-ghost btn-sm" id="tb3" onclick="sw(3)">3 • Comparables</button>
     </div>
-    <!-- Panel 1: Propiedad -->
     <div id="p1">
-      <div class="form-group"><label class="form-label">Dirección *</label><input class="form-input" id="m-addr" placeholder="123 Main St"/></div>
+      <div class="form-group"><label class="form-label">Dirección *</label><input class="form-input" id="m-addr" placeholder="123 Main St, Atlanta, GA"/></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Ciudad</label><input class="form-input" id="m-city" placeholder="Atlanta"/></div>
         <div class="form-group"><label class="form-label">Código Postal</label><input class="form-input" id="m-zip" placeholder="30309"/></div>
       </div>
-      <div class="form-group"><label class="form-label">Link (Zillow / MLS / etc.)</label><input class="form-input" id="m-link" placeholder="https://zillow.com/..."/></div>
+      <div class="form-group"><label class="form-label">Link (Zillow / MLS)</label><input class="form-input" id="m-link" placeholder="https://zillow.com/..."/></div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Dueño / Vendedor</label><input class="form-input" id="m-owner" placeholder="Nombre del vendedor"/></div>
         <div class="form-group"><label class="form-label">Estatus</label>
-          <select class="form-input" id="m-status">
-            <option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option>
-            <option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option>
-          </select>
+          <select class="form-input" id="m-status"><option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option><option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option></select>
         </div>
       </div>
       <div class="form-row">
@@ -186,7 +145,6 @@ tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
         <div class="form-group"><label class="form-label">Baños</label><input class="form-input" id="m-baths" type="number" step="0.5" placeholder="2"/></div>
       </div>
     </div>
-    <!-- Panel 2: Financieros -->
     <div id="p2" style="display:none">
       <div class="form-row">
         <div class="form-group"><label class="form-label">Precio Vendedor $</label><input class="form-input" id="m-ask" type="number" placeholder="180000" oninput="calcMao()"/></div>
@@ -195,40 +153,35 @@ tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
       <div class="form-row">
         <div class="form-group"><label class="form-label">Costo Reparación $</label><input class="form-input" id="m-rep" type="number" placeholder="40000" oninput="calcMao()"/></div>
         <div class="form-group"><label class="form-label">Oferta Inicial / MAO (auto)</label>
-          <div style="background:#F0FDF4;border:1.5px solid #BBF7D0;border-radius:var(--radius);padding:9px 12px;font-family:var(--font-mono);font-size:15px;font-weight:800;color:#15803D" id="m-mao-display">—</div>
+          <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:8px;padding:10px 12px;font-family:var(--font-mono);font-size:16px;font-weight:800;color:#15803D" id="m-mao">—</div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group"><label class="form-label">Estrategia</label>
-          <select class="form-input" id="m-dtype">
-            <option value="fix_flip">Fix &amp; Flip</option>
-            <option value="buy_hold">Renta / Hold</option>
-            <option value="wholesale">Wholesale</option>
-          </select>
+          <select class="form-input" id="m-dtype"><option value="fix_flip">Fix &amp; Flip</option><option value="buy_hold">Renta / Hold</option><option value="wholesale">Wholesale</option></select>
         </div>
         <div class="form-group"><label class="form-label">Motivación (1-10)</label><input class="form-input" id="m-mot" type="number" min="1" max="10" placeholder="7"/></div>
       </div>
     </div>
-    <!-- Panel 3: Comparables -->
     <div id="p3" style="display:none">
-      <p style="font-size:12px;color:#64748B;margin-bottom:14px">Ingresa las propiedades comparables vendidas para validar el ARV</p>
-      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 1</div>
-        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c1" placeholder="456 Oak Ave, Atlanta, GA"/></div>
-        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d1" type="number" step="0.1" placeholder="0.3"/></div>
+      <p style="font-size:12px;color:var(--text-2);margin-bottom:16px">Ingresa propiedades comparables vendidas para validar el ARV.</p>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Comparable 1</div>
+        <div class="form-group" style="margin-bottom:8px"><label class="form-label">Dirección</label><input class="form-input" id="m-c1" placeholder="456 Oak Ave, Atlanta, GA"/></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d1" type="number" step="0.1" placeholder="0.3"/></div>
       </div>
-      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 2</div>
-        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c2" placeholder="789 Pine Rd, Atlanta, GA"/></div>
-        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d2" type="number" step="0.1" placeholder="0.5"/></div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Comparable 2</div>
+        <div class="form-group" style="margin-bottom:8px"><label class="form-label">Dirección</label><input class="form-input" id="m-c2" placeholder="789 Pine Rd, Atlanta, GA"/></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d2" type="number" step="0.1" placeholder="0.5"/></div>
       </div>
-      <div style="background:#FFFBEB;border:1px solid #FED7AA;border-radius:var(--radius);padding:12px 14px">
-        <div style="font-size:11px;font-weight:700;color:#C2410C;margin-bottom:8px">COMPARABLE 3</div>
-        <div class="form-group"><label class="form-label">Dirección</label><input class="form-input" id="m-c3" placeholder="321 Elm St, Atlanta, GA"/></div>
-        <div class="form-group"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d3" type="number" step="0.1" placeholder="0.8"/></div>
+      <div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:14px">
+        <div style="font-size:10px;font-weight:700;color:#92400E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Comparable 3</div>
+        <div class="form-group" style="margin-bottom:8px"><label class="form-label">Dirección</label><input class="form-input" id="m-c3" placeholder="321 Elm St, Atlanta, GA"/></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">Distancia (millas)</label><input class="form-input" id="m-d3" type="number" step="0.1" placeholder="0.8"/></div>
       </div>
     </div>
-    <div style="display:flex;gap:8px;margin-top:18px;padding-top:14px;border-top:1px solid #E2E8F0">
+    <div style="display:flex;gap:8px;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
       <button class="btn btn-primary" style="flex:1" onclick="saveNew()">Guardar Propiedad</button>
       <button class="btn btn-ghost" onclick="closeModal('add-modal')">Cancelar</button>
     </div>
@@ -239,7 +192,12 @@ tr.row-lo td:first-child{box-shadow:inset 3px 0 0 #DC2626;}
 <div id="toast-container"></div>
 <script>
 const STATUSES_ES=['Nuevo Lead','Analizando','Oferta Lista','Bajo Contrato','Cerrado','Descartado'];
-const STATUS_BADGE={'nuevo lead':'b-new-lead','analizando':'b-analyzing','oferta lista':'b-offer','bajo contrato':'b-under-contract','cerrado':'b-closed','descartado':'b-pass','new lead':'b-new-lead','analyzing':'b-analyzing','offer ready':'b-offer','under contract':'b-under-contract','closed':'b-closed','pass':'b-pass'};
+const STATUS_BADGE={
+  'nuevo lead':'b-new-lead','analizando':'b-analyzing','oferta lista':'b-offer',
+  'bajo contrato':'b-under-contract','cerrado':'b-closed','descartado':'b-pass',
+  'new lead':'b-new-lead','analyzing':'b-analyzing','offer ready':'b-offer',
+  'under contract':'b-under-contract','closed':'b-closed','pass':'b-pass'
+};
 let _all=[],_uid=null,_isOwner=false;
 
 (async()=>{
@@ -257,22 +215,27 @@ let _all=[],_uid=null,_isOwner=false;
 })();
 
 async function load(){
-  const sb=P714Auth.getClient();
-  const{data}=await sb.from('acquisitions_leads').select('*').order('created_at',{ascending:false});
-  _all=data||[];
-  const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
-  const af=document.getElementById('sa');const cur=af.value;
-  af.innerHTML='<option value="">Todos los Agentes</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
-  updateKPIs();doFilter();
+  try{
+    const sb=P714Auth.getClient();
+    const{data,error}=await sb.from('acquisitions_leads').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    _all=data||[];
+    const agents=[...new Set(_all.map(l=>l.assigned_to).filter(Boolean))];
+    const af=document.getElementById('sa');const cur=af.value;
+    af.innerHTML='<option value="">Todos los Agentes</option>'+agents.map(a=>`<option${a===cur?' selected':''}>${a}</option>`).join('');
+    updateKPIs();doFilter();
+  }catch(e){
+    document.getElementById('tbody').innerHTML=`<tr><td colspan="21" style="padding:40px;text-align:center;color:#DC2626">Error al cargar: ${e.message}</td></tr>`;
+  }
 }
 
 function updateKPIs(){
   document.getElementById('k1').textContent=_all.length;
   document.getElementById('k2').textContent=_all.filter(l=>(l.deal_score||0)>=70).length;
   const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
-  document.getElementById('k3').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
+  document.getElementById('k3').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':p?'$'+Math.round(p):'\u2014';
   document.getElementById('k4').textContent=_all.filter(l=>(l.status||'').toLowerCase().includes('contrato')||(l.status||'').toLowerCase().includes('contract')).length;
-  document.getElementById('sheet-sub').textContent=`${_all.length} propiedades — haz click en cualquier celda para editar`;
+  document.getElementById('sheet-sub').textContent=`${_all.length} propiedades \u2014 haz click en cualquier celda para editar \u2022 ${_all.filter(l=>(l.deal_score||0)>=70).length} alta confianza`;
 }
 
 function doFilter(){
@@ -280,7 +243,7 @@ function doFilter(){
   const ss=document.getElementById('ss').value;
   const sa=document.getElementById('sa').value;
   const list=_all.filter(l=>{
-    const txt=`${l.property_address||''} ${l.city||''} ${l.zip||''}`.toLowerCase();
+    const txt=`${l.property_address||''} ${l.city||''} ${l.zip||''} ${l.name||''}`.toLowerCase();
     return(!q||txt.includes(q))&&(!ss||l.status===ss)&&(!sa||l.assigned_to===sa);
   });
   render(list);
@@ -290,12 +253,12 @@ function doFilter(){
 function maoCalc(l){const a=Number(l.arv)||0,r=Number(l.repairs)||0;return a?Math.floor(a*.7)-r:null;}
 function profitCalc(l){const m=maoCalc(l),ask=Number(l.asking_price)||0;return m!==null&&ask?m-ask:null;}
 function fm(n){if(n===null||n===undefined||n==='')return '';const v=Number(n);return isNaN(v)?'':'$'+v.toLocaleString('en-US');}
-function fd(d){return d?new Date(d).toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'}):''}
+function fd(d){if(!d)return '';try{return new Date(d).toLocaleDateString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric'});}catch{return d;}}
 
 function render(list){
   const tb=document.getElementById('tbody');
   if(!list.length){
-    tb.innerHTML='<tr><td colspan="21" style="padding:50px;text-align:center;color:#94A3B8">No hay propiedades. Haz click en “+ Agregar propiedad” para comenzar.</td></tr>';
+    tb.innerHTML='<tr><td colspan="21" style="padding:60px;text-align:center;color:#94A3B8;font-size:13px">No hay propiedades. Haz click en "+ Agregar propiedad" para comenzar.</td></tr>';
     return;
   }
   tb.innerHTML=list.map((l,i)=>{
@@ -307,116 +270,196 @@ function render(list){
     const mao=maoCalc(l);
     const pr=profitCalc(l);
     const link=l.listing_url;
-    const fecha=fd(l.created_at);
     return `<tr class="${rowClass}">
-      <td>${i+1}</td>
-      <td><span class="cv ro muted">${fecha}</span></td>
-      <td>${cv(l.id,'property_address',l.property_address,'text')}</td>
-      <td>${cv(l.id,'city',l.city,'text')}</td>
-      <td>${cv(l.id,'zip',l.zip,'text')}</td>
-      <td>
-        <div class="link-cell">
-          ${link?`<a class="link-icon" href="${esc(link)}" target="_blank" title="Abrir link">🔗</a>`:'<span style="color:#CBD5E1;font-size:12px">—</span>'}
-          <span class="cv" data-id="${l.id}" data-f="listing_url" data-v="${esc(link||'')}" data-t="text" style="flex:1;padding:0;min-height:auto;font-size:11px;color:#2563EB;overflow:hidden;text-overflow:ellipsis;max-width:80px;white-space:nowrap;cursor:text">${link?'enlace':''}</span>
-        </div>
+      <td style="color:#94A3B8;font-size:11px;font-family:var(--font-mono);padding:0 8px">${i+1}</td>
+      <td><span class="cv ro muted" style="font-size:11px">${fd(l.created_at)}</span></td>
+      <td>${cel(l.id,'property_address',l.property_address,'text','Dirección...')}</td>
+      <td>${cel(l.id,'city',l.city,'text','Ciudad...')}</td>
+      <td>${cel(l.id,'zip',l.zip,'text','00000')}</td>
+      <td style="padding:0 8px">
+        ${link?`<a href="${esc(link)}" target="_blank" style="color:#2563EB;font-size:16px;text-decoration:none" title="Abrir link">🔗</a>`:'<span style="color:#E2E8F0;font-size:12px;display:block;padding:8px 0">—</span>'}
+        <span style="display:none" class="cv" data-id="${l.id}" data-f="listing_url" data-v="${esc(link||'')}" data-t="text"></span>
       </td>
-      <td style="border-right:2px solid #E2E8F0">${svc(l.id,'status',l.status,STATUSES_ES,'',null,stBadge)}</td>
-      <td>${cv(l.id,'asking_price',l.asking_price,'number')}</td>
-      <td>${cv(l.id,'arv',l.arv,'number')}</td>
-      <td>${cv(l.id,'repairs',l.repairs,'number')}</td>
-      <td style="border-right:2px solid #E2E8F0"><span class="cv ro" style="color:${pr!==null&&pr>=0?'#16A34A':'#DC2626'};font-weight:700">${fm(mao)||'<span style="color:#CBD5E1">—</span>'}</span></td>
-      <td style="border-right:2px solid #E2E8F0">${cv(l.id,'owner_name',l.owner_name||l.name,'text')}</td>
-      <td>${cv(l.id,'beds',l.beds,'number')}</td>
-      <td>${cv(l.id,'baths',l.baths,'number')}</td>
-      <td style="border-right:2px solid #E2E8F0">${cv(l.id,'assigned_to',l.assigned_to,'text')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp1_address',l.comp1_address,'text')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp1_distance',l.comp1_distance,'number')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp2_address',l.comp2_address,'text')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp2_distance',l.comp2_distance,'number')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp3_address',l.comp3_address,'text')}</td>
-      <td style="background:#FFFBEB">${cv(l.id,'comp3_distance',l.comp3_distance,'number')}</td>
+      <td style="border-right:2px solid #CBD5E1">${sel(l.id,'status',l.status,STATUSES_ES,stBadge)}</td>
+      <td>${cel(l.id,'asking_price',l.asking_price,'number','$0')}</td>
+      <td>${cel(l.id,'arv',l.arv,'number','$0')}</td>
+      <td>${cel(l.id,'repairs',l.repairs,'number','$0')}</td>
+      <td style="border-right:2px solid #CBD5E1">
+        <span class="cv ro" style="color:${pr!==null&&pr>=0?'#16A34A':'#DC2626'};font-weight:700;padding:8px 12px;display:block">
+          ${fm(mao)||'<span style="color:#CBD5E1">—</span>'}
+        </span>
+      </td>
+      <td style="border-right:2px solid #CBD5E1">${cel(l.id,'owner_name',l.owner_name||l.name,'text','Nombre...')}</td>
+      <td>${cel(l.id,'beds',l.beds,'number','0')}</td>
+      <td>${cel(l.id,'baths',l.baths,'number','0')}</td>
+      <td style="border-right:2px solid #CBD5E1">${cel(l.id,'assigned_to',l.assigned_to,'text','Agente...')}</td>
+      <td class="comp-cell">${cel(l.id,'comp1_address',l.comp1_address,'text','Dirección comp...')}</td>
+      <td class="comp-cell">${cel(l.id,'comp1_distance',l.comp1_distance,'number','0.0 mi')}</td>
+      <td class="comp-cell">${cel(l.id,'comp2_address',l.comp2_address,'text','Dirección comp...')}</td>
+      <td class="comp-cell">${cel(l.id,'comp2_distance',l.comp2_distance,'number','0.0 mi')}</td>
+      <td class="comp-cell">${cel(l.id,'comp3_address',l.comp3_address,'text','Dirección comp...')}</td>
+      <td class="comp-cell">${cel(l.id,'comp3_distance',l.comp3_distance,'number','0.0 mi')}</td>
     </tr>`;
   }).join('');
-  // Attach events
-  tb.querySelectorAll('.cv:not(.ro)').forEach(el=>{
-    el.addEventListener('click',e=>{
+  // Attach click listeners ONLY to editable cv spans
+  tb.querySelectorAll('span.cv[data-f]:not(.ro)').forEach(span=>{
+    span.style.cursor='text';
+    span.addEventListener('click',function(e){
       e.stopPropagation();
-      startEdit(el.closest('td'),el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.t);
+      e.preventDefault();
+      const td=this.parentElement;
+      if(!td||td.querySelector('input,select,textarea'))return;
+      startEdit(td,this.dataset.id,this.dataset.f,this.dataset.v,this.dataset.t);
     });
   });
-  tb.querySelectorAll('.cs').forEach(el=>{
-    el.addEventListener('click',e=>{
+  // Select dropdowns
+  tb.querySelectorAll('span.sel-cell[data-f]').forEach(span=>{
+    span.addEventListener('click',function(e){
       e.stopPropagation();
-      startSel(el.closest('td'),el.dataset.id,el.dataset.f,el.dataset.v,el.dataset.opts.split('||'));
+      const td=this.parentElement;
+      if(!td||td.querySelector('select'))return;
+      startSel(td,this.dataset.id,this.dataset.f,this.dataset.v,STATUSES_ES);
+    });
+  });
+  // Link cells
+  tb.querySelectorAll('span.cv[data-f="listing_url"]').forEach(span=>{
+    span.previousElementSibling && span.previousElementSibling.addEventListener&&
+    span.parentElement.addEventListener('click',function(e){
+      if(e.target.tagName==='A')return;
+      const s=this.querySelector('span.cv[data-f="listing_url"]');
+      if(s&&!this.querySelector('input'))startEdit(this,s.dataset.id,s.dataset.f,s.dataset.v,s.dataset.t);
     });
   });
 }
 
-function cv(id,f,val,type){
-  const disp=type==='number'?fm(val):esc(val||'');
-  return `<span class="cv${!val?' muted':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}">${disp||'<span style="color:#E2E8F0">—</span>'}</span>`;
+// Create editable cell
+function cel(id,f,val,type,placeholder){
+  const isEmpty=!val&&val!==0;
+  let disp;
+  if(type==='number')disp=val?fm(val):'';
+  else disp=esc(val||'');
+  return `<span class="cv${isEmpty?' muted':''}" data-id="${id}" data-f="${f}" data-v="${esc(String(val||''))}" data-t="${type}" title="Click para editar">${disp||`<span style="color:#CBD5E1;font-size:11px">${placeholder||'...'}</span>`}</span>`;
 }
 
-function svc(id,f,val,opts,style,labelFn,badgeClass){
-  let inner;
-  if(badgeClass&&val)inner=`<span class="badge ${badgeClass}"><span class="badge-dot"></span>${val}</span>`;
-  else inner=`<span style="color:${val?'#0F172A':'#CBD5E1'}">${val||'—'}</span>`;
-  return `<span class="cs cv" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" data-opts="${opts.join('||')}" style="display:block;min-height:38px;padding:8px 12px;cursor:pointer">${inner}</span>`;
+// Create select cell
+function sel(id,f,val,opts,badgeClass){
+  const inner=val?`<span class="badge ${badgeClass}"><span class="badge-dot"></span>${val}</span>`:`<span style="color:#CBD5E1">—</span>`;
+  return `<span class="sel-cell" data-id="${id}" data-f="${f}" data-v="${esc(val||'')}" style="display:block;padding:8px 12px;min-height:38px;cursor:pointer" title="Click para cambiar estatus">${inner}</span>`;
 }
 
 function startEdit(td,id,field,cur,type){
-  if(!td||td.querySelector('input,select'))return;
+  if(!td)return;
+  // Clear previous editors
+  if(td.querySelector('input,select'))return;
   const inp=document.createElement('input');
-  inp.className='ci';inp.type=type==='number'?'number':'text';inp.value=cur||'';
-  td.innerHTML='';td.appendChild(inp);inp.focus();inp.select();
-  const save=async()=>{await saveF(id,field,inp.value.trim()||null);await load();};
+  inp.style.cssText='width:100%;background:#fff;border:2px solid #2563EB;outline:none;padding:7px 11px;font-size:12.5px;color:#0F172A;font-family:Inter,sans-serif;min-height:38px;display:block;box-sizing:border-box;';
+  inp.type=type==='number'?'number':'text';
+  // Show raw number value, not formatted
+  if(type==='number'&&cur)inp.value=cur;
+  else inp.value=cur||'';
+  if(type==='number')inp.style.fontFamily='DM Mono,monospace';
+  const origContent=td.innerHTML;
+  td.innerHTML='';
+  td.appendChild(inp);
+  inp.focus();
+  inp.select();
+  let saved=false;
+  const save=async()=>{
+    if(saved)return;
+    saved=true;
+    const newVal=inp.value.trim()||null;
+    await saveField(id,field,newVal);
+    await load();
+  };
+  const cancel=()=>{
+    if(saved)return;
+    saved=true;
+    td.innerHTML=origContent;
+    // Re-attach listeners for this cell
+    td.querySelectorAll('span.cv[data-f]:not(.ro)').forEach(s=>{
+      s.addEventListener('click',function(e){
+        e.stopPropagation();
+        const td2=this.parentElement;
+        if(!td2||td2.querySelector('input'))return;
+        startEdit(td2,this.dataset.id,this.dataset.f,this.dataset.v,this.dataset.t);
+      });
+    });
+  };
   inp.addEventListener('blur',save);
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur();}if(e.key==='Escape')load();});
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){e.preventDefault();inp.blur();}
+    if(e.key==='Escape'){e.preventDefault();cancel();}
+  });
 }
 
 function startSel(td,id,field,cur,opts){
   if(!td||td.querySelector('select'))return;
-  const sel=document.createElement('select');sel.className='ci';
-  sel.innerHTML=opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${o||'(ninguno)'}</option>`).join('');
-  td.innerHTML='';td.appendChild(sel);sel.focus();
-  const save=async()=>{await saveF(id,field,sel.value||null);await load();};
-  sel.addEventListener('change',save);sel.addEventListener('blur',save);
+  const origContent=td.innerHTML;
+  const sel=document.createElement('select');
+  sel.style.cssText='width:100%;background:#fff;border:2px solid #2563EB;outline:none;padding:7px 11px;font-size:12px;color:#0F172A;font-family:Inter,sans-serif;min-height:38px;display:block;box-sizing:border-box;cursor:pointer;';
+  sel.innerHTML=opts.map(o=>`<option value="${esc(o)}"${o===cur?' selected':''}>${o}</option>`).join('');
+  td.innerHTML='';
+  td.appendChild(sel);
+  sel.focus();
+  let saved=false;
+  const save=async()=>{
+    if(saved)return;
+    saved=true;
+    await saveField(id,field,sel.value||null);
+    await load();
+  };
+  sel.addEventListener('change',save);
+  sel.addEventListener('blur',()=>setTimeout(save,150));
+  sel.addEventListener('keydown',e=>{if(e.key==='Escape'){saved=true;td.innerHTML=origContent;}});
 }
 
-async function saveF(id,field,value){
+async function saveField(id,field,value){
   setSt('saving');
   try{
     const sb=P714Auth.getClient();
-    const upd={[field]:field==='beds'||field==='comp1_distance'||field==='comp2_distance'||field==='comp3_distance'?(value?Number(value):null):value,updated_at:new Date().toISOString()};
-    const lead=_all.find(l=>l.id===id);
-    if(lead&&['arv','repairs','asking_price'].includes(field)){
-      const nl={...lead,[field]:value};
-      const m=maoCalc(nl),pr=profitCalc(nl);
-      if(m!==null){upd.mao=m;upd.initial_offer=m;}
-      if(pr!==null)upd.estimated_profit=pr;
-      if(pr!==null&&Number(nl.asking_price))upd.roi=Math.round(pr/Number(nl.asking_price)*100);
+    const numFields=['beds','baths','comp1_distance','comp2_distance','comp3_distance','asking_price','arv','repairs'];
+    const upd={[field]:numFields.includes(field)?(value?Number(value):null):value,updated_at:new Date().toISOString()};
+    // Auto-calc MAO and profit when financial fields change
+    if(['arv','repairs','asking_price'].includes(field)){
+      const lead=_all.find(l=>l.id===id);
+      if(lead){
+        const nl={...lead,[field]:value};
+        const a=Number(nl.arv)||0,r=Number(nl.repairs)||0,ask=Number(nl.asking_price)||0;
+        const mao=a?Math.floor(a*.7)-r:null;
+        const pr=mao&&ask?mao-ask:null;
+        if(mao!==null){upd.mao=mao;upd.initial_offer=mao;}
+        if(pr!==null){upd.estimated_profit=pr;upd.roi=ask?Math.round(pr/ask*100):null;}
+      }
     }
     const{error}=await sb.from('acquisitions_leads').update(upd).eq('id',id);
     if(error)throw error;
     setSt('saved');
-  }catch(e){setSt('error');toast('error','Error al guardar',e.message);}
+  }catch(e){
+    setSt('error');
+    toast('error','Error al guardar',e.message);
+  }
 }
 
 function setSt(s){
   const el=document.getElementById('save-st');
-  if(s==='saving')el.textContent='⏳ Guardando...';
-  else if(s==='saved'){el.textContent='✓ Guardado';setTimeout(()=>el.textContent='',2000);}
-  else{el.textContent='✕ Error';setTimeout(()=>el.textContent='',3000);}
+  const styles={saving:'⏳ Guardando...',saved:'✓ Guardado',error:'✕ Error'};
+  el.textContent=styles[s]||'';
+  el.style.color=s==='saved'?'#16A34A':s==='error'?'#DC2626':'#94A3B8';
+  if(s!=='saving')setTimeout(()=>el.textContent='',2500);
 }
 
 async function addRow(){
   try{
     const sb=P714Auth.getClient();
     const user=P714Auth.getUser(),p=P714Auth.getProfile();
-    await sb.from('acquisitions_leads').insert({user_id:user.id,assigned_to:p?.full_name||'Unknown',property_address:'Nueva Propiedad',status:'Nuevo Lead',state:'GA',deal_type:'fix_flip',deal_score:0});
+    const{error}=await sb.from('acquisitions_leads').insert({
+      user_id:user.id,assigned_to:p?.full_name||'Agente',
+      property_address:'Nueva Propiedad',status:'Nuevo Lead',state:'GA',deal_type:'fix_flip',deal_score:0
+    });
+    if(error)throw error;
     await load();
-    document.querySelector('.sheet-wrap').scrollTop=99999;
-    toast('success','Propiedad agregada','Haz click en las celdas para completar la info');
+    setTimeout(()=>document.querySelector('.sheet-wrap').scrollTop=99999,100);
+    toast('success','Fila agregada','✏️ Haz click en cualquier celda para editar');
   }catch(e){toast('error','Error',e.message);}
 }
 
@@ -424,7 +467,7 @@ async function doExport(){
   const cols=['created_at','city','property_address','zip','listing_url','status','asking_price','arv','repairs','initial_offer','owner_name','beds','baths','assigned_to','comp1_address','comp1_distance','comp2_address','comp2_distance','comp3_address','comp3_distance'];
   const h=['Fecha','Ciudad','Dirección','Código Postal','Link','Estatus','Precio Vendedor','ARV Estimado','Costo Reparación','Oferta Inicial','Dueño','Cuartos','Baños','Agente','Comparable 1','Distancia 1','Comparable 2','Distancia 2','Comparable 3','Distancia 3'];
   const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(rows.join('\n'));a.download='adquisiciones_p714.csv';a.click();
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\n'));a.download='adquisiciones_p714.csv';a.click();
   toast('success','Exportado',`${_all.length} propiedades`);
 }
 
@@ -432,23 +475,21 @@ async function doExport(){
 function sw(n){
   [1,2,3].forEach(i=>{
     document.getElementById('p'+i).style.display=i===n?'':'none';
-    const btn=document.getElementById('tb'+i);
-    btn.style.background=i===n?'#2563EB':'transparent';
-    btn.style.color=i===n?'#fff':'#64748B';
-    btn.style.borderColor=i===n?'#2563EB':'#E2E8F0';
+    const b=document.getElementById('tb'+i);
+    b.style.background=i===n?'#2563EB':'transparent';
+    b.style.color=i===n?'#fff':'#64748B';
+    b.style.borderColor=i===n?'#2563EB':'var(--border)';
   });
 }
-
 function calcMao(){
   const a=parseFloat(document.getElementById('m-arv').value)||0;
   const r=parseFloat(document.getElementById('m-rep').value)||0;
   const m=a?Math.floor(a*.7)-r:null;
-  document.getElementById('m-mao-display').textContent=m!==null?'$'+m.toLocaleString('en-US'):'—';
+  document.getElementById('m-mao').textContent=m!==null?'$'+m.toLocaleString('en-US'):'\u2014';
 }
-
 function openAddModal(){
   ['m-addr','m-city','m-zip','m-link','m-owner','m-ask','m-arv','m-rep','m-c1','m-d1','m-c2','m-d2','m-c3','m-d3','m-beds','m-baths'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('m-mao-display').textContent='—';
+  document.getElementById('m-mao').textContent='\u2014';
   sw(1);
   document.getElementById('add-modal').classList.add('open');
 }
@@ -467,19 +508,19 @@ async function saveNew(){
     const pr=mao&&ask?mao-ask:null;
     const r=pr&&ask?Math.round(pr/ask*100):null;
     const{error}=await sb.from('acquisitions_leads').insert({
-      user_id:user.id,assigned_to:p?.full_name||'Unknown',
+      user_id:user.id,assigned_to:p?.full_name||'Agente',
       property_address:addr,
       city:document.getElementById('m-city').value||null,
       zip:document.getElementById('m-zip').value||null,
       listing_url:document.getElementById('m-link').value||null,
       owner_name:document.getElementById('m-owner').value||null,
       name:document.getElementById('m-owner').value||null,
-      status:document.getElementById('m-status').value||'Nuevo Lead',
-      asking_price:ask||null,arv:arv||null,repairs:rep||null,mao,initial_offer:mao,
-      estimated_profit:pr,roi:r,
+      status:document.getElementById('m-status').value,
+      asking_price:ask||null,arv:arv||null,repairs:rep||null,
+      mao,initial_offer:mao,estimated_profit:pr,roi:r,
       beds:parseInt(document.getElementById('m-beds').value)||null,
       baths:parseFloat(document.getElementById('m-baths').value)||null,
-      deal_type:document.getElementById('m-dtype').value||'fix_flip',
+      deal_type:document.getElementById('m-dtype').value,
       motivation_score:parseInt(document.getElementById('m-mot').value)||5,
       comp1_address:document.getElementById('m-c1').value||null,
       comp1_distance:parseFloat(document.getElementById('m-d1').value)||null,
@@ -491,17 +532,17 @@ async function saveNew(){
     });
     if(error)throw error;
     closeModal('add-modal');
-    toast('success','Propiedad guardada','Los datos se han registrado correctamente');
+    toast('success','\u2713 Propiedad guardada','Los datos se han registrado en Supabase');
     await load();
   }catch(e){toast('error','Error',e.message);}
 }
 
 function toast(l,t,m){
   const c=document.getElementById('toast-container');
-  const cols={success:'#16A34A',error:'#DC2626',info:'#2563EB'};
-  const ic={success:'✓',error:'✕',info:'ℹ'};
-  const el=document.createElement('div');el.className='toast';el.style.background='#fff';
-  el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title" style="color:#0F172A">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
+  const col={success:'#16A34A',error:'#DC2626',info:'#2563EB'};
+  const ic={success:'\u2713',error:'\u2715',info:'\u2139'};
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<span class="toast-icon" style="color:${col[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
   c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},5000);
 }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
