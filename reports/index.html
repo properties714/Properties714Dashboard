@@ -6,42 +6,31 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/css/app.css"/>
+<link rel="stylesheet" href="/css/app.css?v=7"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
-<script src="/js/config.js"></script>
-<script src="/js/auth.js"></script>
+<script src="/js/config.js?v=7"></script>
+<script src="/js/auth.js?v=7"></script>
 <style>
-.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
+.rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;}
 @media(max-width:900px){.rep-grid{grid-template-columns:1fr;}}
 .funnel-row{display:flex;align-items:center;gap:10px;padding:9px 18px;border-bottom:1px solid var(--border);}
 .funnel-row:last-child{border-bottom:none;}
-.funnel-label{font-size:12px;color:var(--text-2);width:120px;flex-shrink:0;}
-.funnel-count{font-family:var(--font-mono);font-size:13px;font-weight:700;width:30px;color:var(--text-1);}
-.bar-wrap{background:var(--bg);border-radius:99px;height:7px;flex:1;overflow:hidden;border:1px solid var(--border);}
-.bar-fill{height:100%;border-radius:99px;transition:width 0.6s ease;}
-.agent-row{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);}
+.bar-wrap{background:var(--bg2);border-radius:99px;height:7px;flex:1;overflow:hidden;border:1px solid var(--border);}
+.bar-fill{height:100%;border-radius:99px;transition:width 0.6s;}
+.agent-row{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--border);}
 .agent-row:last-child{border-bottom:none;}
-.agent-stat{text-align:center;}
-.agent-stat-val{font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--text-1);display:block;}
-.agent-stat-lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;}
-.period-btn{padding:5px 12px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-2);transition:all 130ms;font-family:var(--font);}
+.period-btn{padding:5px 13px;border-radius:99px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-2);transition:all 130ms;font-family:var(--font);}
 .period-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);}
-.stat-row{display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;}
-.stat-row:last-child{border-bottom:none;}
-.stat-label{color:var(--text-2);}
-.stat-val{font-family:var(--font-mono);font-weight:700;color:var(--text-1);}
-.stat-val.green{color:var(--green);}
-.stat-val.amber{color:var(--amber);}
 </style>
 </head>
-<body>
+<body style="background:#F8FAFC">
 <div class="app-shell">
 <aside class="sidebar">
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
     <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
-    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
+    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Adquisiciones</a>
     <span class="nav-section-label">Management</span>
     <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
     <a href="/deals/" class="nav-item"><span class="nav-icon">📋</span>Deals</a>
@@ -53,64 +42,44 @@
     <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
   </div></div>
 </aside>
-<main class="app-main">
+<main class="app-main" style="background:#F8FAFC">
   <div class="top-bar">
     <div class="breadcrumb"><span>Home</span><span class="breadcrumb-sep">/</span><span class="breadcrumb-current">Reports</span></div>
     <div class="top-bar-actions">
-      <button class="period-btn active" onclick="setPeriod('all',this)">All Time</button>
-      <button class="period-btn" onclick="setPeriod('month',this)">This Month</button>
-      <button class="period-btn" onclick="setPeriod('week',this)">This Week</button>
-      <button class="btn btn-ghost btn-sm" onclick="exportReport()">⬇ Export</button>
+      <button class="period-btn active" onclick="setPeriod('all',this)">Todo</button>
+      <button class="period-btn" onclick="setPeriod('month',this)">Este Mes</button>
+      <button class="period-btn" onclick="setPeriod('week',this)">Esta Semana</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportReport()">⬇ Exportar</button>
     </div>
   </div>
   <div class="page-content">
-    <div class="page-header">
-      <h1 class="page-title">Reports</h1>
-      <p class="page-subtitle">Pipeline analytics and team performance</p>
-    </div>
+    <div class="page-header"><h1 class="page-title">Reports</h1><p class="page-subtitle">Análisis del pipeline y performance del equipo</p></div>
     <div class="kpi-row" style="margin-bottom:20px">
-      <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Deals Analyzed</div><div class="kpi-value" id="r1">—</div><div class="kpi-sub" id="r1s">All time</div></div>
-      <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Total Pipeline Profit</div><div class="kpi-value" id="r2">—</div><div class="kpi-sub">Estimated</div></div>
-      <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">High Confidence</div><div class="kpi-value" id="r3">—</div><div class="kpi-sub">Score ≥ 70</div></div>
-      <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Avg Deal Score</div><div class="kpi-value" id="r4">—</div><div class="kpi-sub">Portfolio quality</div></div>
+      <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Analizados</div><div class="kpi-value" id="r1">—</div><div class="kpi-sub" id="r1s">Todo el tiempo</div></div>
+      <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Pipeline Total</div><div class="kpi-value" id="r2">—</div><div class="kpi-sub">Ganancia estimada</div></div>
+      <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">Alta Confianza</div><div class="kpi-value" id="r3">—</div><div class="kpi-sub">Score ≥ 70</div></div>
+      <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Score Promedio</div><div class="kpi-value" id="r4">—</div><div class="kpi-sub">Calidad del portfolio</div></div>
     </div>
-
-    <!-- Agent Performance (full width) -->
     <div class="card" style="margin-bottom:18px">
-      <div class="card-hdr"><span class="card-title">👥 Agent Performance</span><span style="font-size:11px;color:var(--text-3)" id="agent-period-label">All time</span></div>
-      <div id="agents-list"><div style="padding:30px;text-align:center;color:var(--text-3)">Loading...</div></div>
+      <div class="card-hdr"><span class="card-title">👥 Performance por Agente</span><span style="font-size:11px;color:var(--text-3)" id="ap-lbl">Todo el tiempo</span></div>
+      <div id="agents-list"><div style="padding:30px;text-align:center;color:var(--text-3)">Cargando...</div></div>
     </div>
-
     <div class="rep-grid">
-      <!-- Pipeline Funnel -->
       <div class="card">
-        <div class="card-hdr"><span class="card-title">📈 Pipeline Funnel</span></div>
-        <div id="funnel-list"><div style="padding:30px;text-align:center;color:var(--text-3)">Loading...</div></div>
+        <div class="card-hdr"><span class="card-title">📈 Funnel del Pipeline</span></div>
+        <div id="funnel-list"></div>
       </div>
-      <!-- Lead Source Chart -->
       <div class="card">
-        <div class="card-hdr"><span class="card-title">🎯 Leads by Source</span></div>
-        <div style="padding:16px"><canvas id="source-chart" height="220"></canvas></div>
-      </div>
-      <!-- Strategy Breakdown -->
-      <div class="card">
-        <div class="card-hdr"><span class="card-title">🏠 Strategy Breakdown</span></div>
-        <div id="strategy-breakdown"><div style="padding:30px;text-align:center;color:var(--text-3)">Loading...</div></div>
-      </div>
-      <!-- Score Distribution -->
-      <div class="card">
-        <div class="card-hdr"><span class="card-title">🎲 Score Distribution</span></div>
-        <div style="padding:16px"><canvas id="score-chart" height="220"></canvas></div>
+        <div class="card-hdr"><span class="card-title">🎯 Leads por Fuente</span></div>
+        <div style="padding:16px"><canvas id="src-chart" height="220"></canvas></div>
       </div>
     </div>
-
-    <!-- Closed / Under Contract Table -->
     <div class="card">
-      <div class="card-hdr"><span class="card-title">✅ High Confidence + Closed Deals</span><a href="/deals/" style="font-size:11px;color:var(--blue);font-weight:600">View all →</a></div>
+      <div class="card-hdr"><span class="card-title">✅ Deals Destacados</span><a href="/deals/" style="font-size:11px;color:var(--blue);font-weight:600">Ver todos →</a></div>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Score</th><th>Address</th><th>Agent</th><th>Asking</th><th>ARV</th><th>Est. Profit</th><th>ROI</th><th>Strategy</th><th>Status</th><th>Date</th></tr></thead>
-          <tbody id="closed-list"><tr><td colspan="10" style="padding:30px;text-align:center;color:var(--text-3)">Loading...</td></tr></tbody>
+          <thead><tr><th>Score</th><th>Dirección</th><th>Agente</th><th>Precio</th><th>ARV</th><th>Ganancia Est.</th><th>ROI</th><th>Estatus</th><th>Fecha</th></tr></thead>
+          <tbody id="deals-list"><tr><td colspan="9" style="padding:30px;text-align:center;color:var(--text-3)">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -119,8 +88,7 @@
 </div>
 <div id="toast-container"></div>
 <script>
-let _all=[],_period='all',_srcChart=null,_scChart=null;
-
+let _all=[],_period='all',_srcChart=null;
 (async()=>{
   try{
     const s=await P714Auth.init();
@@ -128,13 +96,12 @@ let _all=[],_period='all',_srcChart=null,_scChart=null;
     const p=P714Auth.getProfile();
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
-    document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agent';
+    document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agente';
     const{data}=await P714Auth.getClient().from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
     _all=data||[];
     render();
   }catch(e){console.error(e);}
 })();
-
 function filterPeriod(list){
   if(_period==='all')return list;
   const from=new Date();
@@ -143,88 +110,65 @@ function filterPeriod(list){
   from.setHours(0,0,0,0);
   return list.filter(l=>new Date(l.created_at||0)>=from);
 }
-
 function setPeriod(p,btn){
   _period=p;
   document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   render();
 }
-
 function render(){
   const data=filterPeriod(_all);
-  const lbl={all:'All time',month:'This month',week:'This week'}[_period];
-  document.getElementById('agent-period-label').textContent=lbl;
+  const lbl={all:'Todo el tiempo',month:'Este mes',week:'Esta semana'}[_period];
+  document.getElementById('ap-lbl').textContent=lbl;
   document.getElementById('r1s').textContent=lbl;
-  // KPIs
   document.getElementById('r1').textContent=data.length;
   const tp=data.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
-  document.getElementById('r2').textContent=tp>=1e6?'$'+(tp/1e6).toFixed(1)+'M':tp>=1000?'$'+Math.round(tp/1000)+'K':'$'+Math.round(tp);
+  document.getElementById('r2').textContent=tp>=1e6?'$'+(tp/1e6).toFixed(1)+'M':tp>=1000?'$'+Math.round(tp/1000)+'K':'$'+Math.round(tp)||'\u2014';
   document.getElementById('r3').textContent=data.filter(l=>(l.deal_score||0)>=70).length;
-  const scores=data.map(l=>l.deal_score||0).filter(s=>s>0);
-  document.getElementById('r4').textContent=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):'—';
+  const sc=data.map(l=>l.deal_score||0).filter(s=>s>0);
+  document.getElementById('r4').textContent=sc.length?Math.round(sc.reduce((a,b)=>a+b)/sc.length):'\u2014';
   // Agents
   const agents={};
   data.forEach(l=>{
-    const a=l.assigned_to||'Unassigned';
-    if(!agents[a])agents[a]={leads:0,hi:0,contract:0,closed:0,profit:0,scores:[]};
+    const a=l.assigned_to||'Sin asignar';
+    if(!agents[a])agents[a]={leads:0,hi:0,contract:0,profit:0,sc:[]};
     agents[a].leads++;
     if((l.deal_score||0)>=70)agents[a].hi++;
-    if(l.status==='Under Contract')agents[a].contract++;
-    if(l.status==='Closed')agents[a].closed++;
+    if((l.status||'').includes('Contrato')||(l.status||'').includes('Contract'))agents[a].contract++;
     agents[a].profit+=(Number(l.estimated_profit)||0);
-    if(l.deal_score)agents[a].scores.push(l.deal_score);
+    if(l.deal_score)agents[a].sc.push(l.deal_score);
   });
   const maxL=Math.max(...Object.values(agents).map(a=>a.leads),1);
   const avC=['','teal','green','purple','amber'];
   document.getElementById('agents-list').innerHTML=Object.entries(agents).sort((a,b)=>b[1].leads-a[1].leads).map(([name,s],i)=>{
     const init=(name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     const pct=Math.round(s.leads/maxL*100);
-    const avgSc=s.scores.length?Math.round(s.scores.reduce((a,b)=>a+b)/s.scores.length):0;
+    const avgSc=s.sc.length?Math.round(s.sc.reduce((a,b)=>a+b)/s.sc.length):0;
     const pr=s.profit>=1000?'$'+Math.round(s.profit/1000)+'K':'$'+Math.round(s.profit);
     return `<div class="agent-row">
       <div class="user-avatar ${avC[i%5]}" style="flex-shrink:0">${init}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:600;font-size:13px;margin-bottom:5px;color:var(--text-1)">${esc(name)}</div>
+        <div style="font-weight:600;font-size:13px;margin-bottom:5px">${esc(name)}</div>
         <div style="display:flex;align-items:center;gap:8px">
           <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:var(--blue)"></div></div>
-          <span style="font-size:11px;color:var(--text-3);white-space:nowrap">${s.leads} deals • Avg score: ${avgSc}</span>
+          <span style="font-size:11px;color:var(--text-3);white-space:nowrap">${s.leads} deals &bull; Avg score: ${avgSc}</span>
         </div>
       </div>
-      <div class="agent-stats" style="display:flex;gap:20px">
-        <div class="agent-stat"><span class="agent-stat-val" style="color:var(--teal)">${s.hi}</span><span class="agent-stat-lbl">High</span></div>
-        <div class="agent-stat"><span class="agent-stat-val" style="color:var(--green)">${s.contract}</span><span class="agent-stat-lbl">Contract</span></div>
-        <div class="agent-stat"><span class="agent-stat-val">${s.closed}</span><span class="agent-stat-lbl">Closed</span></div>
-        <div class="agent-stat"><span class="agent-stat-val" style="color:var(--purple);font-size:12px">${pr}</span><span class="agent-stat-lbl">Profit</span></div>
+      <div style="display:flex;gap:18px">
+        <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--teal)">${s.hi}</div><div style="font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em">Alta conf.</div></div>
+        <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--green)">${s.contract}</div><div style="font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em">Contrato</div></div>
+        <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--purple);font-size:12px">${pr}</div><div style="font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em">Ganancia</div></div>
       </div>
     </div>`;
-  }).join('')||'<div style="padding:30px;text-align:center;color:var(--text-3)">No data yet</div>';
+  }).join('')||'<div style="padding:30px;text-align:center;color:var(--text-3)">Sin datos a\u00fan</div>';
   // Funnel
-  const stages=[['New Lead','#7C3AED'],['Analyzing','#14B8A6'],['Offer Ready','#2563EB'],['Under Contract','#16A34A'],['Closed','#059669'],['Pass','#DC2626']];
+  const stages=[['Nuevo Lead','#7C3AED'],['Analizando','#0D9488'],['Oferta Lista','#2563EB'],['Bajo Contrato','#16A34A'],['Cerrado','#059669'],['Descartado','#DC2626']];
   document.getElementById('funnel-list').innerHTML=stages.map(([st,color])=>{
     const count=data.filter(l=>(l.status||'')===st).length;
     const pct=data.length?Math.round(count/data.length*100):0;
     return `<div class="funnel-row">
-      <span class="funnel-label" style="color:var(--text-1);font-weight:500">${st}</span>
-      <span class="funnel-count" style="color:${color}">${count}</span>
-      <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
-      <span style="font-size:11px;color:var(--text-3);width:32px;text-align:right">${pct}%</span>
-    </div>`;
-  }).join('');
-  // Strategy breakdown
-  const strats={fix_flip:0,buy_hold:0,wholesale:0};
-  data.forEach(l=>{const s=l.deal_type||'fix_flip';if(strats[s]!==undefined)strats[s]++;});
-  const totalS=Object.values(strats).reduce((a,b)=>a+b,1);
-  document.getElementById('strategy-breakdown').innerHTML=[
-    ['Fix & Flip','fix_flip','var(--purple)'],
-    ['Rental / Hold','buy_hold','var(--blue)'],
-    ['Wholesale','wholesale','var(--amber)']
-  ].map(([lbl,key,color])=>{
-    const count=strats[key];
-    const pct=Math.round(count/totalS*100);
-    return `<div class="funnel-row">
-      <span class="funnel-label" style="color:var(--text-1);font-weight:500">${lbl}</span>
-      <span class="funnel-count" style="color:${color}">${count}</span>
+      <span style="font-size:12px;font-weight:500;color:var(--text-1);width:120px;flex-shrink:0">${st}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${color};width:30px">${count}</span>
       <div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
       <span style="font-size:11px;color:var(--text-3);width:32px;text-align:right">${pct}%</span>
     </div>`;
@@ -232,65 +176,49 @@ function render(){
   // Source chart
   const sources={};
   data.forEach(l=>{const s=l.source||'Other';sources[s]=(sources[s]||0)+1;});
-  const srcLabels=Object.keys(sources);
-  const srcVals=Object.values(sources);
-  const srcColors=['#2563EB','#14B8A6','#16A34A','#D97706','#DC2626','#7C3AED','#0891B2','#DB2777'];
+  const srcL=Object.keys(sources),srcV=Object.values(sources);
+  const srcC=['#2563EB','#0D9488','#16A34A','#D97706','#DC2626','#7C3AED','#0891B2','#DB2777'];
   if(_srcChart)_srcChart.destroy();
-  _srcChart=new Chart(document.getElementById('source-chart').getContext('2d'),{
+  _srcChart=new Chart(document.getElementById('src-chart').getContext('2d'),{
     type:'doughnut',
-    data:{labels:srcLabels,datasets:[{data:srcVals,backgroundColor:srcColors.slice(0,srcLabels.length),borderWidth:0,hoverOffset:6}]},
-    options:{plugins:{legend:{position:'right',labels:{color:'#475569',font:{family:'Inter',size:11},boxWidth:10,padding:12}}},cutout:'62%'}
-  });
-  // Score distribution
-  const bins=[0,0,0,0,0]; // 0-19, 20-39, 40-59, 60-79, 80-100
-  data.forEach(l=>{const s=l.deal_score||0;bins[Math.min(4,Math.floor(s/20))]++;});
-  if(_scChart)_scChart.destroy();
-  _scChart=new Chart(document.getElementById('score-chart').getContext('2d'),{
-    type:'bar',
-    data:{labels:['0-19','20-39','40-59','60-79','80-100'],datasets:[{data:bins,backgroundColor:['#FEE2E2','#FEF3C7','#FEF9C3','#D1FAE5','#DCFCE7'],borderColor:['#DC2626','#D97706','#CA8A04','#16A34A','#15803D'],borderWidth:1.5,borderRadius:6}]},
-    options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#94A3B8',font:{size:11}}},y:{grid:{color:'rgba(0,0,0,0.04)'},ticks:{color:'#94A3B8',font:{size:11}},beginAtZero:true}}}
+    data:{labels:srcL,datasets:[{data:srcV,backgroundColor:srcC.slice(0,srcL.length),borderWidth:0,hoverOffset:4}]},
+    options:{plugins:{legend:{position:'right',labels:{color:'#475569',font:{family:'Inter',size:11},boxWidth:10,padding:10}}},cutout:'62%'}
   });
   // Table
-  const notable=data.filter(l=>(l.deal_score||0)>=60||['Under Contract','Closed','Offer Ready'].includes(l.status||'')).slice(0,15);
-  const SBADGE={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass'};
-  const STAG={fix_flip:'flip-tag',buy_hold:'rental-tag',wholesale:'wholesale-tag'};
-  document.getElementById('closed-list').innerHTML=notable.length?notable.map(l=>{
+  const notable=data.filter(l=>(l.deal_score||0)>=60||['Oferta Lista','Bajo Contrato','Cerrado','Offer Ready','Under Contract','Closed'].includes(l.status||'')).slice(0,12);
+  const SBADGE={
+    'nuevo lead':'b-new-lead','analizando':'b-analyzing','oferta lista':'b-offer',
+    'bajo contrato':'b-under-contract','cerrado':'b-closed','descartado':'b-pass',
+    'new lead':'b-new-lead','analyzing':'b-analyzing','offer ready':'b-offer',
+    'under contract':'b-under-contract','closed':'b-closed','pass':'b-pass'
+  };
+  document.getElementById('deals-list').innerHTML=notable.length?notable.map(l=>{
     const sc=l.deal_score||0;
     const scC=sc>=70?'hi':sc>=50?'mid':'lo';
-    const strat=l.deal_type||'fix_flip';
-    const stratLabel=strat==='fix_flip'?'Flip':strat==='buy_hold'?'Rental':'Wholesale';
     const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
-    const stBadge=SBADGE[(l.status||'lead').toLowerCase()]||'b-analyzing';
+    const st=(l.status||'nuevo lead').toLowerCase();
+    const bc=SBADGE[st]||'b-analyzing';
     return `<tr onclick="location.href='/deals/?id=${l.id}'">
       <td><span class="score-badge sm ${scC}">${sc}</span></td>
-      <td><div class="td-addr">${esc(l.property_address||'—')}</div><div class="td-sub">${l.city||''} ${l.state||''}</div></td>
-      <td style="font-size:12px;color:var(--text-2)">${esc(l.assigned_to||'—')}</td>
+      <td><div class="td-addr">${esc(l.property_address||'\u2014')}</div><div class="td-sub">${l.city||''} ${l.state||''}</div></td>
+      <td style="font-size:12px;color:var(--text-2)">${esc(l.assigned_to||'\u2014')}</td>
       <td class="price-cell bright">${fm(l.asking_price)}</td>
       <td class="price-cell">${fm(l.arv)}</td>
       <td class="price-cell green">${fm(l.estimated_profit)}</td>
-      <td class="price-cell${r&&r>=15?' green':r&&r<0?' red':''}">${r!==null?r+'%':'—'}</td>
-      <td><span class="strat-tag ${STAG[strat]||'flip-tag'}">${stratLabel}</span></td>
-      <td><span class="badge ${stBadge}"><span class="badge-dot"></span>${l.status||'Lead'}</span></td>
-      <td style="font-size:11px;color:var(--text-3)">${new Date(l.updated_at||l.created_at||0).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'})}</td>
+      <td class="price-cell${r&&r>=15?' green':r&&r<0?' red':''}">${r!==null?r+'%':'\u2014'}</td>
+      <td><span class="badge ${bc}"><span class="badge-dot"></span>${l.status||'\u2014'}</span></td>
+      <td style="font-size:11px;color:var(--text-3)">${new Date(l.updated_at||l.created_at||0).toLocaleDateString('es-MX',{month:'short',day:'numeric',year:'2-digit'})}</td>
     </tr>`;
-  }).join(''):'<tr><td colspan="10" style="padding:30px;text-align:center;color:var(--text-3)">No notable deals yet</td></tr>';
+  }).join(''):'<tr><td colspan="9" style="padding:30px;text-align:center;color:var(--text-3)">Sin deals destacados a\u00fan</td></tr>';
 }
-
 function exportReport(){
   const data=filterPeriod(_all);
-  const cols=['property_address','city','state','assigned_to','asking_price','arv','estimated_profit','roi','deal_score','deal_type','status','source','created_at'];
-  const h=['Address','City','ST','Agent','Asking','ARV','Profit','ROI%','Score','Strategy','Status','Source','Date'];
+  const cols=['property_address','city','state','assigned_to','asking_price','arv','estimated_profit','roi','deal_score','status','source','created_at'];
+  const h=['Dirección','Ciudad','Estado','Agente','Precio','ARV','Ganancia','ROI%','Score','Estatus','Fuente','Fecha'];
   const rows=[h.join(','),...data.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];
-  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows.join('\n'));a.download='report_p714.csv';a.click();
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(rows.join('\n'));a.download='report_p714.csv';a.click();
 }
-
-function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
+function fm(n){if(!n&&n!==0)return '\u2014';const v=Number(n);return isNaN(v)?'\u2014':'$'+v.toLocaleString('en-US');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-// Strat tag classes for inline use
-document.addEventListener('DOMContentLoaded',()=>{
-  const style=document.createElement('style');
-  style.textContent='.strat-tag{display:inline-flex;padding:3px 10px;border-radius:99px;font-size:10px;font-weight:700;letter-spacing:0.04em;}.flip-tag{background:var(--purple-light);color:var(--purple);}.rental-tag{background:var(--blue-light);color:var(--blue);}.wholesale-tag{background:var(--amber-light);color:var(--amber);}';
-  document.head.appendChild(style);
-});
 </script>
 </body></html>
