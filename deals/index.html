@@ -2,516 +2,211 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Deal Detail — Properties 714</title>
+<title>Deals — Properties 714</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="/css/app.css"/>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/js/config.js"></script>
-<script src="/js/auth.js"></script>
 <style>
-.deal-list-grid{display:grid;gap:10px;}
-.deal-card-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:14px 18px;cursor:pointer;transition:border-color 150ms,transform 150ms;display:flex;align-items:center;gap:14px;}
-.deal-card-item:hover{border-color:var(--border-soft);transform:translateX(3px);}
-.deal-card-info{flex:1;min-width:0;}
-.deal-card-addr{font-weight:600;font-size:13px;color:var(--text-1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.deal-card-sub{font-size:11px;color:var(--text-3);margin-top:2px;}
-.deal-card-stats{display:flex;gap:16px;align-items:center;flex-shrink:0;}
-.deal-stat{text-align:center;}
-.deal-stat-val{font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--text-1);display:block;}
-.deal-stat-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:var(--text-3);}
-.detail-view{display:none;}
-.detail-view.open{display:block;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#F8FAFC!important;color:#0F172A!important;font-family:'Inter',-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%;}
+.app-shell{display:flex;height:100vh;overflow:hidden;background:#F8FAFC!important;}
+.sidebar{width:230px;flex-shrink:0;background:#1E293B;display:flex;flex-direction:column;overflow-y:auto;}
+.sidebar-brand{display:flex;align-items:center;gap:10px;padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo{width:32px;height:32px;background:#2563EB;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;}
+.sidebar-brand-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;}
+.sidebar-nav{flex:1;padding:10px 8px;}
+.nav-sl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#475569;padding:12px 10px 5px;display:block;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;font-size:13px;font-weight:500;color:#94A3B8;cursor:pointer;transition:all 120ms;position:relative;text-decoration:none;}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#E2E8F0;}
+.nav-item.active{background:rgba(37,99,235,0.25);color:#93C5FD;font-weight:600;}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:#2563EB;border-radius:0 3px 3px 0;}
+.sidebar-footer{padding:12px;border-top:1px solid rgba(255,255,255,0.08);}
+.sidebar-user{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer;}
+.sidebar-user:hover{background:rgba(255,255,255,0.06);}
+.uav{width:32px;height:32px;border-radius:50%;background:rgba(37,99,235,0.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#93C5FD;flex-shrink:0;}
+.app-main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;background:#F8FAFC!important;}
+.top-bar{height:54px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid #E2E8F0;background:#fff!important;gap:12px;flex-shrink:0;}
+.page-content{flex:1;overflow-y:auto;padding:22px;background:#F8FAFC!important;}
+.hbg{display:none;width:36px;height:36px;border-radius:8px;border:1px solid #E2E8F0;background:#fff;align-items:center;justify-content:center;cursor:pointer;flex-direction:column;gap:5px;flex-shrink:0;}
+.hbg span{display:block;width:18px;height:2px;background:#475569;border-radius:2px;}
+.sb-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:99;}
+.sb-ov.open{display:block;}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.kc{background:#fff!important;border:1px solid #E2E8F0!important;border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;cursor:pointer;transition:all 160ms;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.kc:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+.kc-acc{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.kc-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;margin-bottom:8px;}
+.kc-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.04em;line-height:1;}
+.kc-sub{font-size:11px;color:#94A3B8;margin-top:5px;}
+.kt .kc-acc{background:#0D9488;}.kt .kc-val{color:#0D9488;}
+.ka .kc-acc{background:#D97706;}.ka .kc-val{color:#D97706;}
+.kg .kc-acc{background:#16A34A;}.kg .kc-val{color:#16A34A;}
+.kb .kc-acc{background:#2563EB;}.kb .kc-val{color:#2563EB;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;white-space:nowrap;text-transform:uppercase;}
+.bd{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.b-new{background:#F5F3FF;color:#7C3AED;}.b-new .bd{background:#7C3AED;}
+.b-ana{background:#F0FDFA;color:#0D9488;}.b-ana .bd{background:#0D9488;}
+.b-ofe{background:#EFF6FF;color:#2563EB;}.b-ofe .bd{background:#2563EB;}
+.b-con{background:#F0FDF4;color:#16A34A;}.b-con .bd{background:#16A34A;}
+.b-cer{background:#ECFDF5;color:#059669;}.b-cer .bd{background:#059669;}
+.b-des{background:#FEF2F2;color:#DC2626;}.b-des .bd{background:#DC2626;}
+.sc{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;border:1.5px solid;}
+.sc-h{background:#F0FDF4;color:#16A34A;border-color:rgba(22,163,74,0.2);}
+.sc-m{background:#FFFBEB;color:#D97706;border-color:rgba(217,119,6,0.2);}
+.sc-l{background:#FEF2F2;color:#DC2626;border-color:rgba(220,38,38,0.2);}
+.sc-n{background:#F8FAFC;color:#94A3B8;border-color:#E2E8F0;}
+.deal-card{background:#fff!important;border:1px solid #E2E8F0!important;border-radius:12px;padding:18px 20px;cursor:pointer;transition:all 140ms;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.deal-card:hover{border-color:#93C5FD!important;box-shadow:0 4px 14px rgba(37,99,235,0.1)!important;transform:translateY(-1px);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;white-space:nowrap;font-family:'Inter',sans-serif;transition:all 120ms;}
+.btn-p{background:#2563EB;color:#fff;border-color:#2563EB;}
+.btn-g{background:transparent;color:#475569;border-color:#E2E8F0;}
+.btn-g:hover{background:#F8FAFC;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.si{background:#F8FAFC!important;border:1px solid #E2E8F0!important;border-radius:8px;padding:7px 12px;color:#0F172A!important;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.si:focus{border-color:#2563EB!important;box-shadow:0 0 0 3px rgba(37,99,235,0.08);}
+.si::placeholder{color:#94A3B8;}
+#tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid #CBD5E1;border-radius:12px;padding:12px 16px;min-width:260px;box-shadow:0 4px 12px rgba(0,0,0,0.08);animation:tIn 0.22s ease;}
+@keyframes tIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+@keyframes tOut{to{opacity:0;transform:translateY(4px);}}
+@media(max-width:768px){.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:100;transform:translateX(-100%);transition:transform 0.3s;}.sidebar.open{transform:translateX(0);}.hbg{display:flex!important;}.kpi-row{grid-template-columns:1fr 1fr;}.page-content{padding:14px;}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/js/config.js?v=10"></script>
+<script src="/js/auth.js?v=10"></script>
 </head>
 <body>
+<div class="sb-ov" id="sb-ov" onclick="closeSB()"></div>
 <div class="app-shell">
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-brand"><div class="sidebar-logo">P7</div><span class="sidebar-brand-name">Properties 714</span></div>
   <nav class="sidebar-nav">
-    <a href="/" class="nav-item"><span class="nav-icon">⬡</span>Dashboard</a>
-    <a href="/acquisitions/" class="nav-item"><span class="nav-icon">🎯</span>Acquisitions</a>
-    <span class="nav-section-label">Management</span>
-    <a href="/leads/" class="nav-item"><span class="nav-icon">👥</span>Leads</a>
-    <a href="/deals/" class="nav-item active"><span class="nav-icon">📋</span>Deals</a>
-    <a href="/reports/" class="nav-item"><span class="nav-icon">📊</span>Reports</a>
-    <a href="/settings/" class="nav-item"><span class="nav-icon">⚙️</span>Settings</a>
+    <a href="/" class="nav-item"><span style="width:16px;text-align:center">⬡</span>Dashboard</a>
+    <a href="/acquisitions/" class="nav-item"><span style="width:16px;text-align:center">🎯</span>Adquisiciones</a>
+    <span class="nav-sl">Management</span>
+    <a href="/leads/" class="nav-item"><span style="width:16px;text-align:center">👥</span>Leads</a>
+    <a href="/deals/" class="nav-item active"><span style="width:16px;text-align:center">📋</span>Deals</a>
+    <a href="/reports/" class="nav-item"><span style="width:16px;text-align:center">📊</span>Reports</a>
+    <a href="/settings/" class="nav-item"><span style="width:16px;text-align:center">⚙️</span>Settings</a>
   </nav>
   <div class="sidebar-footer"><div class="sidebar-user" onclick="P714Auth.logout()">
-    <div class="user-avatar" id="s-av">--</div>
-    <div><div class="user-name" id="s-name">Loading...</div><div class="user-role" id="s-role">—</div></div>
+    <div class="uav" id="s-av">--</div>
+    <div><div style="font-size:12px;font-weight:600;color:#E2E8F0" id="s-name">...</div><div style="font-size:10px;color:#475569" id="s-role">—</div></div>
   </div></div>
 </aside>
 <main class="app-main">
   <div class="top-bar">
-    <div class="breadcrumb">
-      <span>Home</span><span class="breadcrumb-sep">/</span>
-      <a href="/deals/" style="color:var(--text-2)" id="bc-deals">Deals</a>
-      <span class="breadcrumb-sep" id="bc-sep" style="display:none">/</span>
-      <span class="breadcrumb-current" id="bc-name" style="display:none"></span>
+    <button class="hbg" onclick="toggleSB()"><span></span><span></span><span></span></button>
+    <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#94A3B8">
+      <span>Home</span><span style="color:#CBD5E1;margin:0 4px">/</span><span style="color:#0F172A;font-weight:600">Deals</span>
     </div>
-    <div class="top-bar-actions" id="detail-actions" style="display:none">
-      <button class="btn btn-success btn-sm" onclick="approveDeal()">✓ Approve</button>
-      <button class="btn btn-danger btn-sm" onclick="rejectDeal()">✕ Pass</button>
-      <button class="btn btn-ghost btn-sm" onclick="backToList()">← Back</button>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button class="btn btn-g btn-sm" onclick="setFilter('all')">Todos</button>
+      <button class="btn btn-sm" id="fl-hi" onclick="setFilter('hi')" style="background:#F0FDF4;color:#16A34A;border-color:rgba(22,163,74,0.2)">&#x1F7E2; Alta Conf.</button>
+      <button class="btn btn-g btn-sm" id="fl-mid" onclick="setFilter('mid')">&#x1F7E1; Review</button>
+      <button class="btn btn-g btn-sm" id="fl-con" onclick="setFilter('con')">Contrato</button>
+      <input class="si" id="sq" placeholder="🔍 Buscar..." oninput="render()" style="width:180px"/>
     </div>
   </div>
   <div class="page-content">
-    <!-- LIST VIEW -->
-    <div id="list-view">
-      <div class="page-header">
-        <h1 class="page-title">Deals</h1>
-        <p class="page-subtitle">All properties — click to open detail + AI analysis</p>
-      </div>
-      <div class="kpi-row" style="margin-bottom:16px">
-        <div class="kpi-card c-teal"><div class="kpi-card-accent"></div><div class="kpi-label">High Confidence</div><div class="kpi-value" id="dk1">—</div><div class="kpi-sub">Score ≥ 70 → ready to offer</div></div>
-        <div class="kpi-card c-amber"><div class="kpi-card-accent"></div><div class="kpi-label">Needs Review</div><div class="kpi-value" id="dk2">—</div><div class="kpi-sub">Score 50–69</div></div>
-        <div class="kpi-card c-green"><div class="kpi-card-accent"></div><div class="kpi-label">Under Contract</div><div class="kpi-value" id="dk3">—</div><div class="kpi-sub">Active closings</div></div>
-        <div class="kpi-card c-blue"><div class="kpi-card-accent"></div><div class="kpi-label">Total Pipeline</div><div class="kpi-value" id="dk4">—</div><div class="kpi-sub">Est. profit</div></div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-        <button class="btn btn-sm" id="fl-all" onclick="setListFilter('all',this)" style="background:var(--blue);color:#fff">All</button>
-        <button class="btn btn-ghost btn-sm" id="fl-hi" onclick="setListFilter('hi',this)">🟢 High Confidence</button>
-        <button class="btn btn-ghost btn-sm" id="fl-mid" onclick="setListFilter('mid',this)">🟡 Review</button>
-        <button class="btn btn-ghost btn-sm" id="fl-contract" onclick="setListFilter('contract',this)">📋 Under Contract</button>
-        <button class="btn btn-ghost btn-sm" id="fl-closed" onclick="setListFilter('closed',this)">✓ Closed</button>
-        <input class="search-input" id="dl-q" placeholder="🔍 Search..." oninput="renderList()" style="margin-left:auto;width:200px"/>
-      </div>
-      <div class="deal-list-grid" id="deal-list"><div style="padding:40px;text-align:center;color:var(--text-3)">Loading...</div></div>
+    <div style="margin-bottom:20px">
+      <h1 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#0F172A">Deals</h1>
+      <p style="font-size:12px;color:#94A3B8;margin-top:3px">Todas las propiedades — click para abrir análisis + IA</p>
     </div>
-
-    <!-- DETAIL VIEW -->
-    <div id="detail-view" class="detail-view">
-      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px">
-        <!-- Left: Deal Data -->
-        <div>
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
-            <div class="score-badge hi" id="d-score-badge" style="width:52px;height:52px;font-size:20px;border-radius:12px">—</div>
-            <div>
-              <div style="font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--text-1)" id="d-title">—</div>
-              <div style="font-size:12px;color:var(--text-3);margin-top:2px" id="d-subtitle">—</div>
-            </div>
-            <div id="d-strategy-badge" style="margin-left:auto"></div>
-          </div>
-
-          <!-- Financials KPIs -->
-          <div class="detail-section-title">Financials</div>
-          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px">
-            <div class="detail-kpi"><div class="detail-kpi-lbl">Asking</div><div class="detail-kpi-val" id="df-ask">—</div></div>
-            <div class="detail-kpi"><div class="detail-kpi-lbl">ARV</div><div class="detail-kpi-val" id="df-arv">—</div></div>
-            <div class="detail-kpi"><div class="detail-kpi-lbl">Repairs</div><div class="detail-kpi-val" id="df-rep">—</div></div>
-            <div class="detail-kpi"><div class="detail-kpi-lbl">MAO</div><div class="detail-kpi-val" style="color:var(--teal)" id="df-mao">—</div></div>
-            <div class="detail-kpi"><div class="detail-kpi-lbl">Est. Profit</div><div class="detail-kpi-val" style="color:var(--green)" id="df-profit">—</div></div>
-          </div>
-
-          <!-- Property Data -->
-          <div class="detail-section-title">Property Info</div>
-          <div class="card" style="margin-bottom:20px">
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Type</span><span class="ai-detail-val" id="dp-type">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Condition</span><span class="ai-detail-val" id="dp-cond">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Occupancy</span><span class="ai-detail-val" id="dp-occ">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Source</span><span class="ai-detail-val" id="dp-src">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Agent</span><span class="ai-detail-val" id="dp-agent">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 18px"><span class="ai-detail-label">Status</span><span id="dp-status">—</span></div>
-            </div>
-          </div>
-
-          <!-- Comps -->
-          <div class="detail-section-title">Comparable Sales (Comps)</div>
-          <div class="card" style="margin-bottom:20px">
-            <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-              <span style="font-size:11px;color:var(--text-3)">Enter comparable sold properties to validate ARV</span>
-              <button class="btn btn-ghost btn-sm" onclick="addComp()">+ Add Comp</button>
-            </div>
-            <div style="overflow-x:auto">
-              <table>
-                <thead class="comp-table"><tr><th>Address</th><th>Sqft</th><th>Beds</th><th>Baths</th><th>Sale Price</th><th>$/Sqft</th><th>Dist (mi)</th><th>Sold Date</th><th></th></tr></thead>
-                <tbody id="comp-tbody"><tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-3);font-size:11px">No comps added. Add comps to validate ARV.</td></tr></tbody>
-              </table>
-            </div>
-            <div style="padding:10px 16px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">
-              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">Avg Price/sqft</div><div style="font-family:var(--font-mono);font-weight:700;color:var(--text-1)" id="comp-ppsf">—</div></div>
-              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">Avg Sale Price</div><div style="font-family:var(--font-mono);font-weight:700;color:var(--text-1)" id="comp-avg">—</div></div>
-              <div><div style="font-size:9px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-3);margin-bottom:2px">ARV Confidence</div><div style="font-weight:700" id="comp-conf">—</div></div>
-            </div>
-          </div>
-
-          <!-- Notes -->
-          <div class="detail-section-title">Notes</div>
-          <div class="card">
-            <div class="card-body">
-              <textarea class="form-input" id="d-notes" rows="4" placeholder="Add notes about this deal, negotiations, seller motivation..." style="margin-bottom:8px"></textarea>
-              <button class="btn btn-ghost btn-sm" onclick="saveNotes()">Save Notes</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: AI Panel -->
-        <div>
-          <div class="ai-panel">
-            <div class="ai-panel-hdr">
-              <div class="ai-panel-dot"></div>
-              <span class="ai-panel-title">AI Analysis</span>
-              <span style="margin-left:auto;font-size:10px;color:var(--teal);opacity:0.7" id="ai-model">Claude Sonnet</span>
-            </div>
-            <div style="padding:16px" id="ai-body">
-              <div class="ai-loading"><div class="ai-spinner"></div><span>Select a deal to analyze</span></div>
-            </div>
-          </div>
-
-          <!-- Admin Actions (owner only) -->
-          <div class="card" id="admin-actions" style="margin-top:14px;display:none">
-            <div class="card-hdr"><span class="card-title">Admin Actions</span></div>
-            <div class="card-body" style="display:flex;flex-direction:column;gap:8px">
-              <button class="btn btn-success" onclick="approveAndSendOffer()">✓ Approve — Send to Offer</button>
-              <button class="btn btn-ghost" onclick="markReview()">⚐ Flag for Review</button>
-              <button class="btn btn-danger" onclick="rejectDeal()">✕ Pass on Deal</button>
-            </div>
-          </div>
-
-          <!-- Quick stats -->
-          <div class="card" style="margin-top:14px">
-            <div class="card-hdr"><span class="card-title">Deal Timeline</span></div>
-            <div style="padding:0">
-              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Added</span><span class="ai-detail-val" id="d-created">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Last update</span><span class="ai-detail-val" id="d-updated">—</span></div>
-              <div class="ai-detail-row" style="padding:10px 16px"><span class="ai-detail-label">Days in pipeline</span><span class="ai-detail-val" id="d-days">—</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="kpi-row">
+      <div class="kc kt"><div class="kc-acc"></div><div class="kc-lbl">Alta Confianza</div><div class="kc-val" id="dk1">—</div><div class="kc-sub">Score ≥ 70 → oferta lista</div></div>
+      <div class="kc ka"><div class="kc-acc"></div><div class="kc-lbl">Necesita Revisión</div><div class="kc-val" id="dk2">—</div><div class="kc-sub">Score 50–69</div></div>
+      <div class="kc kg"><div class="kc-acc"></div><div class="kc-lbl">Bajo Contrato</div><div class="kc-val" id="dk3">—</div><div class="kc-sub">Cierres activos</div></div>
+      <div class="kc kb"><div class="kc-acc"></div><div class="kc-lbl">Pipeline Total</div><div class="kc-val" id="dk4">—</div><div class="kc-sub">Ganancia est.</div></div>
     </div>
+    <div id="deals-list"><div style="padding:60px;text-align:center;color:#94A3B8">Cargando deals...</div></div>
   </div>
 </main>
 </div>
-
-<!-- Add Comp Modal -->
-<div class="modal-backdrop" id="comp-modal">
-<div class="modal" style="max-width:520px">
-  <div class="modal-hdr"><span class="modal-title">Add Comparable</span><button class="modal-close-btn" onclick="closeModal('comp-modal')">×</button></div>
-  <div class="modal-body">
-    <div class="form-group"><label class="form-label">Address</label><input class="form-input" id="c-addr" placeholder="456 Main St, Atlanta, GA"/></div>
-    <div class="form-row-3">
-      <div class="form-group"><label class="form-label">Sqft</label><input class="form-input" id="c-sqft" type="number" placeholder="1500"/></div>
-      <div class="form-group"><label class="form-label">Beds</label><input class="form-input" id="c-beds" type="number" placeholder="3"/></div>
-      <div class="form-group"><label class="form-label">Baths</label><input class="form-input" id="c-baths" type="number" step="0.5" placeholder="2"/></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">Sale Price $</label><input class="form-input" id="c-price" type="number" placeholder="280000"/></div>
-      <div class="form-group"><label class="form-label">Distance (miles)</label><input class="form-input" id="c-dist" type="number" step="0.1" placeholder="0.5"/></div>
-    </div>
-    <div class="form-group"><label class="form-label">Sold Date</label><input class="form-input" id="c-date" type="date"/></div>
-    <div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-primary" style="flex:1" onclick="saveComp()">Add Comp</button>
-      <button class="btn btn-ghost" onclick="closeModal('comp-modal')">Cancel</button>
-    </div>
-  </div>
-</div>
-</div>
-
-<div id="toast-container"></div>
+<div id="tc"></div>
 <script>
-let _all=[],_curDeal=null,_comps=[],_listFilter='all',_isOwner=false;
+const SBADGE={'nuevo lead':'b-new','analizando':'b-ana','oferta lista':'b-ofe','bajo contrato':'b-con','cerrado':'b-cer','descartado':'b-des','new lead':'b-new','analyzing':'b-ana','offer ready':'b-ofe','under contract':'b-con','closed':'b-cer','pass':'b-des'};
+let _all=[],_filter='all';
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-ov').classList.toggle('open');}
+function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-ov').classList.remove('open');}
 
 (async()=>{
   try{
     const s=await P714Auth.init();
-    if(!s){window.location.href='/login/?next=/deals/';return;}
+    if(!s){location.href='/login/?next=/deals/';return;}
     const p=P714Auth.getProfile();
-    _isOwner=P714Auth.isOwner();
     document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=p?.full_name||'User';
-    document.getElementById('s-role').textContent=_isOwner?'Owner':'Agent';
-    if(_isOwner)document.getElementById('admin-actions').style.display='';
-    await load();
-    // Check URL for deal id
-    const params=new URLSearchParams(window.location.search);
-    if(params.get('id')){
-      const deal=_all.find(d=>d.id===params.get('id'));
-      if(deal)openDeal(deal);
-    }
+    document.getElementById('s-role').textContent=P714Auth.isOwner()?'Owner':'Agente';
+    const{data}=await P714Auth.getClient().from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
+    _all=data||[];
+    updateKPIs();
+    render();
   }catch(e){console.error(e);}
 })();
 
-async function load(){
-  const sb=P714Auth.getClient();
-  const{data}=await sb.from('acquisitions_leads').select('*').order('deal_score',{ascending:false});
-  _all=data||[];
-  updateListKPIs();
-  renderList();
-}
-
-function updateListKPIs(){
+function updateKPIs(){
   document.getElementById('dk1').textContent=_all.filter(l=>(l.deal_score||0)>=70).length;
   document.getElementById('dk2').textContent=_all.filter(l=>{const s=l.deal_score||0;return s>=50&&s<70;}).length;
-  document.getElementById('dk3').textContent=_all.filter(l=>l.status==='Under Contract').length;
+  document.getElementById('dk3').textContent=_all.filter(l=>(l.status||'').includes('Contrato')||(l.status||'').includes('Contract')).length;
   const p=_all.reduce((s,l)=>s+(Number(l.estimated_profit)||0),0);
-  document.getElementById('dk4').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p);
+  document.getElementById('dk4').textContent=p>=1e6?'$'+(p/1e6).toFixed(1)+'M':p>=1000?'$'+Math.round(p/1000)+'K':'$'+Math.round(p)||'—';
 }
 
-function setListFilter(f,btn){
-  _listFilter=f;
-  document.querySelectorAll('.btn[id^="fl-"]').forEach(b=>{b.style.background='transparent';b.style.color='var(--text-2)';b.style.borderColor='var(--border)';});
-  btn.style.background='var(--blue)';btn.style.color='#fff';btn.style.borderColor='var(--blue)';
-  renderList();
+function setFilter(f){
+  _filter=f;
+  document.querySelectorAll('[id^="fl-"]').forEach(b=>{b.style.background='transparent';b.style.color='#475569';b.style.borderColor='#E2E8F0';});
+  const btn=document.getElementById('fl-'+f);
+  if(btn){btn.style.background='#2563EB';btn.style.color='#fff';btn.style.borderColor='#2563EB';}
+  render();
 }
 
-const STRAT_STYLE={fix_flip:'background:var(--purple-dim);color:var(--purple)',buy_hold:'background:var(--blue-dim);color:#60a5fa',wholesale:'background:var(--amber-dim);color:var(--amber)'};
-const STRAT_LABEL={fix_flip:'Fix & Flip',buy_hold:'Rental / Hold',wholesale:'Wholesale'};
-
-function renderList(){
-  const q=(document.getElementById('dl-q').value||'').toLowerCase();
+function render(){
+  const q=(document.getElementById('sq').value||'').toLowerCase();
   let list=_all;
-  if(_listFilter==='hi')list=_all.filter(l=>(l.deal_score||0)>=70);
-  else if(_listFilter==='mid')list=_all.filter(l=>{const s=l.deal_score||0;return s>=50&&s<70;});
-  else if(_listFilter==='contract')list=_all.filter(l=>l.status==='Under Contract');
-  else if(_listFilter==='closed')list=_all.filter(l=>l.status==='Closed');
-  if(q)list=list.filter(l=>`${l.property_address||''} ${l.name||''} ${l.city||''}`.toLowerCase().includes(q));
-  const grid=document.getElementById('deal-list');
-  if(!list.length){grid.innerHTML='<div style="padding:50px;text-align:center;color:var(--text-3)">No deals in this filter</div>';return;}
-  grid.innerHTML=list.map(l=>{
+  if(_filter==='hi')list=_all.filter(l=>(l.deal_score||0)>=70);
+  else if(_filter==='mid')list=_all.filter(l=>{const s=l.deal_score||0;return s>=50&&s<70;});
+  else if(_filter==='con')list=_all.filter(l=>(l.status||'').includes('Contrato')||(l.status||'').includes('Contract'));
+  if(q)list=list.filter(l=>`${l.property_address||''} ${l.city||''} ${l.name||''}`.toLowerCase().includes(q));
+  const cont=document.getElementById('deals-list');
+  if(!list.length){cont.innerHTML='<div style="padding:60px;text-align:center;color:#94A3B8">No hay deals en este filtro</div>';return;}
+  cont.innerHTML=list.map(l=>{
     const sc=l.deal_score||0;
-    const scClass=sc>=70?'hi':sc>=50?'mid':'lo';
-    const strat=l.deal_type||'fix_flip';
-    const stratSt=STRAT_STYLE[strat]||'';
-    const profit=Number(l.estimated_profit)||0;
-    const roi2=l.asking_price&&profit?Math.round(profit/Number(l.asking_price)*100):null;
-    return `<div class="deal-card-item" onclick="openDeal(${JSON.stringify(JSON.stringify(l))})">
-      <span class="score-badge ${scClass}">${sc||'?'}</span>
-      <div class="deal-card-info">
-        <div class="deal-card-addr">${esc(l.property_address||'No address')}</div>
-        <div class="deal-card-sub">${l.city||''} ${l.state||''} • ${l.property_type||'SFR'} • Agent: ${esc(l.assigned_to||'—')}</div>
+    const scC=sc>=70?'sc-h':sc>=50?'sc-m':sc>0?'sc-l':'sc-n';
+    const st=(l.status||'nuevo lead').toLowerCase();
+    const badge=SBADGE[st]||'b-ana';
+    const strat=l.deal_type==='fix_flip'?'Fix & Flip':l.deal_type==='buy_hold'?'Rental':'Wholesale';
+    const r=l.asking_price&&l.estimated_profit?Math.round(Number(l.estimated_profit)/Number(l.asking_price)*100):null;
+    const margin=l.arv&&l.asking_price?Math.round((Number(l.arv)-Number(l.asking_price))/Number(l.arv)*100):null;
+    return `<div class="deal-card" onclick="location.href='/deals/detail/?id=${l.id}'">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div class="sc ${scC}">${sc||'?'}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:14px;color:#0F172A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(l.property_address||'Sin dirección')}</div>
+          <div style="font-size:11px;color:#94A3B8;margin-top:2px">${l.city||''} ${l.state||''} &bull; ${esc(l.assigned_to||'Sin agente')}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0">
+          <div style="text-align:right">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#0F172A">${fm(l.asking_price)}</div>
+            <div style="font-size:9px;text-transform:uppercase;color:#94A3B8">Precio</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${r&&r>=15?'#16A34A':r&&r<0?'#DC2626':'#0F172A'}">${r!==null?r+'%':'—'}</div>
+            <div style="font-size:9px;text-transform:uppercase;color:#94A3B8">ROI</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:#16A34A">${fm(l.estimated_profit)}</div>
+            <div style="font-size:9px;text-transform:uppercase;color:#94A3B8">Ganancia</div>
+          </div>
+          <span style="background:#F5F3FF;color:#7C3AED;padding:2px 9px;border-radius:99px;font-size:10px;font-weight:700">${strat}</span>
+          <span class="badge ${badge}"><span class="bd"></span>${l.status||'Lead'}</span>
+          <span style="color:#CBD5E1;font-size:18px">&rsaquo;</span>
+        </div>
       </div>
-      <div class="deal-card-stats">
-        <div class="deal-stat"><span class="deal-stat-val">${fm(l.asking_price)}</span><span class="deal-stat-lbl">Asking</span></div>
-        <div class="deal-stat"><span class="deal-stat-val" style="color:var(--green)">${profit?'$'+Math.round(profit/1000)+'K':'—'}</span><span class="deal-stat-lbl">Profit</span></div>
-        <div class="deal-stat"><span class="deal-stat-val" style="color:${roi2&&roi2>=15?'var(--green)':roi2&&roi2>=10?'var(--amber)':'var(--text-2)'}">${roi2!==null?roi2+'%':'—'}</span><span class="deal-stat-lbl">ROI</span></div>
-        <span class="badge" style="${stratSt};padding:2px 9px;font-size:9px;letter-spacing:0.04em">${STRAT_LABEL[strat]||strat}</span>
-      </div>
-      <span style="color:var(--text-3);font-size:16px">›</span>
     </div>`;
   }).join('');
 }
 
-function openDeal(dealOrJson){
-  const l=typeof dealOrJson==='string'?JSON.parse(dealOrJson):dealOrJson;
-  _curDeal=l;_comps=[];
-  document.getElementById('list-view').style.display='none';
-  document.getElementById('detail-view').classList.add('open');
-  document.getElementById('detail-actions').style.display='';
-  document.getElementById('bc-sep').style.display='';
-  document.getElementById('bc-name').style.display='';
-  document.getElementById('bc-name').textContent=l.property_address||'Deal';
-  document.getElementById('bc-deals').onclick=backToList;
-  document.getElementById('bc-deals').style.cursor='pointer';
-  // Score badge
-  const sc=l.deal_score||0;
-  const sb2=document.getElementById('d-score-badge');
-  sb2.textContent=sc||'—';
-  sb2.className='score-badge '+(sc>=70?'hi':sc>=50?'mid':'lo');
-  sb2.style.cssText='width:52px;height:52px;font-size:20px;border-radius:12px';
-  // Header
-  document.getElementById('d-title').textContent=l.property_address||'—';
-  document.getElementById('d-subtitle').textContent=`${l.city||''} ${l.state||''} • ${l.property_type||'SFR'}`;
-  const strat=l.deal_type||'fix_flip';
-  const stratSt=STRAT_STYLE[strat]||'';
-  document.getElementById('d-strategy-badge').innerHTML=`<span style="${stratSt};padding:4px 14px;border-radius:99px;font-size:11px;font-weight:700;display:inline-block">${STRAT_LABEL[strat]||strat}</span>`;
-  // Financials
-  document.getElementById('df-ask').textContent=fm(l.asking_price);
-  document.getElementById('df-arv').textContent=fm(l.arv);
-  document.getElementById('df-rep').textContent=fm(l.repairs);
-  document.getElementById('df-mao').textContent=fm(l.mao);
-  document.getElementById('df-profit').textContent=fm(l.estimated_profit);
-  // Property
-  document.getElementById('dp-type').textContent=l.property_type||'—';
-  document.getElementById('dp-cond').textContent=l.condition||'—';
-  document.getElementById('dp-occ').textContent=l.occupancy||'—';
-  document.getElementById('dp-src').textContent=l.source||'—';
-  document.getElementById('dp-agent').textContent=l.assigned_to||'—';
-  const stBadge={lead:'b-lead',analyzing:'b-analyzing','offer ready':'b-offer','under contract':'b-contract',closed:'b-closed',pass:'b-pass'};
-  document.getElementById('dp-status').innerHTML=`<span class="badge ${stBadge[(l.status||'lead').toLowerCase()]||'b-analyzing'}"><span class="badge-dot"></span>${l.status||'Lead'}</span>`;
-  // Notes
-  document.getElementById('d-notes').value=l.notes||'';
-  // Timeline
-  const fmt=d=>d?new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'2-digit'}):'—';
-  document.getElementById('d-created').textContent=fmt(l.created_at);
-  document.getElementById('d-updated').textContent=fmt(l.updated_at);
-  const days=l.created_at?Math.floor((Date.now()-new Date(l.created_at))/(1000*60*60*24)):null;
-  document.getElementById('d-days').textContent=days!==null?days+'d':'—';
-  // AI
-  runAI(l);
-}
-
-function backToList(){
-  document.getElementById('list-view').style.display='';
-  document.getElementById('detail-view').classList.remove('open');
-  document.getElementById('detail-actions').style.display='none';
-  document.getElementById('bc-sep').style.display='none';
-  document.getElementById('bc-name').style.display='none';
-  history.pushState({},'','/deals/');
-}
-
-async function runAI(l){
-  const key=window.__P714_CONFIG__?.anthropicKey;
-  if(!key){
-    renderAIStatic(l);
-    return;
-  }
-  document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><span>Analyzing deal with AI...</span></div>';
-  try{
-    const prompt=`You are a real estate investment analyst. Analyze this deal and respond in JSON only:\n\nProperty: ${l.property_address}, ${l.city} ${l.state}\nType: ${l.property_type}\nCondition: ${l.condition}\nAsking Price: $${l.asking_price}\nARV (After Repair Value): $${l.arv}\nRepairs Estimate: $${l.repairs}\nMAO (Max Allowable Offer): $${l.mao}\nEst. Profit: $${l.estimated_profit}\nROI: ${l.roi}%\nSeller Motivation: ${l.motivation_score}/10\nSource: ${l.source}\n\nRespond ONLY with this JSON (no markdown, no extra text):\n{\n  "recommendation": "BUY (Flip)" or "BUY (Rental)" or "Wholesale" or "PASS",\n  "confidence": 0-100,\n  "roi_flip": number,\n  "roi_rental": number,\n  "roi_wholesale": number,\n  "best_strategy": "flip" or "rental" or "wholesale",\n  "suggested_offer": number,\n  "arv_confidence": "High" or "Medium" or "Low",\n  "risks": ["risk1", "risk2", "risk3"],\n  "opportunities": ["opp1", "opp2"],\n  "summary": "2 sentence analysis",\n  "next_action": "specific next step",\n  "flip_margin": number\n}`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]}),});
-    const d=await res.json();
-    let ai;
-    try{ai=JSON.parse(d.content[0].text);}catch{ai=null;}
-    if(ai)renderAIResult(l,ai);
-    else renderAIStatic(l);
-  }catch(e){
-    console.error('AI error:',e);
-    renderAIStatic(l);
-  }
-}
-
-function renderAIResult(l,ai){
-  const sc=l.deal_score||0;
-  const recColor=ai.recommendation.startsWith('BUY')?'var(--green)':ai.recommendation==='Wholesale'?'var(--amber)':'var(--red)';
-  document.getElementById('ai-body').innerHTML=`
-    <div class="ai-rec" style="margin-bottom:14px">
-      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:42px;height:42px;font-size:15px;border-radius:10px">${ai.confidence}</div>
-      <div>
-        <div style="font-size:10px;color:var(--text-3);margin-bottom:2px">AI Confidence / 100</div>
-        <div style="font-size:13px;font-weight:700;color:${recColor}">✦ ${ai.recommendation}</div>
-      </div>
-    </div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Flip</span><span class="ai-detail-val" style="color:${(ai.roi_flip||0)>=15?'var(--green)':'var(--text-2)'}">${ai.roi_flip||0}%</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Rental</span><span class="ai-detail-val">${ai.roi_rental||0}%</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ROI — Wholesale</span><span class="ai-detail-val">${ai.roi_wholesale||0}%</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">Flip Margin</span><span class="ai-detail-val">${ai.flip_margin||0}%</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ARV Confidence</span><span class="ai-detail-val" style="color:${ai.arv_confidence==='High'?'var(--green)':ai.arv_confidence==='Medium'?'var(--amber)':'var(--red)'}">${ai.arv_confidence}</span></div>
-    <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--teal)">Analysis</div>
-    <div style="font-size:11px;color:var(--text-2);line-height:1.5;margin-bottom:10px">${esc(ai.summary)}</div>
-    <div style="margin-bottom:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Risks</div>
-    ${(ai.risks||[]).map(r=>`<div class="ai-bullet">${esc(r)}</div>`).join('')}
-    <div style="margin:10px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--green)">Opportunities</div>
-    ${(ai.opportunities||[]).map(o=>`<div class="ai-bullet" style="color:var(--green)">${esc(o)}</div>`).join('')}
-    <div style="margin:14px 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
-    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:8px">${fm(ai.suggested_offer)}</div>
-    <div style="font-size:11px;color:var(--teal);margin-bottom:12px">→ ${esc(ai.next_action||'')}</div>
-    <button class="ai-simulate-btn" onclick="rerunAI()">↻ Re-analyze</button>
-  `;
-}
-
-function renderAIStatic(l){
-  const sc=l.deal_score||0;
-  const strat=l.deal_type==='fix_flip'?'BUY (Flip)':l.deal_type==='buy_hold'?'BUY (Rental)':'Wholesale';
-  const hasKey=!!window.__P714_CONFIG__?.anthropicKey;
-  document.getElementById('ai-body').innerHTML=`
-    <div class="ai-rec" style="margin-bottom:12px">
-      <div class="score-badge ${sc>=70?'hi':sc>=50?'mid':'lo'}" style="width:42px;height:42px;font-size:15px;border-radius:10px">${sc}</div>
-      <div><div style="font-size:10px;color:var(--text-3);margin-bottom:2px">Deal Score / 100</div>
-      <div style="font-size:13px;font-weight:700;color:${sc>=70?'var(--green)':sc>=50?'var(--amber)':'var(--red)'}">✦ ${strat}</div></div>
-    </div>
-    <div class="ai-detail-row"><span class="ai-detail-label">Est. Profit</span><span class="ai-detail-val" style="color:var(--green)">${fm(l.estimated_profit)}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">MAO</span><span class="ai-detail-val">${fm(l.mao)}</span></div>
-    <div class="ai-detail-row"><span class="ai-detail-label">ARV</span><span class="ai-detail-val">${fm(l.arv)}</span></div>
-    <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">AI Analysis</div>
-    ${sc>=70?'<div class="ai-bullet">High confidence — score qualifies for offer</div><div class="ai-bullet">Verify ARV with comps before submitting offer</div><div class="ai-bullet">Strong deal — prioritize for negotiation</div>':sc>=50?'<div class="ai-bullet">Review needed before making offer</div><div class="ai-bullet">Validate comps and ARV accuracy</div><div class="ai-bullet">Negotiate price down or pass</div>':'<div class="ai-bullet">Score below threshold — high risk</div><div class="ai-bullet">ROI insufficient for target return</div><div class="ai-bullet">Consider passing on this deal</div>'}
-    <div style="margin:12px 0 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-3)">Suggested Offer</div>
-    <div style="font-family:var(--font-mono);font-size:22px;font-weight:800;color:var(--text-1);margin-bottom:12px">${fm(l.mao)}</div>
-    ${hasKey?'<button class="ai-simulate-btn" onclick="rerunAI()">✦ Run Full AI Analysis</button>':'<div style="background:rgba(20,184,166,0.08);border:1px solid rgba(20,184,166,0.2);border-radius:8px;padding:10px 12px;font-size:11px;color:var(--text-3)">Add your Anthropic API key in <code>js/config.js</code> to enable full AI analysis with strategy comparison.</div>'}
-  `;
-}
-
-function rerunAI(){if(_curDeal)runAI(_curDeal);}
-
-function addComp(){document.getElementById('comp-modal').classList.add('open');['c-addr','c-sqft','c-beds','c-baths','c-price','c-dist'].forEach(id=>{document.getElementById(id).value='';});document.getElementById('c-date').valueAsDate=new Date();}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-
-function saveComp(){
-  const comp={address:document.getElementById('c-addr').value,sqft:parseFloat(document.getElementById('c-sqft').value)||null,beds:parseFloat(document.getElementById('c-beds').value)||null,baths:parseFloat(document.getElementById('c-baths').value)||null,price:parseFloat(document.getElementById('c-price').value)||null,distance:parseFloat(document.getElementById('c-dist').value)||null,date:document.getElementById('c-date').value};
-  if(!comp.address||!comp.price){toast('error','Missing fields','Address and price required');return;}
-  _comps.push(comp);closeModal('comp-modal');renderComps();
-}
-
-function renderComps(){
-  if(!_comps.length){document.getElementById('comp-tbody').innerHTML='<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-3);font-size:11px">No comps added yet</td></tr>';document.getElementById('comp-avg').textContent='—';document.getElementById('comp-ppsf').textContent='—';document.getElementById('comp-conf').textContent='—';return;}
-  document.getElementById('comp-tbody').innerHTML=_comps.map((c,i)=>{
-    const ppsf=c.sqft&&c.price?Math.round(c.price/c.sqft):null;
-    return `<tr>
-      <td style="font-size:11px;color:var(--text-2)">${esc(c.address)}</td>
-      <td class="price-cell">${c.sqft||'—'}</td>
-      <td class="price-cell">${c.beds||'—'}</td>
-      <td class="price-cell">${c.baths||'—'}</td>
-      <td class="price-cell bright">${fm(c.price)}</td>
-      <td class="price-cell">${ppsf?'$'+ppsf:'—'}</td>
-      <td class="price-cell">${c.distance||'—'}mi</td>
-      <td style="font-size:10px;color:var(--text-3)">${c.date||'—'}</td>
-      <td><button class="btn btn-danger btn-sm" style="padding:2px 7px;font-size:10px" onclick="removeComp(${i})">✕</button></td>
-    </tr>`;
-  }).join('');
-  const avgPrice=Math.round(_comps.filter(c=>c.price).reduce((s,c)=>s+c.price,0)/_comps.filter(c=>c.price).length);
-  const ppsfs=_comps.filter(c=>c.sqft&&c.price).map(c=>c.price/c.sqft);
-  const avgPpsf=ppsfs.length?Math.round(ppsfs.reduce((a,b)=>a+b)/ppsfs.length):null;
-  document.getElementById('comp-avg').textContent='$'+avgPrice.toLocaleString('en-US');
-  document.getElementById('comp-ppsf').textContent=avgPpsf?'$'+avgPpsf+'/sqft':'—';
-  const variance=_curDeal?.arv?Math.abs(avgPrice-Number(_curDeal.arv))/Number(_curDeal.arv)*100:null;
-  const conf=variance!==null?(variance<=5?'<span style="color:var(--green);font-weight:700">High ✓</span>':variance<=15?'<span style="color:var(--amber);font-weight:700">Medium ⚠</span>':'<span style="color:var(--red);font-weight:700">Low ✗</span>'):'—';
-  document.getElementById('comp-conf').innerHTML=conf;
-}
-
-function removeComp(i){_comps.splice(i,1);renderComps();}
-
-async function saveNotes(){
-  if(!_curDeal)return;
-  try{
-    const sb=P714Auth.getClient();
-    await sb.from('acquisitions_leads').update({notes:document.getElementById('d-notes').value,updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
-    toast('success','Notes saved','');
-  }catch(e){toast('error','Error',e.message);}
-}
-
-async function approveAndSendOffer(){
-  if(!_curDeal||!confirm('Mark as Offer Ready and notify?'))return;
-  try{
-    const sb=P714Auth.getClient();
-    await sb.from('acquisitions_leads').update({status:'Offer Ready',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
-    toast('success','✓ Approved','Status updated to Offer Ready');
-    _curDeal.status='Offer Ready';backToList();await load();
-  }catch(e){toast('error','Error',e.message);}
-}
-
-async function approveDeal(){return approveAndSendOffer();}
-
-async function rejectDeal(){
-  if(!_curDeal||!confirm('Mark this deal as Pass?'))return;
-  try{
-    const sb=P714Auth.getClient();
-    await sb.from('acquisitions_leads').update({status:'Pass',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
-    toast('success','Deal passed','');
-    backToList();await load();
-  }catch(e){toast('error','Error',e.message);}
-}
-
-async function markReview(){
-  if(!_curDeal)return;
-  try{
-    const sb=P714Auth.getClient();
-    await sb.from('acquisitions_leads').update({status:'Analyzing',updated_at:new Date().toISOString()}).eq('id',_curDeal.id);
-    toast('info','Flagged for review','');
-    _curDeal.status='Analyzing';
-  }catch(e){toast('error','Error',e.message);}
-}
-
-function toast(l,t,m){
-  const c=document.getElementById('toast-container');
-  const cols={success:'var(--green)',error:'var(--red)',info:'var(--teal)'};
-  const ic={success:'✓',error:'✕',info:'✦'};
-  const el=document.createElement('div');el.className='toast';
-  el.innerHTML=`<span class="toast-icon" style="color:${cols[l]}">${ic[l]}</span><div><div class="toast-title">${t}</div>${m?`<div class="toast-msg">${m}</div>`:''}</div>`;
-  c.appendChild(el);setTimeout(()=>{el.style.animation='toastOut 0.3s ease forwards';setTimeout(()=>el.remove(),300);},5000);
-}
 function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 </script>
