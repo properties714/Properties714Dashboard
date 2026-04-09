@@ -1,97 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Sign In — Properties 714</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/js/config.js?v=7"></script>
-<script src="/js/auth.js?v=7"></script>
+<script src="/js/config.js"></script>
+<script src="/js/auth.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
-.shell{min-height:100vh;display:flex;background:#F8FAFC;}
-.left{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;}
-.right{width:420px;background:linear-gradient(135deg,#1E3A8A 0%,#2563EB 60%,#7C3AED 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px;}
-@media(max-width:700px){.right{display:none;}.left{padding:20px;}}
-.card{width:100%;max-width:400px;background:#fff;border:1px solid #E2E8F0;border-radius:16px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,0.07);}
-.brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
-.logo{width:40px;height:40px;background:#2563EB;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.3);}
-.brand-name{font-family:'Syne',sans-serif;font-weight:700;font-size:16px;color:#0F172A;}
-h1{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.03em;color:#0F172A;margin-bottom:6px;}
-.sub{font-size:13px;color:#94A3B8;margin-bottom:28px;}
-.label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#475569;margin-bottom:6px;}
-.input{width:100%;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:8px;padding:11px 14px;font-family:'Inter',sans-serif;font-size:14px;color:#0F172A;outline:none;transition:all 150ms;}
-.input:focus{border-color:#2563EB;box-shadow:0 0 0 3px rgba(37,99,235,0.1);background:#fff;}
-.input::placeholder{color:#CBD5E1;}
-.fg{margin-bottom:18px;}
-.btn{width:100%;background:#2563EB;color:#fff;border:none;border-radius:8px;padding:13px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 150ms;margin-top:6px;box-shadow:0 2px 8px rgba(37,99,235,0.25);}
-.btn:hover{background:#1D4ED8;box-shadow:0 4px 12px rgba(37,99,235,0.35);}
-.btn:disabled{opacity:0.5;cursor:not-allowed;}
-.err{display:none;background:#FEF2F2;border:1px solid #FECACA;border-radius:8px;padding:11px 14px;font-size:12px;color:#DC2626;margin-top:14px;line-height:1.5;}
-.err.show{display:block;}
-.foot{margin-top:24px;text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:#CBD5E1;}
-.right-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;text-align:center;margin-bottom:12px;letter-spacing:-0.03em;}
-.right-sub{font-size:13px;color:rgba(255,255,255,0.6);text-align:center;line-height:1.6;}
-.feature{display:flex;align-items:center;gap:10px;margin-top:20px;}
-.feature-icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
-.feature-text{font-size:12px;color:rgba(255,255,255,0.75);}
+
+/* ── LAYOUT ── */
+.shell{display:flex;height:100vh;overflow:hidden;}
+
+/* ── LEFT PANEL (form) ── */
+.left{
+  width:480px;flex-shrink:0;
+  background:#F8FAFC;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:48px 56px;
+  position:relative;z-index:2;
+  box-shadow:4px 0 40px rgba(0,0,0,0.15);
+}
+.logo-wrap{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:40px;align-self:flex-start;
+}
+.logo-box{
+  width:44px;height:44px;
+  background:linear-gradient(135deg,#2563EB,#1D4ED8);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:#fff;
+  box-shadow:0 4px 14px rgba(37,99,235,0.4);
+}
+.logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:#0F172A;letter-spacing:-0.02em;}
+
+.form-wrap{width:100%;}
+.form-title{
+  font-family:'Syne',sans-serif;
+  font-size:30px;font-weight:800;
+  color:#0F172A;letter-spacing:-0.03em;
+  margin-bottom:6px;
+}
+.form-sub{font-size:14px;color:#64748B;margin-bottom:36px;}
+
+.field{margin-bottom:20px;}
+.field-label{
+  display:block;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:0.08em;
+  color:#475569;margin-bottom:7px;
+}
+.field-input{
+  width:100%;padding:13px 16px;
+  background:#fff;
+  border:1.5px solid #E2E8F0;
+  border-radius:10px;
+  font-size:14px;font-family:'Inter',sans-serif;
+  color:#0F172A;outline:none;
+  transition:border-color .15s,box-shadow .15s;
+}
+.field-input:focus{
+  border-color:#2563EB;
+  box-shadow:0 0 0 4px rgba(37,99,235,0.1);
+}
+.field-input::placeholder{color:#CBD5E1;}
+
+.btn-login{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,#2563EB,#1D4ED8);
+  color:#fff;border:none;border-radius:10px;
+  font-size:14px;font-weight:700;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;transition:all .15s;
+  box-shadow:0 4px 14px rgba(37,99,235,0.35);
+  margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,0.45);}
+.btn-login:active{transform:translateY(0);}
+.btn-login:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+.err-msg{
+  background:#FEF2F2;border:1px solid #FECACA;
+  border-radius:8px;padding:11px 14px;
+  font-size:12px;color:#DC2626;font-weight:500;
+  margin-bottom:16px;display:none;
+}
+.err-msg.show{display:block;}
+
+.form-footer{
+  margin-top:32px;text-align:center;
+  font-size:11px;color:#94A3B8;
+}
+
+/* Spinner */
+.spin{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── RIGHT PANEL (dark hero) ── */
+.right{
+  flex:1;
+  background:linear-gradient(145deg,#0A0F1E 0%,#0F172A 30%,#1a1f35 60%,#0d1929 100%);
+  position:relative;
+  overflow:hidden;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:60px 60px 60px 60px;
+}
+
+/* Grid pattern */
+.right::before{
+  content:'';
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(37,99,235,0.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(37,99,235,0.07) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse at center,black 40%,transparent 80%);
+}
+
+/* Glow blobs */
+.blob1{
+  position:absolute;width:500px;height:500px;
+  background:radial-gradient(circle,rgba(37,99,235,0.18) 0%,transparent 70%);
+  top:-100px;right:-100px;pointer-events:none;
+}
+.blob2{
+  position:absolute;width:400px;height:400px;
+  background:radial-gradient(circle,rgba(13,148,136,0.12) 0%,transparent 70%);
+  bottom:-80px;left:-60px;pointer-events:none;
+}
+
+.right-content{position:relative;z-index:1;text-align:center;max-width:540px;}
+
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 16px;
+  background:rgba(37,99,235,0.15);
+  border:1px solid rgba(37,99,235,0.3);
+  border-radius:99px;
+  font-size:11px;font-weight:700;
+  color:#93C5FD;letter-spacing:0.06em;text-transform:uppercase;
+  margin-bottom:28px;
+}
+.hero-badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#2563EB;
+  box-shadow:0 0 6px #2563EB;
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:48px;font-weight:800;
+  color:#fff;line-height:1.08;
+  letter-spacing:-0.04em;
+  margin-bottom:18px;
+}
+.hero-title span{color:#60A5FA;}
+
+.hero-sub{
+  font-size:15px;color:rgba(255,255,255,0.5);
+  line-height:1.65;margin-bottom:48px;
+  max-width:400px;margin-left:auto;margin-right:auto;
+}
+
+/* Feature cards grid */
+.feat-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  text-align:left;
+}
+.feat{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px;
+  padding:18px 18px;
+  transition:border-color .2s;
+}
+.feat:hover{border-color:rgba(37,99,235,0.4);}
+.feat-icon{
+  width:38px;height:38px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  margin-bottom:12px;
+}
+.feat-icon.blue{background:rgba(37,99,235,0.2);}
+.feat-icon.teal{background:rgba(13,148,136,0.2);}
+.feat-icon.green{background:rgba(22,163,74,0.2);}
+.feat-icon.amber{background:rgba(217,119,6,0.2);}
+.feat-name{font-size:13px;font-weight:700;color:#F1F5F9;margin-bottom:4px;}
+.feat-desc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;}
+
+/* Stats bar */
+.stats-bar{
+  display:flex;align-items:center;justify-content:center;
+  gap:36px;
+  margin-top:36px;
+  padding-top:28px;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.stat-val{
+  font-family:'DM Mono',monospace;
+  font-size:22px;font-weight:700;
+  color:#fff;display:block;
+}
+.stat-lbl{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.stat-div{width:1px;height:30px;background:rgba(255,255,255,0.1);}
+
+/* Mobile */
+@media(max-width:768px){
+  .shell{flex-direction:column;}
+  .right{display:none;}
+  .left{width:100%;padding:40px 28px;box-shadow:none;}
+  .form-title{font-size:26px;}
+}
 </style>
 </head>
 <body>
 <div class="shell">
+
+  <!-- LEFT: Login Form -->
   <div class="left">
-    <div class="card">
-      <div class="brand"><div class="logo">P7</div><span class="brand-name">Properties 714</span></div>
-      <h1>Bienvenido</h1>
-      <p class="sub">Inicia sesión en tu sistema de adquisiciones</p>
-      <div class="fg"><label class="label">Email</label><input class="input" type="email" id="email" placeholder="tu@properties714.com" autocomplete="email"/></div>
-      <div class="fg"><label class="label">Contraseña</label><input class="input" type="password" id="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"/></div>
-      <button class="btn" id="btn">Iniciar Sesión</button>
-      <div class="err" id="err"></div>
-      <div class="foot">Properties 714 LLC &mdash; Sistema Interno</div>
+    <div class="logo-wrap">
+      <div class="logo-box">P7</div>
+      <span class="logo-name">Properties 714</span>
+    </div>
+    <div class="form-wrap">
+      <h1 class="form-title">Bienvenido</h1>
+      <p class="form-sub">Inicia sesión en tu sistema de adquisiciones</p>
+      <div class="err-msg" id="err"></div>
+      <div class="field">
+        <label class="field-label">Email</label>
+        <input class="field-input" id="email" type="email"
+          placeholder="tu@properties714.com"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <div class="field">
+        <label class="field-label">Contraseña</label>
+        <input class="field-input" id="pass" type="password"
+          placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+      </div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">
+        <div class="spin" id="spin"></div>
+        <span id="btn-txt">Iniciar Sesión</span>
+      </button>
+      <div class="form-footer">Properties 714 LLC &mdash; Sistema Interno</div>
     </div>
   </div>
+
+  <!-- RIGHT: Hero -->
   <div class="right">
-    <div>
-      <div class="right-title">AI Acquisition System</div>
-      <div class="right-sub">Plataforma profesional para adquisiciones inmobiliarias</div>
-      <div class="feature"><div class="feature-icon">🎯</div><div class="feature-text">Seguimiento de propiedades en tiempo real con tu equipo</div></div>
-      <div class="feature"><div class="feature-icon">🤖</div><div class="feature-text">IA analiza cada deal y recomienda estrategia óptima</div></div>
-      <div class="feature"><div class="feature-icon">📊</div><div class="feature-text">Dashboard con métricas del pipeline y performance del equipo</div></div>
-      <div class="feature"><div class="feature-icon">📝</div><div class="feature-text">Comparables y MAO calculados automáticamente</div></div>
+    <div class="blob1"></div>
+    <div class="blob2"></div>
+    <div class="right-content">
+      <div class="hero-badge">
+        <div class="hero-badge-dot"></div>
+        AI Acquisition System
+      </div>
+      <h2 class="hero-title">
+        Adquisiciones<br>
+        <span>Impulsadas por IA</span>
+      </h2>
+      <p class="hero-sub">
+        Plataforma profesional para equipos de adquisiciones inmobiliarias.
+        Analiza deals, calcula MAO y toma decisiones con inteligencia artificial.
+      </p>
+      <div class="feat-grid">
+        <div class="feat">
+          <div class="feat-icon blue">🎯</div>
+          <div class="feat-name">Seguimiento en Tiempo Real</div>
+          <div class="feat-desc">Propiedades y pipeline de tu equipo en un solo lugar</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon teal">🤖</div>
+          <div class="feat-name">Análisis con IA</div>
+          <div class="feat-desc">Claude analiza cada deal y recomienda la mejor estrategia</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon green">📊</div>
+          <div class="feat-name">Dashboard Inteligente</div>
+          <div class="feat-desc">Métricas de pipeline y performance del equipo en vivo</div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon amber">📍</div>
+          <div class="feat-name">MAO Automático</div>
+          <div class="feat-desc">Comparables y oferta óptima calculados instantáneamente</div>
+        </div>
+      </div>
+      <div class="stats-bar">
+        <div>
+          <span class="stat-val">70%</span>
+          <div class="stat-lbl">Regla del Inversionista</div>
+        </div>
+        <div class="stat-div"></div>
+        <div>
+          <span class="stat-val">AI</span>
+          <div class="stat-lbl">Score por Deal</div>
+        </div>
+        <div class="stat-div"></div>
+        <div>
+          <span class="stat-val">100%</span>
+          <div class="stat-lbl">Tu Equipo, Tu Data</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
 <script>
 (async()=>{
   try{
-    const session=await P714Auth.init();
-    if(session){const p=new URLSearchParams(window.location.search);window.location.href=p.get('next')||'/';}
+    const s=await P714Auth.init();
+    if(s){
+      const next=new URLSearchParams(location.search).get('next')||'/';
+      location.href=next;
+    }
   }catch(e){}
 })();
-const btn=document.getElementById('btn');
-const errEl=document.getElementById('err');
-function showErr(m){errEl.textContent=m;errEl.classList.add('show');}
-async function login(){
-  errEl.classList.remove('show');
+
+async function doLogin(){
   const email=document.getElementById('email').value.trim();
-  const pass=document.getElementById('password').value;
-  if(!email||!pass){showErr('Por favor ingresa email y contraseña.');return;}
-  btn.disabled=true;btn.textContent='Iniciando sesión...';
+  const pass=document.getElementById('pass').value;
+  const err=document.getElementById('err');
+  const btn=document.getElementById('login-btn');
+  const spin=document.getElementById('spin');
+  const txt=document.getElementById('btn-txt');
+  err.classList.remove('show');
+  if(!email||!pass){
+    err.textContent='Por favor ingresa email y contraseña.';
+    err.classList.add('show');
+    return;
+  }
+  btn.disabled=true;
+  spin.style.display='block';
+  txt.textContent='Ingresando...';
   try{
-    await P714Auth.login(email,pass);
-    const p=new URLSearchParams(window.location.search);
-    window.location.href=p.get('next')||'/';
+    const{data,error}=await P714Auth.getClient().auth.signInWithPassword({email,password:pass});
+    if(error)throw error;
+    const next=new URLSearchParams(location.search).get('next')||'/';
+    location.href=next;
   }catch(e){
-    showErr(e.message==='Invalid login credentials'?'Email o contraseña incorrectos.':e.message||'Error al iniciar sesión.');
-    btn.disabled=false;btn.textContent='Iniciar Sesión';
+    err.textContent=e.message==='Invalid login credentials'
+      ?'Email o contraseña incorrectos. Verifica tus datos.'
+      :e.message||'Error al iniciar sesión';
+    err.classList.add('show');
+    btn.disabled=false;
+    spin.style.display='none';
+    txt.textContent='Iniciar Sesión';
   }
 }
-btn.addEventListener('click',login);
-document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')login();});
-document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('password').focus();});
 </script>
-</body></html>
+</body>
+</html>
