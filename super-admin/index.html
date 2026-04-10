@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Super Admin — Properties 714 SaaS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="/js/config.js?v=13"></script><script src="/js/auth.js?v=13"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#060D1F;color:#F1F5F9;font-family:'Inter',-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;min-height:100%;}
+/* NAVBAR */
+.sa-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:rgba(6,13,31,.95);border-bottom:1px solid rgba(255,255,255,.07);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;}
+.sa-logo{display:flex;align-items:center;gap:10px;}
+.sa-logo-box{width:36px;height:36px;background:linear-gradient(135deg,#7C3AED,#5B21B6);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;box-shadow:0 2px 10px rgba(124,58,237,.5);}
+.sa-logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:#fff;}
+.sa-logo-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#7C3AED;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.3);padding:2px 8px;border-radius:99px;margin-left:4px;}
+.sa-nav-right{display:flex;align-items:center;gap:12px;}
+.sa-switch-btn{display:flex;align-items:center;gap:7px;padding:7px 14px;background:rgba(37,99,235,.15);border:1px solid rgba(37,99,235,.3);border-radius:8px;font-size:12px;font-weight:600;color:#93C5FD;cursor:pointer;transition:all .15s;text-decoration:none;}
+.sa-switch-btn:hover{background:rgba(37,99,235,.25);border-color:rgba(37,99,235,.5);}
+.sa-av{width:32px;height:32px;border-radius:50%;background:rgba(124,58,237,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#C4B5FD;cursor:pointer;}
+/* PAGE */
+.sa-page{max-width:1200px;margin:0 auto;padding:32px 24px;}
+.sa-page-hdr{margin-bottom:28px;}
+.sa-page-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#fff;letter-spacing:-.03em;margin-bottom:4px;}
+.sa-page-sub{font-size:12px;color:rgba(255,255,255,.35);}
+/* KPI GRID */
+.sa-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.sa-kpi{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .16s;}
+.sa-kpi:hover{border-color:rgba(124,58,237,.4);background:rgba(255,255,255,.06);}
+.sa-kpi-bar{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0;}
+.sa-kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.3);margin-bottom:10px;}
+.sa-kpi-val{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;letter-spacing:-.04em;line-height:1;color:#fff;}
+.sa-kpi-sub{font-size:11px;color:rgba(255,255,255,.25);margin-top:6px;}
+.kp1 .sa-kpi-bar{background:linear-gradient(90deg,#7C3AED,#A78BFA);}.kp1 .sa-kpi-val{color:#A78BFA;}
+.kp2 .sa-kpi-bar{background:linear-gradient(90deg,#2563EB,#60A5FA);}.kp2 .sa-kpi-val{color:#60A5FA;}
+.kp3 .sa-kpi-bar{background:linear-gradient(90deg,#0D9488,#34D399);}.kp3 .sa-kpi-val{color:#34D399;}
+.kp4 .sa-kpi-bar{background:linear-gradient(90deg,#D97706,#FCD34D);}.kp4 .sa-kpi-val{color:#FCD34D;}
+/* GRID */
+.sa-grid{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+/* CARD */
+.sa-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden;}
+.sa-card-h{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.sa-card-t{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:#fff;}
+.sa-card-b{}
+/* ORG TABLE */
+.org-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .12s;}
+.org-row:last-child{border-bottom:none;}
+.org-row:hover{background:rgba(255,255,255,.04);}
+.org-av{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,rgba(37,99,235,.3),rgba(37,99,235,.15));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#93C5FD;flex-shrink:0;}
+.org-name{font-size:13px;font-weight:600;color:#F1F5F9;margin-bottom:2px;}
+.org-meta{font-size:11px;color:rgba(255,255,255,.3);}
+.org-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.plan-badge{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:700;text-transform:uppercase;}
+.plan-pro{background:rgba(124,58,237,.2);color:#C4B5FD;border:1px solid rgba(124,58,237,.3);}
+.plan-basic{background:rgba(100,116,139,.15);color:#94A3B8;border:1px solid rgba(100,116,139,.2);}
+.plan-team{background:rgba(13,148,136,.2);color:#5EEAD4;border:1px solid rgba(13,148,136,.3);}
+.status-dot{width:7px;height:7px;border-radius:50%;}
+.dot-active{background:#22C55E;box-shadow:0 0 6px #22C55E;}
+.dot-trial{background:#F59E0B;}
+.dot-cancel{background:#EF4444;}
+/* ORG DETAIL PANEL */
+.org-detail{display:none;}
+.org-detail.show{display:block;}
+.od-hdr{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);}
+.od-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;}
+.od-sub{font-size:11px;color:rgba(255,255,255,.3);}
+.od-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);}
+.od-stat{background:rgba(255,255,255,.04);border-radius:8px;padding:12px;}
+.od-stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#fff;}
+.od-stat-lbl{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.07em;margin-top:2px;}
+.od-agents{}
+.od-agent-row{display:flex;align-items:center;gap:10px;padding:11px 20px;border-bottom:1px solid rgba(255,255,255,.05);}
+.od-agent-row:last-child{border-bottom:none;}
+.od-agent-av{width:28px;height:28px;border-radius:50%;background:rgba(37,99,235,.25);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#93C5FD;flex-shrink:0;}
+.od-agent-name{font-size:12px;font-weight:500;color:#F1F5F9;}
+.od-agent-role{font-size:10px;color:rgba(255,255,255,.3);}
+/* Charts */
+.sa-chart-wrap{padding:16px 20px;}
+/* Plan bar */
+.plan-dist{padding:14px 20px;}
+.pd-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.pd-row:last-child{margin-bottom:0;}
+.pd-lbl{font-size:12px;font-weight:500;color:#F1F5F9;width:60px;flex-shrink:0;}
+.pd-bar-wrap{flex:1;background:rgba(255,255,255,.07);border-radius:99px;height:6px;overflow:hidden;}
+.pd-bar{height:100%;border-radius:99px;}
+.pd-cnt{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);}
+/* AI usage */
+.ai-meter{padding:14px 20px;}
+.ai-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;}
+.ai-row:last-child{border-bottom:none;}
+.ai-lbl{color:rgba(255,255,255,.4);}
+.ai-val{font-family:'DM Mono',monospace;color:#F1F5F9;font-weight:600;}
+/* Btn */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;white-space:nowrap;font-family:'Inter',sans-serif;transition:all .12s;}
+.btn-purple{background:rgba(124,58,237,.2);color:#C4B5FD;border-color:rgba(124,58,237,.3);}.btn-purple:hover{background:rgba(124,58,237,.3);}
+.btn-ghost{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.1);}.btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff;}
+.btn-sm{padding:4px 10px;font-size:11px;}
+/* Toast */
+#tc{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{display:flex;align-items:flex-start;gap:10px;background:#1E293B;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;min-width:260px;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+.tt{font-size:12px;font-weight:600;color:#F1F5F9;}.tm{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;}
+/* Modal */
+.modal-bd{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-bd.open{display:flex;}
+.modal{background:#0F172A;border:1px solid rgba(255,255,255,.1);border-radius:16px;width:100%;max-width:480px;overflow:hidden;}
+.modal-h{padding:18px 22px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:#fff;}
+.modal-x{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.07);border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-b{padding:20px 22px;}
+.mf{margin-bottom:14px;}.ml{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);margin-bottom:5px;}
+.mi{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .14s;}
+.mi:focus{border-color:#7C3AED;}
+.mi::placeholder{color:rgba(255,255,255,.2);}
+@media(max-width:768px){.sa-kpi-grid{grid-template-columns:1fr 1fr;}.sa-grid{grid-template-columns:1fr;}.sa-nav{padding:12px 16px;}.sa-page{padding:16px;}.sa-logo-badge{display:none;}}
+</style>
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="sa-nav">
+  <div class="sa-logo">
+    <div class="sa-logo-box">Σ</div>
+    <span class="sa-logo-name">Properties 714</span>
+    <span class="sa-logo-badge">Super Admin</span>
+  </div>
+  <div class="sa-nav-right">
+    <a href="/" class="sa-switch-btn">
+      <span>🎯</span> Switch to My Organization
+    </a>
+    <div class="sa-av" id="s-av" onclick="P714Auth.logout()" title="Cerrar sesión">--</div>
+  </div>
+</nav>
+
+<div class="sa-page">
+  <div class="sa-page-hdr">
+    <div class="sa-page-title">⚡ Super Admin Dashboard</div>
+    <div class="sa-page-sub" id="sa-sub">Cargando datos globales...</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="sa-kpi-grid">
+    <div class="sa-kpi kp1"><div class="sa-kpi-bar"></div><div class="sa-kpi-lbl">Organizaciones</div><div class="sa-kpi-val" id="kp1">0</div><div class="sa-kpi-sub">Clientes activos</div></div>
+    <div class="sa-kpi kp2"><div class="sa-kpi-bar"></div><div class="sa-kpi-lbl">Usuarios Totales</div><div class="sa-kpi-val" id="kp2">0</div><div class="sa-kpi-sub">Admins + Agents</div></div>
+    <div class="sa-kpi kp3"><div class="sa-kpi-bar"></div><div class="sa-kpi-lbl">Deals Totales</div><div class="sa-kpi-val" id="kp3">0</div><div class="sa-kpi-sub">En el sistema</div></div>
+    <div class="sa-kpi kp4"><div class="sa-kpi-bar"></div><div class="sa-kpi-lbl">Uso de IA (30d)</div><div class="sa-kpi-val" id="kp4">0</div><div class="sa-kpi-sub">Requests Claude</div></div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="sa-grid">
+    <!-- Left: Organizations -->
+    <div>
+      <div class="sa-card">
+        <div class="sa-card-h">
+          <span class="sa-card-t">🏢 Organizaciones</span>
+          <button class="btn btn-purple btn-sm" onclick="openNewOrg()">➕ Nueva Org</button>
+        </div>
+        <div id="orgs-list"><div style="padding:40px;text-align:center;color:rgba(255,255,255,.2)">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- Right: Detail + stats -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <!-- Org detail (empty state) -->
+      <div class="sa-card" id="org-detail-card">
+        <div id="org-detail-empty" style="padding:40px;text-align:center;color:rgba(255,255,255,.2)">
+          <div style="font-size:36px;margin-bottom:10px">🏢</div>
+          <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.3)">Selecciona una organización</div>
+          <div style="font-size:11px;margin-top:4px">Click en cualquier org para ver detalles</div>
+        </div>
+        <div id="org-detail-content" class="org-detail"></div>
+      </div>
+
+      <!-- Plan distribution -->
+      <div class="sa-card">
+        <div class="sa-card-h"><span class="sa-card-t">📊 Distribución de Planes</span></div>
+        <div class="plan-dist" id="plan-dist"></div>
+      </div>
+
+      <!-- AI Usage -->
+      <div class="sa-card">
+        <div class="sa-card-h"><span class="sa-card-t">🤖 Uso de IA Global</span></div>
+        <div class="ai-meter" id="ai-meter">
+          <div class="ai-row"><span class="ai-lbl">Total requests</span><span class="ai-val" id="ai-total">0</span></div>
+          <div class="ai-row"><span class="ai-lbl">Deal analysis</span><span class="ai-val" id="ai-deals">0</span></div>
+          <div class="ai-row"><span class="ai-lbl">Donna chats</span><span class="ai-val" id="ai-donna">0</span></div>
+          <div class="ai-row"><span class="ai-lbl">Costo estimado (USD)</span><span class="ai-val" id="ai-cost">$0.00</span></div>
+        </div>
+      </div>
+
+      <!-- Recent events -->
+      <div class="sa-card">
+        <div class="sa-card-h"><span class="sa-card-t">📅 Eventos Recientes</span></div>
+        <div id="events-list"><div style="padding:20px;text-align:center;color:rgba(255,255,255,.2);font-size:12px">Sin eventos aún</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- New Org Modal -->
+<div class="modal-bd" id="modal-bd">
+  <div class="modal">
+    <div class="modal-h">
+      <span class="modal-title">🏢 Nueva Organización</span>
+      <button class="modal-x" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-b">
+      <div class="mf"><label class="ml">Nombre de la organización</label><input class="mi" id="m-name" placeholder="Ej: Realty Masters LLC"/></div>
+      <div class="mf"><label class="ml">Email del Admin</label><input class="mi" id="m-email" type="email" placeholder="admin@empresa.com"/></div>
+      <div class="mf"><label class="ml">Plan</label><select class="mi" id="m-plan"><option value="pro">Pro — $97/mes</option><option value="basic">Basic — Gratis</option><option value="team">Team — $297/mes</option></select></div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <button class="btn btn-purple" style="flex:1" onclick="createOrg()">Crear Organización</button>
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+<script>
+let _orgs=[],_allProfiles=[],_allLeads=[],_aiUsage=[],_allEvents=[];
+
+(async()=>{
+  try{
+    const s=await P714Auth.init();
+    if(!s){location.href='/login/?next=/super-admin/';return;}
+    if(!P714Auth.isSuperAdmin()){location.href='/';return;}
+    const p=P714Auth.getProfile();
+    document.getElementById('s-av').textContent=(p?.full_name||'S').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    await loadAll();
+  }catch(e){console.error(e);}
+})();
+
+async function loadAll(){
+  const sb=P714Auth.getClient();
+  // Load everything in parallel
+  const [o,pr,le,ai,ev]=await Promise.all([
+    sb.from('organizations').select('*,plan:plans(name,display_name)').order('created_at'),
+    sb.from('profiles').select('*'),
+    sb.from('acquisitions_leads').select('id,organization_id,deal_score,status,created_at'),
+    sb.from('ai_usage').select('*').gte('created_at',new Date(Date.now()-30*86400000).toISOString()),
+    sb.from('events').select('*').order('created_at',{ascending:false}).limit(20)
+  ]);
+  _orgs=o.data||[];_allProfiles=pr.data||[];_allLeads=le.data||[];_aiUsage=ai.data||[];_allEvents=ev.data||[];
+
+  // KPIs
+  document.getElementById('kp1').textContent=_orgs.length;
+  document.getElementById('kp2').textContent=_allProfiles.filter(p=>!p.is_super_admin).length;
+  document.getElementById('kp3').textContent=_allLeads.length;
+  document.getElementById('kp4').textContent=_aiUsage.length;
+  document.getElementById('sa-sub').textContent=`${_orgs.length} organizaciones · ${_allProfiles.length} usuarios · ${_allLeads.length} deals en el sistema`;
+
+  // Plan distribution
+  const planCounts={};
+  _orgs.forEach(o=>{const n=o.plan?.name||'basic';planCounts[n]=(planCounts[n]||0)+1;});
+  const total=_orgs.length||1;
+  const planColors={pro:'#7C3AED',basic:'#475569',team:'#0D9488'};
+  document.getElementById('plan-dist').innerHTML=Object.entries(planCounts).map(([n,c])=>
+    `<div class="pd-row"><span class="pd-lbl">${n.charAt(0).toUpperCase()+n.slice(1)}</span><div class="pd-bar-wrap"><div class="pd-bar" style="width:${Math.round(c/total*100)}%;background:${planColors[n]||'#475569'}"></div></div><span class="pd-cnt">${c}</span></div>`
+  ).join('')||'<div style="padding:14px;color:rgba(255,255,255,.2);font-size:12px;text-align:center">Sin datos</div>';
+
+  // AI usage
+  const aiDeals=_aiUsage.filter(a=>a.action==='deal_analysis').length;
+  const aiDonna=_aiUsage.filter(a=>a.action==='donna_chat').length;
+  const aiCost=_aiUsage.reduce((s,a)=>s+(Number(a.cost_estimate)||0),0);
+  document.getElementById('ai-total').textContent=_aiUsage.length;
+  document.getElementById('ai-deals').textContent=aiDeals;
+  document.getElementById('ai-donna').textContent=aiDonna;
+  document.getElementById('ai-cost').textContent='$'+aiCost.toFixed(4);
+
+  // Events
+  document.getElementById('events-list').innerHTML=_allEvents.length
+    ?_allEvents.slice(0,8).map(e=>{
+        const org=_orgs.find(o=>o.id===e.organization_id);
+        const user=_allProfiles.find(p=>p.id===e.user_id);
+        return `<div style="display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05)">
+          <div style="width:7px;height:7px;border-radius:50%;background:#7C3AED;flex-shrink:0"></div>
+          <div style="flex:1"><div style="font-size:12px;color:#F1F5F9">${esc(e.event_type)}</div><div style="font-size:10px;color:rgba(255,255,255,.3)">${esc(user?.full_name||'Usuario')} · ${esc(org?.name||'—')}</div></div>
+          <span style="font-size:10px;color:rgba(255,255,255,.2)">${fd(e.created_at)}</span>
+        </div>`;
+      }).join('')
+    :'<div style="padding:20px;text-align:center;color:rgba(255,255,255,.2);font-size:12px">Sin eventos aún</div>';
+
+  renderOrgs();
+}
+
+function renderOrgs(){
+  const cont=document.getElementById('orgs-list');
+  if(!_orgs.length){
+    cont.innerHTML='<div style="padding:40px;text-align:center;color:rgba(255,255,255,.2)">Sin organizaciones todavía</div>';
+    return;
+  }
+  cont.innerHTML=_orgs.map(o=>{
+    const members=_allProfiles.filter(p=>p.organization_id===o.id);
+    const deals=_allLeads.filter(l=>l.organization_id===o.id);
+    const initials=(o.name||'O').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const planName=o.plan?.name||'basic';
+    const dotClass=o.subscription_status==='active'?'dot-active':o.subscription_status==='trial'?'dot-trial':'dot-cancel';
+    return `<div class="org-row" onclick="showOrgDetail('${o.id}')">
+      <div class="org-av">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div class="org-name">${esc(o.name)}</div>
+        <div class="org-meta">${members.length} miembro${members.length!==1?'s':''} · ${deals.length} deals · ${fd(o.created_at)}</div>
+      </div>
+      <div class="org-right">
+        <span class="plan-badge plan-${planName}">${planName}</span>
+        <div class="status-dot ${dotClass}" title="${o.subscription_status}"></div>
+        <span style="color:rgba(255,255,255,.2);font-size:16px">›</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showOrgDetail(orgId){
+  const o=_orgs.find(x=>x.id===orgId);
+  if(!o)return;
+  document.getElementById('org-detail-empty').style.display='none';
+  const content=document.getElementById('org-detail-content');
+  content.classList.add('show');
+  const members=_allProfiles.filter(p=>p.organization_id===orgId);
+  const deals=_allLeads.filter(l=>l.organization_id===orgId);
+  const hiConf=deals.filter(d=>(d.deal_score||0)>=70).length;
+  const aiReqs=_aiUsage.filter(a=>a.organization_id===orgId).length;
+  content.innerHTML=`
+    <div class="od-hdr">
+      <div class="od-name">${esc(o.name)}</div>
+      <div class="od-sub">Plan: ${o.plan?.display_name||o.plan?.name||'Basic'} · ${o.subscription_status}</div>
+    </div>
+    <div class="od-stats">
+      <div class="od-stat"><div class="od-stat-val">${members.length}</div><div class="od-stat-lbl">Miembros</div></div>
+      <div class="od-stat"><div class="od-stat-val">${deals.length}</div><div class="od-stat-lbl">Deals</div></div>
+      <div class="od-stat"><div class="od-stat-val">${hiConf}</div><div class="od-stat-lbl">Alta Conf.</div></div>
+      <div class="od-stat"><div class="od-stat-val">${aiReqs}</div><div class="od-stat-lbl">Uso IA</div></div>
+    </div>
+    <div class="sa-card-h" style="padding:12px 20px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3)">Equipo</span></div>
+    <div class="od-agents">
+      ${members.map((m,i)=>{
+        const init=(m.full_name||m.email||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+        const colors=['rgba(37,99,235,.25)','rgba(13,148,136,.2)','rgba(22,163,74,.2)','rgba(124,58,237,.15)'];
+        const tcs=['#93C5FD','#5EEAD4','#86EFAC','#C4B5FD'];
+        return `<div class="od-agent-row">
+          <div class="od-agent-av" style="background:${colors[i%4]};color:${tcs[i%4]}">${init}</div>
+          <div><div class="od-agent-name">${esc(m.full_name||m.email||'—')}</div><div class="od-agent-role">${m.role==='owner'?'Owner 👑':'Agente'}</div></div>
+          <span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,.2)">${esc(m.email||'')}</span>
+        </div>`;
+      }).join('')||'<div style="padding:16px 20px;color:rgba(255,255,255,.2);font-size:12px">Sin miembros</div>'}
+    </div>
+    <div style="padding:14px 20px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px">
+      <button class="btn btn-purple btn-sm" onclick="switchToOrg('${orgId}')">🔄 Entrar como esta Org</button>
+    </div>
+  `;
+}
+
+function switchToOrg(orgId){
+  // Store org context override in sessionStorage
+  sessionStorage.setItem('sa_org_override',orgId);
+  toast('info','Cambiando contexto...','Redirigiendo al dashboard de la org');
+  setTimeout(()=>location.href='/',800);
+}
+
+async function createOrg(){
+  const name=document.getElementById('m-name').value.trim();
+  const email=document.getElementById('m-email').value.trim();
+  const planName=document.getElementById('m-plan').value;
+  if(!name){toast('error','Nombre requerido','');return;}
+  try{
+    const{data:plan}=await P714Auth.getClient().from('plans').select('id').eq('name',planName).single();
+    const slug=name.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
+    const{error}=await P714Auth.getClient().from('organizations').insert({name,plan_id:plan?.id,subscription_status:'trial',slug:slug+'-'+Date.now()});
+    if(error)throw error;
+    toast('success','✓ Organización creada','');
+    closeModal();await loadAll();
+  }catch(e){toast('error','Error',e.message);}
+}
+
+function openNewOrg(){document.getElementById('modal-bd').classList.add('open');setTimeout(()=>document.getElementById('m-name').focus(),200);}
+function closeModal(){document.getElementById('modal-bd').classList.remove('open');}
+document.getElementById('modal-bd').onclick=e=>{if(e.target===document.getElementById('modal-bd'))closeModal();};
+
+function fm(n){if(!n&&n!==0)return '—';const v=Number(n);return isNaN(v)?'—':'$'+v.toLocaleString('en-US');}
+function fd(d){if(!d)return '';try{return new Date(d).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'2-digit'});}catch{return '';}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function toast(l,t,m){
+  const c=document.getElementById('tc');
+  const col={success:'#22C55E',error:'#EF4444',info:'#60A5FA'};
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML=`<span style="color:${col[l]};font-size:15px">${l==='success'?'✓':l==='error'?'✕':'ℹ'}</span><div><div class="tt">${t}</div>${m?`<div class="tm">${m}</div>`:''}</div>`;
+  c.appendChild(el);setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},5000);
+}
+</script>
+<script src="/js/donna.js?v=3"></script>
+</body></html>
