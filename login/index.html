@@ -4,6 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Sign In — Properties 714</title>
+<meta name="theme-color" content="#2563EB"/>
+<link rel="manifest" href="/manifest.json"/>
+<link rel="apple-touch-icon" href="/icons/icon-192.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -12,315 +15,85 @@
 <script src="/js/auth.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{
-  min-height:100%;
-  font-family:'Inter',-apple-system,sans-serif;
-  -webkit-font-smoothing:antialiased;
-  background:#060D1F;
-  color:#fff;
-  overflow-x:hidden;
-}
-
-/* ══ BACKGROUND ══ */
-.bg{
-  position:fixed;inset:0;
-  background:linear-gradient(160deg,#060D1F 0%,#0A1628 35%,#0D1F3C 65%,#060D1F 100%);
-  z-index:0;
-}
-/* Grid */
-.bg::before{
-  content:'';
-  position:absolute;inset:0;
-  background-image:
-    linear-gradient(rgba(37,99,235,0.09) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(37,99,235,0.09) 1px, transparent 1px);
-  background-size:60px 60px;
-}
-/* Glow blobs */
+html,body{min-height:100%;font-family:'Inter',-apple-system,sans-serif;-webkit-font-smoothing:antialiased;background:#060D1F;color:#fff;overflow-x:hidden;}
+.bg{position:fixed;inset:0;background:linear-gradient(160deg,#060D1F 0%,#0A1628 35%,#0D1F3C 65%,#060D1F 100%);z-index:0;}
+.bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,0.09) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,0.09) 1px,transparent 1px);background-size:60px 60px;}
 .blob{position:absolute;border-radius:50%;pointer-events:none;filter:blur(60px);}
 .blob1{width:700px;height:700px;background:rgba(37,99,235,0.15);top:-200px;left:50%;transform:translateX(-50%);}
 .blob2{width:500px;height:500px;background:rgba(13,148,136,0.08);bottom:-100px;right:-100px;}
 .blob3{width:400px;height:400px;background:rgba(37,99,235,0.08);bottom:-50px;left:-80px;}
-
-/* ══ PAGE ══ */
 .page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;}
-
-/* ══ NAVBAR ══ */
-.navbar{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:20px 60px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-  backdrop-filter:blur(12px);
-  position:sticky;top:0;z-index:10;
-  background:rgba(6,13,31,0.6);
-}
+/* NAVBAR */
+.navbar{display:flex;align-items:center;justify-content:space-between;padding:18px 60px;border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);position:sticky;top:0;z-index:10;background:rgba(6,13,31,0.6);}
 .nav-logo{display:flex;align-items:center;gap:12px;}
-.nav-logo-box{
-  width:38px;height:38px;
-  background:linear-gradient(135deg,#2563EB,#1D4ED8);
-  border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#fff;
-  box-shadow:0 3px 12px rgba(37,99,235,0.45);
-}
-.nav-logo-name{
-  font-family:'Syne',sans-serif;font-weight:700;font-size:17px;
-  color:#fff;letter-spacing:-0.01em;
-}
+.nav-logo-box{width:40px;height:40px;background:linear-gradient(135deg,#2563EB,#1D4ED8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:-0.03em;color:#fff;box-shadow:0 3px 12px rgba(37,99,235,0.45);}
+.nav-logo-name{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;color:#fff;letter-spacing:-0.01em;}
 .nav-center{display:flex;align-items:center;gap:6px;}
-.nav-link{
-  padding:7px 16px;border-radius:99px;
-  font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);
-  cursor:pointer;transition:all .15s;text-decoration:none;
-}
+.nav-link{padding:7px 16px;border-radius:99px;font-size:13px;font-weight:500;color:rgba(255,255,255,0.55);cursor:pointer;transition:all .15s;text-decoration:none;}
 .nav-link:hover{color:#fff;background:rgba(255,255,255,0.06);}
 .nav-link.active{background:rgba(37,99,235,0.25);color:#93C5FD;font-weight:600;}
 .nav-right{display:flex;align-items:center;gap:10px;}
-.nav-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:5px 12px;
-  background:rgba(37,99,235,0.15);
-  border:1px solid rgba(37,99,235,0.3);
-  border-radius:99px;
-  font-size:10px;font-weight:700;color:#93C5FD;
-  text-transform:uppercase;letter-spacing:0.06em;
-}
-.nav-dot{
-  width:5px;height:5px;border-radius:50%;
-  background:#2563EB;box-shadow:0 0 5px #2563EB;
-  animation:pulse 2s infinite;
-}
+.nav-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);border-radius:99px;font-size:10px;font-weight:700;color:#93C5FD;text-transform:uppercase;letter-spacing:0.06em;}
+.nav-dot{width:5px;height:5px;border-radius:50%;background:#2563EB;box-shadow:0 0 5px #2563EB;animation:pulse 2s infinite;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-
-/* ══ HERO ══ */
-.hero{
-  flex:1;
-  display:flex;flex-direction:column;
-  align-items:center;
-  padding:56px 24px 40px;
-  text-align:center;
-}
-/* Security badge */
-.sec-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:8px 20px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:99px;
-  font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);
-  margin-bottom:30px;
-}
-.sec-badge-icon{
-  width:20px;height:20px;border-radius:50%;
-  background:rgba(37,99,235,0.3);
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;
-}
-
-/* Title */
-.hero-title{
-  font-family:'Syne',sans-serif;
-  font-size:clamp(36px,5vw,60px);
-  font-weight:800;
-  line-height:1.06;
-  letter-spacing:-0.04em;
-  color:#fff;
-  margin-bottom:18px;
-  max-width:700px;
-}
-.hero-title span{
-  background:linear-gradient(135deg,#60A5FA,#38BDF8);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-
-.hero-sub{
-  font-size:15px;color:rgba(255,255,255,0.45);
-  line-height:1.7;max-width:480px;margin-bottom:40px;
-}
-
-/* ══ LOGIN CARD ══ */
-.login-card{
-  background:rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:20px;
-  padding:32px 36px;
-  width:100%;max-width:400px;
-  backdrop-filter:blur(20px);
-  box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05);
-  margin-bottom:56px;
-  text-align:left;
-}
-.card-title{
-  font-family:'Syne',sans-serif;
-  font-size:18px;font-weight:700;
-  color:#fff;margin-bottom:4px;
-}
+/* HERO */
+.hero{flex:1;display:flex;flex-direction:column;align-items:center;padding:56px 24px 40px;text-align:center;}
+.sec-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:99px;font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:30px;}
+.sec-badge-icon{width:20px;height:20px;border-radius:50%;background:rgba(37,99,235,0.3);display:flex;align-items:center;justify-content:center;font-size:10px;}
+.hero-title{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.06;letter-spacing:-0.04em;color:#fff;margin-bottom:18px;max-width:700px;}
+.hero-title span{background:linear-gradient(135deg,#60A5FA,#38BDF8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,0.45);line-height:1.7;max-width:480px;margin-bottom:40px;}
+/* LOGIN CARD */
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:32px 36px;width:100%;max-width:400px;backdrop-filter:blur(20px);box-shadow:0 20px 60px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.05);margin-bottom:56px;text-align:left;}
+.card-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:#fff;margin-bottom:4px;}
 .card-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:24px;}
-
 .field{margin-bottom:16px;}
-.field-label{
-  display:block;font-size:10px;font-weight:700;
-  text-transform:uppercase;letter-spacing:0.09em;
-  color:rgba(255,255,255,0.4);margin-bottom:7px;
-}
-.field-input{
-  width:100%;padding:12px 15px;
-  background:rgba(255,255,255,0.06);
-  border:1.5px solid rgba(255,255,255,0.1);
-  border-radius:10px;
-  font-size:14px;font-family:'Inter',sans-serif;
-  color:#fff;outline:none;
-  transition:border-color .15s,background .15s,box-shadow .15s;
-}
-.field-input:focus{
-  border-color:rgba(37,99,235,0.7);
-  background:rgba(37,99,235,0.08);
-  box-shadow:0 0 0 4px rgba(37,99,235,0.12);
-}
+.field-label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.09em;color:rgba(255,255,255,0.4);margin-bottom:7px;}
+.field-input{width:100%;padding:12px 15px;background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;font-size:14px;font-family:'Inter',sans-serif;color:#fff;outline:none;transition:border-color .15s,background .15s,box-shadow .15s;}
+.field-input:focus{border-color:rgba(37,99,235,0.7);background:rgba(37,99,235,0.08);box-shadow:0 0 0 4px rgba(37,99,235,0.12);}
 .field-input::placeholder{color:rgba(255,255,255,0.2);}
-
-.btn-login{
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,#2563EB,#1D4ED8);
-  color:#fff;border:none;border-radius:10px;
-  font-size:14px;font-weight:700;
-  font-family:'Inter',sans-serif;
-  cursor:pointer;transition:all .15s;
-  box-shadow:0 4px 16px rgba(37,99,235,0.5);
-  margin-top:4px;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-login:hover{
-  transform:translateY(-1px);
-  box-shadow:0 8px 24px rgba(37,99,235,0.6);
-}
-.btn-login:active{transform:translateY(0);}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;box-shadow:0 4px 16px rgba(37,99,235,0.5);margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,0.6);}
 .btn-login:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
-
-.spin{
-  width:15px;height:15px;
-  border:2px solid rgba(255,255,255,0.3);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin .7s linear infinite;display:none;
-}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-.err-msg{
-  background:rgba(220,38,38,0.15);
-  border:1px solid rgba(220,38,38,0.3);
-  border-radius:8px;padding:10px 13px;
-  font-size:12px;color:#FCA5A5;font-weight:500;
-  margin-bottom:14px;display:none;
-}
+.err-msg{background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:10px 13px;font-size:12px;color:#FCA5A5;font-weight:500;margin-bottom:14px;display:none;}
 .err-msg.show{display:block;}
-
-.card-footer{
-  margin-top:18px;text-align:center;
-  font-size:11px;color:rgba(255,255,255,0.2);
-}
-
-/* ══ FEATURE CARDS ══ */
-.feat-section{
-  width:100%;max-width:1060px;
-  margin:0 auto;padding:0 24px 60px;
-}
-.feat-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:16px;
-}
-.feat-card{
-  background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:16px;
-  padding:22px 20px;
-  transition:all .2s;
-}
-.feat-card:hover{
-  background:rgba(255,255,255,0.06);
-  border-color:rgba(37,99,235,0.35);
-  transform:translateY(-3px);
-  box-shadow:0 12px 30px rgba(0,0,0,0.3);
-}
-.feat-icon{
-  width:42px;height:42px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:20px;margin-bottom:14px;
-}
-.feat-icon.i-blue{background:rgba(37,99,235,0.2);}
-.feat-icon.i-teal{background:rgba(13,148,136,0.2);}
-.feat-icon.i-green{background:rgba(22,163,74,0.2);}
-.feat-icon.i-amber{background:rgba(217,119,6,0.2);}
-
-.feat-tag{
-  display:inline-flex;align-items:center;gap:5px;
-  padding:3px 9px;border-radius:99px;
-  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;
-  margin-bottom:10px;
-}
-.feat-tag.t-blue{background:rgba(37,99,235,0.2);color:#93C5FD;}
-.feat-tag.t-teal{background:rgba(13,148,136,0.2);color:#5EEAD4;}
-.feat-tag.t-green{background:rgba(22,163,74,0.2);color:#86EFAC;}
-.feat-tag.t-amber{background:rgba(217,119,6,0.2);color:#FCD34D;}
-
+.card-footer{margin-top:18px;text-align:center;font-size:11px;color:rgba(255,255,255,0.2);}
+/* FEATURE CARDS */
+.feat-section{width:100%;max-width:1060px;margin:0 auto;padding:0 24px 60px;}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.feat-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:22px 20px;transition:all .2s;}
+.feat-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(37,99,235,0.35);transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.3);}
+.feat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:14px;}
+.feat-icon.i-blue{background:rgba(37,99,235,0.2);}.feat-icon.i-teal{background:rgba(13,148,136,0.2);}
+.feat-icon.i-green{background:rgba(22,163,74,0.2);}.feat-icon.i-amber{background:rgba(217,119,6,0.2);}
+.feat-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;}
+.feat-tag.t-blue{background:rgba(37,99,235,0.2);color:#93C5FD;}.feat-tag.t-teal{background:rgba(13,148,136,0.2);color:#5EEAD4;}
+.feat-tag.t-green{background:rgba(22,163,74,0.2);color:#86EFAC;}.feat-tag.t-amber{background:rgba(217,119,6,0.2);color:#FCD34D;}
 .feat-name{font-size:14px;font-weight:700;color:#F1F5F9;margin-bottom:8px;}
 .feat-desc{font-size:12px;color:rgba(255,255,255,0.35);line-height:1.6;}
-
-/* Feat card extras */
-.feat-stat{
-  margin-top:16px;padding-top:14px;
-  border-top:1px solid rgba(255,255,255,0.06);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.feat-stat-val{
-  font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#fff;
-}
+.feat-stat{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;}
+.feat-stat-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:700;color:#fff;}
 .feat-stat-lbl{font-size:10px;color:rgba(255,255,255,0.3);}
 .feat-mini-bar{height:4px;border-radius:99px;background:rgba(255,255,255,0.08);margin-top:8px;overflow:hidden;}
 .feat-mini-bar-fill{height:100%;border-radius:99px;}
-
-/* ══ BOTTOM STRIP ══ */
-.bottom-strip{
-  border-top:1px solid rgba(255,255,255,0.06);
-  padding:20px 60px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:rgba(6,13,31,0.5);
-  backdrop-filter:blur(12px);
-}
+/* BOTTOM */
+.bottom-strip{border-top:1px solid rgba(255,255,255,0.06);padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(6,13,31,0.5);}
 .bottom-trust{font-size:12px;color:rgba(255,255,255,0.3);}
 .tech-stack{display:flex;align-items:center;gap:20px;}
-.tech-item{
-  font-size:11px;font-weight:600;color:rgba(255,255,255,0.25);
-  letter-spacing:0.04em;
-  display:flex;align-items:center;gap:5px;
-}
+.tech-item{font-size:11px;font-weight:600;color:rgba(255,255,255,0.25);letter-spacing:0.04em;display:flex;align-items:center;gap:5px;}
 .tech-dot{width:4px;height:4px;border-radius:50%;background:rgba(37,99,235,0.5);}
-
-/* ══ MOBILE ══ */
-@media(max-width:900px){
-  .navbar{padding:16px 24px;}
-  .nav-center{display:none;}
-  .feat-grid{grid-template-columns:1fr 1fr;}
-  .bottom-strip{flex-direction:column;gap:12px;text-align:center;padding:18px 24px;}
-}
-@media(max-width:560px){
-  .hero{padding:40px 16px 28px;}
-  .login-card{padding:24px 22px;}
-  .feat-grid{grid-template-columns:1fr;}
-  .feat-section{padding:0 16px 40px;}
-}
+@media(max-width:900px){.navbar{padding:16px 24px;}.nav-center{display:none;}.feat-grid{grid-template-columns:1fr 1fr;}.bottom-strip{flex-direction:column;gap:12px;text-align:center;padding:18px 24px;}}
+@media(max-width:560px){.hero{padding:40px 16px 28px;}.login-card{padding:24px 22px;}.feat-grid{grid-template-columns:1fr;}.feat-section{padding:0 16px 40px;}}
 </style>
 </head>
 <body>
-
 <div class="bg"><div class="blob blob1"></div><div class="blob blob2"></div><div class="blob blob3"></div></div>
-
 <div class="page">
-
-  <!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-logo">
-      <div class="nav-logo-box">P7</div>
+      <div class="nav-logo-box">714</div>
       <span class="nav-logo-name">Properties 714</span>
     </div>
     <div class="nav-center">
@@ -333,105 +106,55 @@ html,body{
       <div class="nav-badge"><div class="nav-dot"></div>Sistema Activo</div>
     </div>
   </nav>
-
-  <!-- HERO -->
   <div class="hero">
-    <div class="sec-badge">
-      <div class="sec-badge-icon">⚡</div>
-      Análisis con IA por Deal · Resultados en Segundos
-    </div>
-
-    <h1 class="hero-title">
-      Impulsa las Adquisiciones<br>
-      de tu Equipo <span>desde Cualquier Lugar</span>
-    </h1>
-
-    <p class="hero-sub">
-      Conecta a tu equipo a un sistema inteligente que analiza propiedades,
-      calcula MAO automáticamente y recomienda la mejor estrategia de inversión.
-    </p>
-
-    <!-- LOGIN FORM CARD -->
+    <div class="sec-badge"><div class="sec-badge-icon">⚡</div>Análisis con IA por Deal · Resultados en Segundos</div>
+    <h1 class="hero-title">Impulsa las Adquisiciones<br>de tu Equipo <span>desde Cualquier Lugar</span></h1>
+    <p class="hero-sub">Conecta a tu equipo a un sistema inteligente que analiza propiedades, calcula MAO automáticamente y recomienda la mejor estrategia de inversión.</p>
     <div class="login-card">
       <div class="card-title">Iniciar Sesión</div>
       <div class="card-sub">Accede a tu sistema de adquisiciones</div>
       <div class="err-msg" id="err"></div>
       <div class="field">
         <label class="field-label">Email</label>
-        <input class="field-input" id="email" type="email"
-          placeholder="tu@properties714.com"
-          onkeydown="if(event.key==='Enter')doLogin()"/>
+        <input class="field-input" id="email" type="email" placeholder="tu@properties714.com" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
       <div class="field">
         <label class="field-label">Contraseña</label>
-        <input class="field-input" id="pass" type="password"
-          placeholder="••••••••"
-          onkeydown="if(event.key==='Enter')doLogin()"/>
+        <input class="field-input" id="pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
       </div>
       <button class="btn-login" id="login-btn" onclick="doLogin()">
         <div class="spin" id="spin"></div>
         <span id="btn-txt">Iniciar Sesión →</span>
       </button>
-      <div class="card-footer">Properties 714 LLC · Sistema Interno</div>
+      <div class="card-footer">Properties 714 LLC &middot; Sistema Interno</div>
     </div>
   </div>
-
-  <!-- FEATURE CARDS -->
   <div class="feat-section">
     <div class="feat-grid">
-
-      <!-- Card 1: Deal Score -->
       <div class="feat-card">
         <div class="feat-icon i-blue">🎯</div>
         <div class="feat-tag t-blue">· Score Automático</div>
         <div class="feat-name">Deal Score Calculator</div>
         <div class="feat-desc">La IA evalúa cada propiedad con un score 0–100 basado en precio, ARV, reparaciones y comps.</div>
-        <div class="feat-stat">
-          <div>
-            <div class="feat-stat-val">0–100</div>
-            <div class="feat-stat-lbl">Score por deal</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:11px;color:rgba(255,255,255,0.3)">≥70 = Alta Conf.</div>
-          </div>
-        </div>
+        <div class="feat-stat"><div><div class="feat-stat-val">0–100</div><div class="feat-stat-lbl">Score por deal</div></div><div style="font-size:11px;color:rgba(255,255,255,0.3)">≥70 = Alta Conf.</div></div>
         <div class="feat-mini-bar"><div class="feat-mini-bar-fill" style="width:82%;background:linear-gradient(90deg,#2563EB,#60A5FA)"></div></div>
       </div>
-
-      <!-- Card 2: Pipeline -->
       <div class="feat-card">
         <div class="feat-icon i-teal">📊</div>
         <div class="feat-tag t-teal">· Tiempo Real</div>
         <div class="feat-name">Pipeline Tracking</div>
         <div class="feat-desc">Sigue cada propiedad desde el primer contacto hasta el cierre. Estatus, agente y ganancia estimada.</div>
-        <div class="feat-stat">
-          <div>
-            <div class="feat-stat-val" id="live-count">—</div>
-            <div class="feat-stat-lbl">Propiedades activas</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:11px;color:rgba(255,255,255,0.3)">En tu pipeline</div>
-          </div>
-        </div>
+        <div class="feat-stat"><div><div class="feat-stat-val" id="live-count">—</div><div class="feat-stat-lbl">Propiedades activas</div></div></div>
         <div class="feat-mini-bar"><div class="feat-mini-bar-fill" style="width:65%;background:linear-gradient(90deg,#0D9488,#5EEAD4)"></div></div>
       </div>
-
-      <!-- Card 3: AI Analysis -->
       <div class="feat-card">
         <div class="feat-icon i-green">🤖</div>
         <div class="feat-tag t-green">· Claude AI</div>
         <div class="feat-name">AI Analysis Engine</div>
         <div class="feat-desc">Claude Sonnet analiza cada deal: recomienda Flip, Rental o Wholesale con nivel de confianza y por qué.</div>
-        <div class="feat-stat">
-          <div>
-            <div class="feat-stat-val">3 Estrategias</div>
-            <div class="feat-stat-lbl">Flip · Rental · Wholesale</div>
-          </div>
-        </div>
+        <div class="feat-stat"><div><div class="feat-stat-val">3 Estrategias</div><div class="feat-stat-lbl">Flip · Rental · Wholesale</div></div></div>
         <div class="feat-mini-bar"><div class="feat-mini-bar-fill" style="width:90%;background:linear-gradient(90deg,#16A34A,#86EFAC)"></div></div>
       </div>
-
-      <!-- Card 4: MAO + Comps -->
       <div class="feat-card">
         <div class="feat-icon i-amber">📍</div>
         <div class="feat-tag t-amber">· Automático</div>
@@ -443,11 +166,8 @@ html,body{
         </div>
         <div class="feat-mini-bar" style="margin-top:12px"><div class="feat-mini-bar-fill" style="width:75%;background:linear-gradient(90deg,#D97706,#FCD34D)"></div></div>
       </div>
-
     </div>
   </div>
-
-  <!-- BOTTOM STRIP -->
   <div class="bottom-strip">
     <div class="bottom-trust">Trusted & Used by Properties 714 LLC · Atlanta, GA</div>
     <div class="tech-stack">
@@ -457,32 +177,22 @@ html,body{
       <div class="tech-item"><div class="tech-dot"></div>PostgreSQL</div>
     </div>
   </div>
-
-</div><!-- /page -->
-
+</div>
 <script>
-// Auto-redirect if already logged in
 (async()=>{
   try{
     const s=await P714Auth.init();
-    if(s){
-      const next=new URLSearchParams(location.search).get('next')||'/';
-      location.href=next;
-    }
+    if(s){const next=new URLSearchParams(location.search).get('next')||'/';location.href=next;}
   }catch(e){}
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 })();
-
-// Live property count (optional — shows if DB is reachable)
 (async()=>{
   try{
     const sb=P714Auth.getClient();
     const{count}=await sb.from('acquisitions_leads').select('*',{count:'exact',head:true});
-    if(count!==null){
-      document.getElementById('live-count').textContent=count;
-    }
+    if(count!==null)document.getElementById('live-count').textContent=count;
   }catch(e){}
 })();
-
 async function doLogin(){
   const email=document.getElementById('email').value.trim();
   const pass=document.getElementById('pass').value;
@@ -491,27 +201,20 @@ async function doLogin(){
   const spin=document.getElementById('spin');
   const txt=document.getElementById('btn-txt');
   err.classList.remove('show');
-  if(!email||!pass){
-    err.textContent='Por favor ingresa email y contraseña.';
-    err.classList.add('show');
-    return;
-  }
-  btn.disabled=true;
-  spin.style.display='block';
-  txt.textContent='Ingresando...';
+  if(!email||!pass){err.textContent='Por favor ingresa email y contraseña.';err.classList.add('show');return;}
+  btn.disabled=true;spin.style.display='block';txt.textContent='Ingresando...';
   try{
     const{data,error}=await P714Auth.getClient().auth.signInWithPassword({email,password:pass});
     if(error)throw error;
+    await P714Auth.init();
     const next=new URLSearchParams(location.search).get('next')||'/';
+    // If super admin, let them choose context
+    const p=P714Auth.getProfile();
     location.href=next;
   }catch(e){
-    err.textContent=e.message==='Invalid login credentials'
-      ?'Email o contraseña incorrectos. Verifica tus datos.'
-      :e.message||'Error al iniciar sesión';
+    err.textContent=e.message==='Invalid login credentials'?'Email o contraseña incorrectos. Verifica tus datos.':e.message||'Error al iniciar sesión';
     err.classList.add('show');
-    btn.disabled=false;
-    spin.style.display='none';
-    txt.textContent='Iniciar Sesión →';
+    btn.disabled=false;spin.style.display='none';txt.textContent='Iniciar Sesión →';
   }
 }
 </script>
