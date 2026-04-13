@@ -1,0 +1,29 @@
+name: Deploy to Easypanel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Easypanel Deploy
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "http://72.60.226.147:3000/api/deploy/${{ secrets.EASYPANEL_DEPLOY_TOKEN }}")
+          echo "Deploy response: $response"
+          if [ "$response" != "200" ]; then
+            echo "Deploy failed with HTTP $response"
+            exit 1
+          fi
+          echo "Deploy triggered successfully!"
+
+      - name: Notify success
+        if: success()
+        run: echo "✅ Deploy to Easypanel triggered successfully"
+
+      - name: Notify failure  
+        if: failure()
+        run: echo "❌ Deploy failed - check Easypanel logs"
