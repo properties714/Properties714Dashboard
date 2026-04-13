@@ -126,6 +126,20 @@ html,body{min-height:100%;font-family:'Inter',-apple-system,sans-serif;-webkit-f
         <div class="spin" id="spin"></div>
         <span id="btn-txt">Iniciar Sesión →</span>
       </button>
+      <div id="reset-section" style="display:none;margin-top:16px">
+        <div class="field">
+          <label class="field-label">Ingresa tu email para restablecer</label>
+          <input class="field-input" id="reset-email" type="email" placeholder="tu@properties714.com"/>
+        </div>
+        <button class="btn-login" id="reset-btn" onclick="doReset()" style="background:linear-gradient(135deg,#0D9488,#0F766E);box-shadow:0 4px 16px rgba(13,148,136,0.4)">
+          <div class="spin" id="reset-spin"></div>
+          <span id="reset-txt">Enviar enlace →</span>
+        </button>
+      </div>
+      <div id="err-reset" style="display:none;padding:10px 12px;background:rgba(13,148,136,0.15);border:1px solid rgba(13,148,136,0.3);border-radius:8px;font-size:13px;color:#5EEAD4;margin-top:8px"></div>
+      <div style="text-align:center;margin-top:12px">
+        <a href="#" onclick="toggleReset(event)" id="forgot-link" style="font-size:12px;color:rgba(255,255,255,0.35);text-decoration:none;hover:color:white">¿Olvidaste tu contraseña?</a>
+      </div>
       <div class="card-footer">Properties 714 LLC &middot; Sistema Interno</div>
     </div>
   </div>
@@ -193,6 +207,37 @@ html,body{min-height:100%;font-family:'Inter',-apple-system,sans-serif;-webkit-f
     if(count!==null)document.getElementById('live-count').textContent=count;
   }catch(e){}
 })();
+function toggleReset(e){
+  e.preventDefault();
+  const sec=document.getElementById('reset-section');
+  const lnk=document.getElementById('forgot-link');
+  const showing=sec.style.display!=='none';
+  sec.style.display=showing?'none':'block';
+  lnk.textContent=showing?'¿Olvidaste tu contraseña?':'← Volver al login';
+  document.getElementById('err-reset').style.display='none';
+}
+async function doReset(){
+  const email=document.getElementById('reset-email').value.trim();
+  const btn=document.getElementById('reset-btn');
+  const spin=document.getElementById('reset-spin');
+  const txt=document.getElementById('reset-txt');
+  const msg=document.getElementById('err-reset');
+  if(!email){msg.textContent='Ingresa tu email.';msg.style.display='block';return;}
+  btn.disabled=true;spin.style.display='block';txt.textContent='Enviando...';
+  try{
+    await P714Admin.requestPasswordReset(email);
+    msg.textContent='¡Listo! Revisa tu correo para el enlace de restablecimiento.';
+    msg.style.display='block';
+    txt.textContent='Enviado ✓';
+  }catch(e){
+    msg.textContent=e.message||'Error al enviar. Intenta de nuevo.';
+    msg.style.background='rgba(239,68,68,0.15)';
+    msg.style.borderColor='rgba(239,68,68,0.3)';
+    msg.style.color='#FCA5A5';
+    msg.style.display='block';
+    btn.disabled=false;spin.style.display='none';txt.textContent='Enviar enlace →';
+  }
+}
 async function doLogin(){
   const email=document.getElementById('email').value.trim();
   const pass=document.getElementById('pass').value;
@@ -208,7 +253,6 @@ async function doLogin(){
     if(error)throw error;
     await P714Auth.init();
     const next=new URLSearchParams(location.search).get('next')||'/';
-    // If super admin, let them choose context
     const p=P714Auth.getProfile();
     location.href=next;
   }catch(e){
