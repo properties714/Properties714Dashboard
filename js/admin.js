@@ -1,5 +1,7 @@
 'use strict';
 const P714Admin = (() => {
+  const N8N_BASE = 'https://n8n.properties714.com/webhook';
+
   function _cfg() {
     const url = window.__P714_CONFIG__?.supabaseUrl;
     const key = window.__P714_ADMIN_CONFIG__?.serviceRoleKey;
@@ -19,6 +21,18 @@ const P714Admin = (() => {
     return d;
   }
 
+  async function _notify(endpoint, payload) {
+    try {
+      await fetch(`${N8N_BASE}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      console.warn('[P714Admin] Notification failed:', e.message);
+    }
+  }
+
   async function listTeam() {
     const sb = window.P714Auth?.getClient();
     if (!sb) throw new Error('Not authenticated');
@@ -35,6 +49,8 @@ const P714Admin = (() => {
     if (sb && user.id) {
       await sb.from('profiles').upsert({ id: user.id, email, full_name: fullName, role });
     }
+    // Send welcome email via n8n
+    await _notify('welcome-member', { email, fullName, role });
     return user;
   }
 
@@ -49,11 +65,36 @@ const P714Admin = (() => {
   async function updateProfile(userId, updates) {
     const sb = window.P714Auth?.getClient();
     if (!sb) throw new Error('Not authenticated');
+    // Get current profile to detect role change
+    const { data: current } = await sb.from('profiles').select('full_name,email,role').eq('id', userId).single();
     const { data, error } = await sb.from('profiles').update(updates).eq('id', userId).select().single();
     if (error) throw error;
+    // Notify if role changed
+    if (current && updates.role && current.role !== updates.role) {
+      await _notify('role-changed', {
+        email: current.email,
+        fullName: current.full_name,
+        oldRole: current.role,
+        newRole: updates.role,
+      });
+    }
     return data;
   }
 
-  return { listTeam, createUser, setPassword, deleteUser, updateProfile };
+  async function requestPasswordReset(email) {
+    const sb = window.P714Auth?.getClient();
+    if (!sb) throw new Error('Not authenticated');
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login/?reset=true`,
+    });
+    if (error) throw error;
+    // Also notify via n8n with custom email
+    await _notify('password-reset', {
+      email,
+      resetUrl: `${window.location.origin}/login/?reset=true`,
+    });
+  }
+
+  return { listTeam, createUser, setPassword, deleteUser, updateProfile, requestPasswordReset };
 })();
 window.P714Admin = P714Admin;
