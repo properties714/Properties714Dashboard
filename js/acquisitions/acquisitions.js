@@ -838,7 +838,21 @@ const AcquisitionsApp = (() => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const data = Object.fromEntries(formData.entries());
+
+      // Apply defaults so partial saves always work
+      if (!data.name || !data.name.trim())
+        data.name = 'Vendedor sin nombre';
+      if (!data.property_address || !data.property_address.trim())
+        data.property_address = 'Dirección pendiente';
+      data.city  = data.city  || 'Atlanta';
+      data.state = data.state || 'GA';
+
+      const btn = document.getElementById('modal-submit-btn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
+
       await _addLead(data);
+
+      if (btn) { btn.disabled = false; btn.textContent = '✓ Guardar Lead'; }
       document.getElementById('add-lead-modal')?.classList.remove('open');
       e.target.reset();
     });

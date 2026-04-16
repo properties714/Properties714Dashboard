@@ -140,183 +140,186 @@
   </div>
 
   <!-- ============================================================
-       MODAL — Add Lead
+       MODAL — Nueva Propiedad
   ============================================================ -->
-  <div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Add New Lead">
-    <div class="modal modal-lg">
+  <div id="add-lead-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Nueva Propiedad">
+    <div class="modal modal-lg" style="max-width:680px">
 
-      <div class="modal-header">
-        <h2 class="modal-title">Add New Lead</h2>
-        <button class="modal-close" aria-label="Close modal">✕</button>
+      <div class="modal-header" style="background:linear-gradient(135deg,#0F172A,#1E293B);border-radius:12px 12px 0 0;padding:18px 20px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:34px;height:34px;background:linear-gradient(135deg,#2563EB,#1D4ED8);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px">🏠</div>
+          <div>
+            <h2 class="modal-title" style="color:#fff;margin:0;font-size:16px">Nueva Propiedad</h2>
+            <div style="font-size:11px;color:#64748B;margin-top:1px">Puedes guardar en cualquier momento — completa los datos después</div>
+          </div>
+        </div>
+        <button class="modal-close" aria-label="Cerrar" style="color:#94A3B8;background:rgba(255,255,255,.08);border-radius:8px;width:30px;height:30px">✕</button>
       </div>
 
       <form id="add-lead-form" class="modal-form" novalidate>
 
         <!-- Step tabs -->
-        <div class="modal-steps">
-          <button type="button" class="modal-step active" data-step="1">1 · Contact</button>
-          <button type="button" class="modal-step" data-step="2">2 · Property</button>
-          <button type="button" class="modal-step" data-step="3">3 · Financials</button>
+        <div class="modal-steps" style="border-bottom:1px solid #E2E8F0;background:#F8FAFC">
+          <button type="button" class="modal-step active" data-step="1">1 · Contacto</button>
+          <button type="button" class="modal-step" data-step="2">2 · Propiedad</button>
+          <button type="button" class="modal-step" data-step="3">3 · Financieros</button>
         </div>
 
-        <!-- ── STEP 1: Contact Info ── -->
+        <!-- ── PASO 1: Contacto ── -->
         <div class="modal-step-panel active" data-step-panel="1">
           <div class="form-grid">
             <div class="form-field full">
-              <label for="f-name">Full Name <span class="required">*</span></label>
-              <input type="text" id="f-name" name="name" placeholder="John Smith" required />
+              <label for="f-name">Nombre / Vendedor</label>
+              <input type="text" id="f-name" name="name" placeholder="Juan Rodríguez" autocomplete="off" />
             </div>
             <div class="form-field">
-              <label for="f-phone">Phone</label>
+              <label for="f-phone">Teléfono</label>
               <input type="tel" id="f-phone" name="phone" placeholder="+1 (404) 555-0000" />
             </div>
             <div class="form-field">
               <label for="f-email">Email</label>
-              <input type="email" id="f-email" name="email" placeholder="owner@email.com" />
+              <input type="email" id="f-email" name="email" placeholder="vendedor@email.com" />
             </div>
             <div class="form-field">
-              <label for="f-source">Lead Source</label>
+              <label for="f-source">Fuente del Lead</label>
               <select id="f-source" name="source">
-                <option value="">Select source…</option>
+                <option value="">Seleccionar…</option>
                 <option value="Driving for Dollars">Driving for Dollars</option>
-                <option value="Direct Mail">Direct Mail</option>
+                <option value="Direct Mail">Correo Directo</option>
                 <option value="Cold Call">Cold Call</option>
                 <option value="PPC / Google">PPC / Google</option>
                 <option value="Facebook Ads">Facebook Ads</option>
-                <option value="Referral">Referral</option>
+                <option value="Referral">Referido</option>
                 <option value="MLS / Zillow">MLS / Zillow</option>
                 <option value="Probate">Probate</option>
+                <option value="Pre-Foreclosure">Pre-Foreclosure</option>
                 <option value="Wholesale">Wholesale</option>
-                <option value="Other">Other</option>
+                <option value="Other">Otro</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="f-assigned">Assign To</label>
+              <label for="f-assigned">Asignar a</label>
               <select id="f-assigned" name="assigned_to">
-                <option value="">Unassigned</option>
-                <option value="Eduardo">Eduardo</option>
-                <option value="Junior">Junior</option>
-                <option value="Yeimy">Yeimy</option>
+                <option value="">Sin asignar</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- ── STEP 2: Property ── -->
+        <!-- ── PASO 2: Propiedad ── -->
         <div class="modal-step-panel" data-step-panel="2">
           <div class="form-grid">
             <div class="form-field full">
-              <label for="f-address">Property Address <span class="required">*</span></label>
-              <input type="text" id="f-address" name="property_address" placeholder="1234 Peachtree Blvd NE" required />
+              <label for="f-address">Dirección de la Propiedad</label>
+              <input type="text" id="f-address" name="property_address" placeholder="1234 Peachtree Blvd NE" autocomplete="off" />
             </div>
             <div class="form-field">
-              <label for="f-city">City</label>
+              <label for="f-city">Ciudad</label>
               <input type="text" id="f-city" name="city" placeholder="Atlanta" />
             </div>
             <div class="form-field">
-              <label for="f-state">State</label>
-              <input type="text" id="f-state" name="state" placeholder="GA" maxlength="2" />
+              <label for="f-state">Estado</label>
+              <input type="text" id="f-state" name="state" placeholder="GA" maxlength="2" style="text-transform:uppercase" />
             </div>
             <div class="form-field">
-              <label for="f-zip">ZIP Code</label>
+              <label for="f-zip">Código ZIP</label>
               <input type="text" id="f-zip" name="zip" placeholder="30309" maxlength="5" />
             </div>
             <div class="form-field">
-              <label for="f-type">Property Type</label>
+              <label for="f-type">Tipo de Propiedad</label>
               <select id="f-type" name="property_type">
-                <option value="SFR">SFR</option>
-                <option value="Duplex">Duplex</option>
-                <option value="Multi-Family">Multi-Family</option>
-                <option value="Commercial">Commercial</option>
-                <option value="Land">Land</option>
-                <option value="Mobile">Mobile</option>
+                <option value="SFR">SFR — Casa unifamiliar</option>
+                <option value="Duplex">Dúplex</option>
+                <option value="Multi-Family">Multi-familiar</option>
+                <option value="Commercial">Comercial</option>
+                <option value="Land">Terreno</option>
+                <option value="Mobile">Casa móvil</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="f-condition">Condition</label>
+              <label for="f-condition">Condición</label>
               <select id="f-condition" name="condition">
-                <option value="">Select…</option>
-                <option value="Excellent">Excellent</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
-                <option value="Distressed">Distressed</option>
-                <option value="Tear-Down">Tear-Down</option>
+                <option value="">Seleccionar…</option>
+                <option value="Excellent">Excelente</option>
+                <option value="Good">Buena</option>
+                <option value="Fair">Regular</option>
+                <option value="Distressed">Deteriorada</option>
+                <option value="Tear-Down">Demolición</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="f-occupancy">Occupancy</label>
+              <label for="f-occupancy">Ocupación</label>
               <select id="f-occupancy" name="occupancy">
-                <option value="">Select…</option>
-                <option value="Owner-Occupied">Owner-Occupied</option>
-                <option value="Tenant-Occupied">Tenant-Occupied</option>
-                <option value="Vacant">Vacant</option>
-                <option value="Unknown">Unknown</option>
+                <option value="">Seleccionar…</option>
+                <option value="Owner-Occupied">Dueño habita</option>
+                <option value="Tenant-Occupied">Inquilino</option>
+                <option value="Vacant">Vacante</option>
+                <option value="Unknown">Desconocido</option>
               </select>
             </div>
           </div>
         </div>
 
-        <!-- ── STEP 3: Financials ── -->
+        <!-- ── PASO 3: Financieros ── -->
         <div class="modal-step-panel" data-step-panel="3">
           <div class="form-grid">
             <div class="form-field">
-              <label for="f-asking">Asking Price ($)</label>
+              <label for="f-asking">Precio Vendedor $</label>
               <input type="number" id="f-asking" name="asking_price" placeholder="180000" min="0" />
             </div>
             <div class="form-field">
-              <label for="f-arv">ARV ($)</label>
+              <label for="f-arv">ARV Estimado $</label>
               <input type="number" id="f-arv" name="arv" placeholder="320000" min="0" />
             </div>
             <div class="form-field">
-              <label for="f-repairs">Repairs Est. ($)</label>
-              <input type="number" id="f-repairs" name="repairs" placeholder="45000" min="0" />
+              <label for="f-repairs">Costo Reparaciones $</label>
+              <input type="number" id="f-repairs" name="repairs" placeholder="40000" min="0" />
             </div>
             <div class="form-field mao-preview-field">
-              <label>MAO (Auto)</label>
-              <div class="mao-preview" id="mao-preview">
-                <span class="mao-preview-val" id="mao-preview-val">—</span>
-                <span class="mao-preview-formula">(ARV × 0.70) − Repairs</span>
+              <label>MAO Calculado</label>
+              <div class="mao-preview" id="mao-preview" style="background:linear-gradient(135deg,rgba(13,148,136,.08),rgba(13,148,136,.04));border:1px solid rgba(13,148,136,.2);border-radius:8px;padding:10px 14px">
+                <span class="mao-preview-val" id="mao-preview-val" style="font-size:18px;font-weight:800;color:#0D9488">—</span>
+                <span class="mao-preview-formula" style="font-size:10px;color:#64748B;display:block;margin-top:2px">ARV × 70% − Reparaciones</span>
               </div>
             </div>
             <div class="form-field">
-              <label for="f-motivation">Motivation (1–10)</label>
+              <label for="f-motivation">Motivación Vendedor (1–10)</label>
               <input type="number" id="f-motivation" name="motivation_score" min="1" max="10" placeholder="7" />
             </div>
             <div class="form-field">
-              <label for="f-urgency">Urgency</label>
+              <label for="f-urgency">Urgencia</label>
               <select id="f-urgency" name="urgency_level">
-                <option value="">Select…</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
+                <option value="Medium">Media</option>
+                <option value="High">Alta</option>
+                <option value="Critical">Crítica</option>
+                <option value="Low">Baja</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="f-risk">Risk Level</label>
-              <select id="f-risk" name="risk_level">
-                <option value="">Select…</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-              </select>
-            </div>
-            <div class="form-field">
-              <label for="f-status">Initial Status</label>
+              <label for="f-status">Estatus Inicial</label>
               <select id="f-status" name="status">
-                <option value="New Lead">New Lead</option>
-                <option value="Contacted">Contacted</option>
-                <option value="Follow-Up">Follow-Up</option>
+                <option value="New Lead">Nuevo Lead</option>
+                <option value="Contacted">Contactado</option>
+                <option value="Follow-Up">Seguimiento</option>
+                <option value="Analyzing">Analizando</option>
               </select>
+            </div>
+            <div class="form-field">
+              <label for="f-notes">Notas Iniciales</label>
+              <input type="text" id="f-notes" name="notes" placeholder="Ej: Vendedor motivado, necesita vender rápido…" />
             </div>
           </div>
         </div>
 
-        <div class="modal-footer">
-          <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Back</button>
-          <button type="button" class="btn btn-secondary" id="modal-next-btn">Next →</button>
-          <button type="submit" class="btn btn-primary" id="modal-submit-btn" style="display:none">
-            ✓ Add Lead
-          </button>
+        <div class="modal-footer" style="background:#F8FAFC;border-top:1px solid #E2E8F0;padding:14px 20px;border-radius:0 0 12px 12px;justify-content:space-between">
+          <button type="button" class="btn btn-ghost" id="modal-prev-btn" style="display:none">← Anterior</button>
+          <div style="display:flex;gap:8px;margin-left:auto">
+            <button type="submit" class="btn" id="modal-submit-btn"
+              style="background:linear-gradient(135deg,#16A34A,#15803D);color:#fff;border:none;padding:10px 22px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;gap:6px">
+              ✓ Guardar Lead
+            </button>
+            <button type="button" class="btn btn-secondary" id="modal-next-btn">Siguiente →</button>
+          </div>
         </div>
 
       </form>
@@ -380,20 +383,21 @@
   <script src="/js/acquisitions/acquisitions.js"></script>
 
   <!-- ============================================================
-       ADD LEAD MODAL — multi-step logic
+       ADD LEAD MODAL — multi-step + partial save
   ============================================================ -->
   <script>
     (function () {
       let _step = 1;
       const TOTAL_STEPS = 3;
 
-      const prevBtn   = document.getElementById('modal-prev-btn');
-      const nextBtn   = document.getElementById('modal-next-btn');
-      const submitBtn = document.getElementById('modal-submit-btn');
-      const arvInput  = document.getElementById('f-arv');
+      const prevBtn      = document.getElementById('modal-prev-btn');
+      const nextBtn      = document.getElementById('modal-next-btn');
+      const submitBtn    = document.getElementById('modal-submit-btn');
+      const arvInput     = document.getElementById('f-arv');
       const repairsInput = document.getElementById('f-repairs');
-      const maoVal    = document.getElementById('mao-preview-val');
+      const maoVal       = document.getElementById('mao-preview-val');
 
+      // Always show Save button — partial saves allowed
       function goTo(step) {
         document.querySelectorAll('.modal-step-panel').forEach(p => {
           p.classList.toggle('active', parseInt(p.dataset.stepPanel) === step);
@@ -401,9 +405,10 @@
         document.querySelectorAll('.modal-step').forEach(b => {
           b.classList.toggle('active', parseInt(b.dataset.step) === step);
         });
-        prevBtn.style.display   = step > 1 ? '' : 'none';
-        nextBtn.style.display   = step < TOTAL_STEPS ? '' : 'none';
-        submitBtn.style.display = step === TOTAL_STEPS ? '' : 'none';
+        prevBtn.style.display = step > 1 ? '' : 'none';
+        nextBtn.style.display = step < TOTAL_STEPS ? '' : 'none';
+        // Submit button always visible
+        submitBtn.style.display = '';
         _step = step;
       }
 
@@ -418,12 +423,55 @@
       function updateMAO() {
         const arv     = parseFloat(arvInput?.value) || 0;
         const repairs = parseFloat(repairsInput?.value) || 0;
-        const mao     = arv && repairs ? Math.floor(arv * 0.7) - repairs : null;
-        if (maoVal) maoVal.textContent = mao != null ? '$' + mao.toLocaleString() : '—';
+        const mao     = arv > 0 ? Math.floor(arv * 0.7) - (repairs || 0) : null;
+        if (maoVal) maoVal.textContent = mao != null ? '$' + Math.max(0,mao).toLocaleString() : '—';
       }
-
       arvInput?.addEventListener('input', updateMAO);
       repairsInput?.addEventListener('input', updateMAO);
+
+      // Reset form when modal closes
+      document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.getElementById('add-lead-modal')?.classList.remove('open');
+          setTimeout(() => {
+            document.getElementById('add-lead-form')?.reset();
+            if (maoVal) maoVal.textContent = '—';
+            goTo(1);
+          }, 300);
+        });
+      });
+
+      // Load team members from Supabase into the assign-to dropdown
+      async function loadTeamMembers() {
+        try {
+          if (!window.P714Auth || !P714Auth.getClient) return;
+          const { data } = await P714Auth.getClient().from('profiles').select('full_name,email').order('full_name');
+          const sel = document.getElementById('f-assigned');
+          if (!sel || !data) return;
+          // Keep "Sin asignar" option
+          const current = sel.value;
+          sel.innerHTML = '<option value="">Sin asignar</option>';
+          data.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m.full_name || m.email;
+            opt.textContent = m.full_name || m.email;
+            sel.appendChild(opt);
+          });
+          if (current) sel.value = current;
+        } catch (e) {
+          // Fallback: keep static options
+        }
+      }
+
+      // Load team when modal opens
+      document.getElementById('btn-add-lead')?.addEventListener('click', loadTeamMembers);
+
+      // Initial call on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        // Show save button from the start
+        goTo(1);
+        submitBtn.style.display = '';
+      });
     })();
   </script>
 
