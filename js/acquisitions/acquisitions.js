@@ -671,25 +671,45 @@ const AcquisitionsApp = (() => {
   // ANALYZER
   // ============================================================
 
+  let _analyzerCurrentLead = null;
+
   async function _runAnalyzer(lead) {
     if (!lead) return;
+    _analyzerCurrentLead = lead;
 
-    _showToast({ level: 'info', title: '⚡ Running Analyzer', message: `Analyzing ${lead.name}...` });
+    const modal    = document.getElementById('analyzer-modal');
+    const outputEl = document.getElementById('analyzer-output');
+    const nameEl   = document.getElementById('analyzer-lead-name');
+    const runBtn   = document.getElementById('analyzer-run-btn');
 
-    const mao    = Scoring.Financial.calculateMAO(lead.arv, lead.repairs);
-    const roi    = Scoring.Financial.calculateROI(lead.arv, lead.asking_price, lead.repairs);
-    const equity = Scoring.Financial.calculateEquityPct(lead.arv, lead.asking_price);
+    if (!modal) return;
 
-    const modal = document.getElementById('analyzer-modal');
-    if (modal) {
-      document.getElementById('analyzer-lead-name').textContent = lead.name;
-      document.getElementById('analyzer-address').textContent   = lead.property_address;
-      document.getElementById('analyzer-score').textContent     = lead.deal_score;
-      document.getElementById('analyzer-mao').textContent       = Scoring.Financial.formatCurrency(mao);
-      document.getElementById('analyzer-roi').textContent       = Scoring.Financial.formatPct(roi);
-      document.getElementById('analyzer-equity').textContent    = Scoring.Financial.formatPct(equity);
-      document.getElementById('analyzer-action').textContent    = lead.suggested_action;
-      modal.classList.add('open');
+    if (nameEl) nameEl.textContent = lead.name + ' — ' + (lead.property_address || '');
+    if (outputEl) {
+      outputEl.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;padding:20px;color:#0D9488">
+          <div class="d-dots"><span></span><span></span><span></span></div>
+          <span style="font-size:13px;color:#475569">Analizando deal con IA...</span>
+        </div>`;
+    }
+    if (runBtn) runBtn.disabled = true;
+    modal.classList.add('open');
+
+    const result = await Assistant.analyzeDeal(lead);
+
+    if (runBtn) runBtn.disabled = false;
+    if (outputEl) {
+      if (result.success && result.text) {
+        const html = result.text
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+          .replace(/\n/g,'<br>');
+        outputEl.innerHTML = `<div style="font-size:13px;line-height:1.75;color:#0F172A;padding:4px 0">${html}</div>`;
+      } else {
+        outputEl.innerHTML = `<div style="padding:16px;color:#DC2626;font-size:13px">
+          ⚠ Error de análisis: ${_escHTML(result.error || 'Error desconocido')}
+        </div>`;
+      }
     }
   }
 
@@ -801,9 +821,15 @@ const AcquisitionsApp = (() => {
 
   function _bindGlobalActions() {
     document.getElementById('btn-add-lead')?.addEventListener('click', _showAddLeadModal);
-    document.getElementById('btn-run-analyzer')?.addEventListener('click', () => _showToast({
-      level: 'info', title: '⚡ Batch Analyzer', message: 'Analyzing all leads...'
-    }));
+    document.getElementById('btn-run-analyzer')?.addEventListener('click', () => {
+      const hot = _leads.filter(l => l.hot_deal || (l.deal_score || 0) >= 75);
+      if (hot.length > 0) _runAnalyzer(hot[0]);
+      else if (_leads.length > 0) _runAnalyzer(_leads[0]);
+      else _showToast({ level: 'info', title: '⚡ Analyzer', message: 'No hay leads para analizar' });
+    });
+    document.getElementById('analyzer-run-btn')?.addEventListener('click', () => {
+      if (_analyzerCurrentLead) _runAnalyzer(_analyzerCurrentLead);
+    });
     document.getElementById('btn-automate')?.addEventListener('click', () => _showToast({
       level: 'info', title: '🤖 Automation', message: `${Automation.getRules().filter(r=>r.active).length} rules active`
     }));

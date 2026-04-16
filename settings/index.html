@@ -8,8 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<script src="/js/config.js?v=12"></script>
-<script src="/js/auth.js?v=12"></script>
+<script src="/js/config.js?v=13"></script>
+<script src="/js/admin-config.js?v=13"></script>
+<script src="/js/auth.js?v=13"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:#F8FAFC;color:#0F172A;font-family:'Inter',-apple-system,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%;}
@@ -218,7 +219,8 @@ async function createAgent(){
   if(!name||!email||!pass){toast('error','Campos incompletos','Llena nombre, email y contraseña');return;}
   if(pass.length<8){toast('error','Contraseña muy corta','Mínimo 8 caracteres');return;}
   try{
-    const adminSb=window.__P714_ADMIN__?supabase.createClient(window.__P714_CONFIG__.supabaseUrl,window.__P714_ADMIN__.serviceKey):null;
+    const svcKey=(window.__P714_ADMIN_CONFIG__||{}).serviceRoleKey;
+    const adminSb=svcKey?supabase.createClient(window.__P714_CONFIG__.supabaseUrl,svcKey):null;
     if(!adminSb){toast('error','Sin permisos de admin','Configura el service role key en js/admin-config.js');return;}
     const{data,error}=await adminSb.auth.admin.createUser({email,password:pass,email_confirm:true,user_metadata:{full_name:name}});
     if(error)throw error;

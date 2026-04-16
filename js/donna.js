@@ -114,16 +114,16 @@
     addBub('me',txt);
     msgs.push({role:'user',content:txt});
     setBusy(true);
-    var key=(window.__P714_CONFIG__||{}).anthropicKey||'';
-    if(!key){
-      addBub('ai','\u26a0\ufe0f La API key de Anthropic no est\u00e1 configurada todav\u00eda.');
+    var proxyUrl=(window.__P714_CONFIG__||{}).aiProxyUrl||'';
+    if(!proxyUrl){
+      addBub('ai','\u26a0\ufe0f El proxy de IA no est\u00e1 configurado.');
       setBusy(false);return;
     }
     // Track AI usage
     if(window.P714Auth&&P714Auth.trackAI)P714Auth.trackAI('donna_chat',200);
-    fetch('https://api.anthropic.com/v1/messages',{
+    fetch(proxyUrl,{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:500,system:SYSTEM,messages:msgs.slice(-10)})
     })
     .then(function(r){if(!r.ok)return r.json().then(function(e){throw new Error((e.error&&e.error.message)||'HTTP '+r.status);});return r.json();})

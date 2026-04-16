@@ -21,13 +21,13 @@ const Assistant = (() => {
   // ============================================================
 
   let _config = {
-    enabled:        false,    // Toggle AI features on/off
-    provider:       null,     // 'openai' | 'anthropic' | 'custom'
-    endpoint:       null,     // API endpoint or Supabase Edge Function URL
-    model:          null,     // e.g., 'gpt-4o', 'claude-opus-4-5'
-    apiKey:         null,     // Loaded securely at runtime (never hardcoded)
-    contextWindow:  4000,     // Max tokens for context
-    stream:         false,    // Streaming responses
+    enabled:        true,     // Toggle AI features on/off
+    provider:       'anthropic',
+    endpoint:       (window.__P714_CONFIG__||{}).aiProxyUrl || 'https://n8n.properties714.com/webhook/ai-proxy',
+    model:          'claude-sonnet-4-6',
+    apiKey:         null,     // Not needed — proxy handles auth
+    contextWindow:  4000,
+    stream:         false,
   };
 
   // ============================================================
@@ -127,9 +127,9 @@ Give:
   // INTERNAL: Call AI API
   // ============================================================
 
-  async function _callAI(prompt, { systemPrompt = '', stream = false } = {}) {
+  async function _callAI(prompt, { systemPrompt = '' } = {}) {
     if (!_config.enabled) {
-      console.warn('[Assistant] AI is not enabled. Call Assistant.configure() first.');
+      console.warn('[Assistant] AI is not enabled.');
       return { error: 'AI not configured', mock: true };
     }
 
@@ -140,19 +140,14 @@ Give:
     const payload = {
       model:      _config.model,
       max_tokens: 1000,
-      messages:   [
-        ...(systemPrompt ? [{ role: 'system', content: systemPrompt }] : []),
-        { role: 'user', content: prompt },
-      ],
+      system:     systemPrompt || '',
+      messages:   [{ role: 'user', content: prompt }],
     };
 
     const response = await fetch(_config.endpoint, {
       method:  'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${_config.apiKey}`,
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
     });
 
     if (!response.ok) {
