@@ -381,7 +381,12 @@ const AcquisitionsApp = (() => {
 
         if (error) throw error;
 
-        _leads = Scoring.recalculateAll(data || []);
+        // Map lead_notes → notes and lead_activity → activity for sidebar compatibility
+        _leads = Scoring.recalculateAll((data || []).map(l => ({
+          ...l,
+          notes:    l.lead_notes    || [],
+          activity: l.lead_activity || [],
+        })));
       } catch (err) {
         console.error('[Properties714] Failed to load leads:', err);
         _leads = MOCK_LEADS;
@@ -541,20 +546,63 @@ const AcquisitionsApp = (() => {
   // LEAD CRUD
   // ============================================================
 
+  // Fields that exist on client objects but are NOT columns in acquisitions_leads
+  const _CLIENT_ONLY_FIELDS = ['notes', 'tasks', 'activity', 'documents', 'lead_notes', 'lead_activity'];
+
+  // Numeric columns that need coercion (FormData returns strings; empty → null)
+  const _NUMERIC_FIELDS = [
+    'asking_price','arv','repairs','mao','estimated_profit','roi',
+    'motivation_score','deal_score','assignment_fee','holding_costs','purchase_price',
+    'monthly_rent','noi','cap_rate','cash_on_cash','attempts','days_in_pipeline',
+    'beds','baths','comp1_distance','comp2_distance','comp3_distance','initial_offer',
+  ];
+
+  function _toDbRow(data) {
+    const row = { ...data };
+    // Strip client-only fields (not columns in DB)
+    _CLIENT_ONLY_FIELDS.forEach(f => delete row[f]);
+    // Coerce numeric fields: empty string → null, otherwise Number()
+    _NUMERIC_FIELDS.forEach(f => {
+      if (f in row) {
+        const v = row[f];
+        if (v === '' || v === null || v === undefined) {
+          delete row[f]; // omit so DB default applies
+        } else {
+          const n = Number(v);
+          row[f] = isNaN(n) ? null : n;
+        }
+      }
+    });
+    return row;
+  }
+
   async function _addLead(leadData) {
-    const mao    = Scoring.Financial.calculateMAO(leadData.arv, leadData.repairs);
-    const profit = Scoring.Financial.calculateProfit(leadData.arv, leadData.asking_price, leadData.repairs);
-    const roi    = Scoring.Financial.calculateROI(leadData.arv, leadData.asking_price, leadData.repairs);
+    // Extract initial notes string (form field) — not a DB column
+    const initialNoteText = typeof leadData.notes === 'string' && leadData.notes.trim()
+      ? leadData.notes.trim()
+      : null;
+
+    const coreData = _toDbRow(leadData);
+
+    // Apply defaults for NOT NULL columns
+    if (!coreData.name?.trim())             coreData.name             = 'Vendedor sin nombre';
+    if (!coreData.property_address?.trim()) coreData.property_address = 'Dirección pendiente';
+    coreData.city  = coreData.city  || 'Atlanta';
+    coreData.state = coreData.state || 'GA';
+
+    const mao    = Scoring.Financial.calculateMAO(coreData.arv, coreData.repairs);
+    const profit = Scoring.Financial.calculateProfit(coreData.arv, coreData.asking_price, coreData.repairs);
+    const roi    = Scoring.Financial.calculateROI(coreData.arv, coreData.asking_price, coreData.repairs);
 
     const newLead = {
-      ...leadData,
+      ...coreData,
       // Attach the current user's id (required by RLS)
-      user_id:          window.P714Auth?.getUser()?.id || leadData.user_id,
-      assigned_to:      leadData.assigned_to || window.P714Auth?.getProfile()?.full_name || 'Unknown',
+      user_id:          window.P714Auth?.getUser()?.id || coreData.user_id,
+      assigned_to:      coreData.assigned_to || window.P714Auth?.getProfile()?.full_name || 'Unknown',
       mao,
       estimated_profit: profit,
       roi,
-      status:           leadData.status || 'New Lead',
+      status:           coreData.status || 'New Lead',
       created_at:       new Date().toISOString(),
       updated_at:       new Date().toISOString(),
     };
@@ -570,10 +618,31 @@ const AcquisitionsApp = (() => {
         .single();
 
       if (error) throw error;
+
+      // Save initial note if provided in form
+      if (initialNoteText) {
+        await _supabase.from('lead_notes').insert({
+          lead_id:    data.id,
+          user_id:    window.P714Auth?.getUser()?.id || data.user_id,
+          author:     window.P714Auth?.getProfile()?.full_name || 'Sistema',
+          content:    initialNoteText,
+          created_at: new Date().toISOString(),
+        });
+        data.notes = [{ date: new Date().toISOString(), author: window.P714Auth?.getProfile()?.full_name || 'Sistema', content: initialNoteText }];
+      } else {
+        data.notes = [];
+      }
+      data.activity = [];
       _leads.unshift(data);
       Automation.onLeadCreated(data);
     } else {
       newLead.id = `lead_${Date.now()}`;
+      if (initialNoteText) {
+        newLead.notes = [{ date: new Date().toISOString(), author: 'Sistema', content: initialNoteText }];
+      } else {
+        newLead.notes = [];
+      }
+      newLead.activity  = [];
       _leads.unshift(newLead);
       Automation.onLeadCreated(newLead);
     }
@@ -588,13 +657,22 @@ const AcquisitionsApp = (() => {
     const idx = _leads.findIndex(l => l.id === leadData.id);
     if (idx < 0) return;
 
-    const oldLead = _leads[idx];
-    const mao     = Scoring.Financial.calculateMAO(leadData.arv, leadData.repairs);
-    const profit  = Scoring.Financial.calculateProfit(leadData.arv, leadData.asking_price, leadData.repairs);
-    const roi     = Scoring.Financial.calculateROI(leadData.arv, leadData.asking_price, leadData.repairs);
+    const oldLead   = _leads[idx];
+    // Preserve client-only fields from current in-memory lead, strip from DB payload
+    const clientData = {
+      notes:    oldLead.notes    || [],
+      activity: oldLead.activity || [],
+      tasks:    oldLead.tasks    || [],
+    };
+    const coreData = _toDbRow(leadData);
+
+    const mao     = Scoring.Financial.calculateMAO(coreData.arv, coreData.repairs);
+    const profit  = Scoring.Financial.calculateProfit(coreData.arv, coreData.asking_price, coreData.repairs);
+    const roi     = Scoring.Financial.calculateROI(coreData.arv, coreData.asking_price, coreData.repairs);
 
     const updated = {
-      ...leadData,
+      ...coreData,
+      ...clientData,
       mao,
       estimated_profit: profit,
       roi,
@@ -616,7 +694,7 @@ const AcquisitionsApp = (() => {
     if (_isConnected) {
       const { error } = await _supabase
         .from('acquisitions_leads')
-        .update(updated)
+        .update(_toDbRow(updated))
         .eq('id', updated.id);
 
       if (error) console.error('[Properties714] Update failed:', error);
@@ -850,11 +928,16 @@ const AcquisitionsApp = (() => {
       const btn = document.getElementById('modal-submit-btn');
       if (btn) { btn.disabled = true; btn.textContent = 'Guardando…'; }
 
-      await _addLead(data);
-
-      if (btn) { btn.disabled = false; btn.textContent = '✓ Guardar Lead'; }
-      document.getElementById('add-lead-modal')?.classList.remove('open');
-      e.target.reset();
+      try {
+        await _addLead(data);
+        document.getElementById('add-lead-modal')?.classList.remove('open');
+        e.target.reset();
+      } catch (err) {
+        console.error('[Properties714] Save failed:', err);
+        _showToast({ level: 'error', title: 'Error al guardar', message: err.message || 'No se pudo guardar el lead' });
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '✓ Guardar Lead'; }
+      }
     });
 
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
