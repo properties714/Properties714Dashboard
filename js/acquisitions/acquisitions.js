@@ -546,10 +546,10 @@ const AcquisitionsApp = (() => {
   // LEAD CRUD
   // ============================================================
 
-  // Fields that exist on client objects but are NOT columns in acquisitions_leads
-  const _CLIENT_ONLY_FIELDS = ['notes', 'tasks', 'activity', 'documents', 'lead_notes', 'lead_activity'];
+  // Client-only fields that have NO column in acquisitions_leads (arrays, related tables)
+  const _CLIENT_ONLY_FIELDS = ['tasks', 'activity', 'documents', 'lead_notes', 'lead_activity'];
 
-  // Numeric columns that need coercion (FormData returns strings; empty → null)
+  // Numeric columns — FormData returns strings; empty → omit so DB default applies
   const _NUMERIC_FIELDS = [
     'asking_price','arv','repairs','mao','estimated_profit','roi',
     'motivation_score','deal_score','assignment_fee','holding_costs','purchase_price',
@@ -557,31 +557,49 @@ const AcquisitionsApp = (() => {
     'beds','baths','comp1_distance','comp2_distance','comp3_distance','initial_offer',
   ];
 
+  // ENUM columns — PostgreSQL rejects empty string ""; must send null
+  const _ENUM_FIELDS = ['condition','occupancy','source','property_type','urgency_level','risk_level','suggested_action'];
+
+  // property_type values the form may send that aren't in the DB ENUM
+  const _PROPERTY_TYPE_MAP = { 'Duplex': 'Multi-Family', 'Mobile': 'Other' };
+
   function _toDbRow(data) {
     const row = { ...data };
-    // Strip client-only fields (not columns in DB)
+
+    // Strip client-only array fields (not DB columns)
     _CLIENT_ONLY_FIELDS.forEach(f => delete row[f]);
-    // Coerce numeric fields: empty string → null, otherwise Number()
+
+    // 'notes' IS a valid text column in acquisitions_leads, but if it came from
+    // a Supabase load it will be an array (mapped from lead_notes) — strip arrays
+    if (Array.isArray(row.notes)) delete row.notes;
+
+    // ENUM fields: empty string → null (Postgres rejects "" for enum types)
+    _ENUM_FIELDS.forEach(f => {
+      if (f in row && row[f] === '') row[f] = null;
+    });
+
+    // Remap property_type values not present in the DB enum
+    if (row.property_type && _PROPERTY_TYPE_MAP[row.property_type]) {
+      row.property_type = _PROPERTY_TYPE_MAP[row.property_type];
+    }
+
+    // Numeric fields: empty string → delete so DB default applies
     _NUMERIC_FIELDS.forEach(f => {
       if (f in row) {
         const v = row[f];
         if (v === '' || v === null || v === undefined) {
-          delete row[f]; // omit so DB default applies
+          delete row[f];
         } else {
           const n = Number(v);
           row[f] = isNaN(n) ? null : n;
         }
       }
     });
+
     return row;
   }
 
   async function _addLead(leadData) {
-    // Extract initial notes string (form field) — not a DB column
-    const initialNoteText = typeof leadData.notes === 'string' && leadData.notes.trim()
-      ? leadData.notes.trim()
-      : null;
-
     const coreData = _toDbRow(leadData);
 
     // Apply defaults for NOT NULL columns
@@ -619,30 +637,15 @@ const AcquisitionsApp = (() => {
 
       if (error) throw error;
 
-      // Save initial note if provided in form
-      if (initialNoteText) {
-        await _supabase.from('lead_notes').insert({
-          lead_id:    data.id,
-          user_id:    window.P714Auth?.getUser()?.id || data.user_id,
-          author:     window.P714Auth?.getProfile()?.full_name || 'Sistema',
-          content:    initialNoteText,
-          created_at: new Date().toISOString(),
-        });
-        data.notes = [{ date: new Date().toISOString(), author: window.P714Auth?.getProfile()?.full_name || 'Sistema', content: initialNoteText }];
-      } else {
-        data.notes = [];
-      }
+      // Set client-side arrays for sidebar display
+      data.notes    = [];
       data.activity = [];
       _leads.unshift(data);
       Automation.onLeadCreated(data);
     } else {
-      newLead.id = `lead_${Date.now()}`;
-      if (initialNoteText) {
-        newLead.notes = [{ date: new Date().toISOString(), author: 'Sistema', content: initialNoteText }];
-      } else {
-        newLead.notes = [];
-      }
-      newLead.activity  = [];
+      newLead.id       = `lead_${Date.now()}`;
+      newLead.notes    = [];
+      newLead.activity = [];
       _leads.unshift(newLead);
       Automation.onLeadCreated(newLead);
     }
