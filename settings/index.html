@@ -178,29 +178,39 @@ function renderEquipo(c){
     <div>
     ${_team.map((m,i)=>{
       const init=(m.full_name||m.email||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const roleLabel=m.role==='owner'?'Owner/Admin':m.role==='acquisitionist'?'Adquisicionista':'Agente';
+      const roleBadge=m.role==='owner'?'b-owner':'b-agent';
+      const isSelf=m.id===_profile?.id;
       return `<div class="team-row">
         <div class="team-av" style="background:${avColors[i%5]};color:${avTc[i%5]}">${init}</div>
         <div style="flex:1;min-width:0">
-          <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(m.full_name||'—')}</div>
+          <div style="font-size:13px;font-weight:600;color:#0F172A">${esc(m.full_name||'—')}${isSelf?' <span style="font-size:10px;color:#94A3B8">(tú)</span>':''}</div>
           <div style="font-size:11px;color:#94A3B8;margin-top:1px">${esc(m.email||'')}</div>
         </div>
-        <span class="badge ${m.role==='owner'?'b-owner':'b-agent'}">${m.role==='owner'?'Owner':'Agente'}</span>
-        ${_isOwner&&m.id!==_profile?.id?`
-          <button class="btn btn-ghost btn-sm" onclick="resetPwd('${m.email}')" title="Resetear contraseña">&#128273;</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteAgent('${m.id}','${esc(m.full_name||m.email)}')">Eliminar</button>
+        <span class="badge ${roleBadge}">${roleLabel}</span>
+        ${_isOwner&&!isSelf?`
+          <button class="btn btn-ghost btn-sm" onclick="toggleRole('${m.id}','${m.role}')" title="Cambiar rol" style="font-size:11px">⇄ Rol</button>
+          <button class="btn btn-ghost btn-sm" onclick="resetPwd('${m.email}')" title="Resetear contraseña">🔑</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAgent('${m.id}','${esc(m.full_name||m.email||'')}')">Eliminar</button>
         `:''}
       </div>`;
     }).join('')}
     </div>
   </div>
   <div class="card" id="add-agent-card" style="display:none">
-    <div class="card-h"><span class="card-t">➕ Agregar Nuevo Agente</span></div>
+    <div class="card-h"><span class="card-t">➕ Agregar Nuevo Miembro</span></div>
     <div class="card-b">
       <div class="fg"><label class="fl">Nombre Completo</label><input class="fi" id="ag-name" placeholder="Juan Rodríguez"/></div>
       <div class="fg"><label class="fl">Email</label><input class="fi" id="ag-email" type="email" placeholder="juan@properties714.com"/></div>
       <div class="fg"><label class="fl">Contraseña Temporal</label><input class="fi" id="ag-pass" type="password" placeholder="Mínimo 8 caracteres"/></div>
+      <div class="fg"><label class="fl">Rol</label>
+        <select class="fi" id="ag-role">
+          <option value="acquisitionist">Adquisicionista</option>
+          <option value="owner">Owner / Admin</option>
+        </select>
+      </div>
       <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="btn btn-blue" onclick="createAgent()">Crear Cuenta</button>
+        <button class="btn btn-blue" onclick="createAgent()">✓ Crear Cuenta</button>
         <button class="btn btn-ghost" onclick="document.getElementById('add-agent-card').style.display='none'">Cancelar</button>
       </div>
     </div>
@@ -216,16 +226,36 @@ async function createAgent(){
   const name=document.getElementById('ag-name').value.trim();
   const email=document.getElementById('ag-email').value.trim();
   const pass=document.getElementById('ag-pass').value;
-  if(!name||!email||!pass){toast('error','Campos incompletos','Llena nombre, email y contraseña');return;}
-  if(pass.length<8){toast('error','Contraseña muy corta','Mínimo 8 caracteres');return;}
+  const role=document.getElementById('ag-role').value||'acquisitionist';
+  if(!name||!email){toast('error','Campos incompletos','Llena nombre y email');return;}
+  if(!pass||pass.length<8){toast('error','Contraseña muy corta','Mínimo 8 caracteres');return;}
   try{
     const svcKey=(window.__P714_ADMIN_CONFIG__||{}).serviceRoleKey;
-    const adminSb=svcKey?supabase.createClient(window.__P714_CONFIG__.supabaseUrl,svcKey):null;
-    if(!adminSb){toast('error','Sin permisos de admin','Configura el service role key en js/admin-config.js');return;}
+    if(!svcKey){toast('error','Sin permisos de admin','Falta service role key');return;}
+    const adminSb=supabase.createClient(window.__P714_CONFIG__.supabaseUrl,svcKey);
     const{data,error}=await adminSb.auth.admin.createUser({email,password:pass,email_confirm:true,user_metadata:{full_name:name}});
     if(error)throw error;
-    await adminSb.from('profiles').upsert({id:data.user.id,full_name:name,email,role:'agent'});
-    toast('success','✓ Agente creado',`${name} puede iniciar sesión ahora`);
+    await adminSb.from('profiles').upsert({id:data.user.id,full_name:name,email,role});
+    const roleLabel=role==='owner'?'Owner/Admin':'Adquisicionista';
+    toast('success',`✓ ${roleLabel} creado`,`${name} puede iniciar sesión ahora`);
+    document.getElementById('ag-name').value='';document.getElementById('ag-email').value='';document.getElementById('ag-pass').value='';
+    document.getElementById('add-agent-card').style.display='none';
+    const{data:t}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
+    _team=t||[];renderEquipo(document.getElementById('tab-content'));
+  }catch(e){toast('error','Error al crear cuenta',e.message);}
+}
+
+async function toggleRole(id,currentRole){
+  const newRole=currentRole==='owner'?'acquisitionist':'owner';
+  const label=newRole==='owner'?'Owner/Admin':'Adquisicionista';
+  if(!confirm(`¿Cambiar rol a ${label}?`))return;
+  try{
+    const svcKey=(window.__P714_ADMIN_CONFIG__||{}).serviceRoleKey;
+    if(!svcKey){toast('error','Sin permisos','Falta service role key');return;}
+    const adminSb=supabase.createClient(window.__P714_CONFIG__.supabaseUrl,svcKey);
+    const{error}=await adminSb.from('profiles').update({role:newRole}).eq('id',id);
+    if(error)throw error;
+    toast('success','✓ Rol actualizado',`Ahora es ${label}`);
     const{data:t}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
     _team=t||[];renderEquipo(document.getElementById('tab-content'));
   }catch(e){toast('error','Error',e.message);}

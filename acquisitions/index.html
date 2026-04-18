@@ -134,7 +134,7 @@ select.fi{cursor:pointer;}textarea.fi{resize:vertical;}.fr{display:grid;grid-tem
       <div class="fg"><label class="fl">Link (Zillow / MLS)</label><input class="fi" id="f-link" placeholder="https://zillow.com/homedetails/..." oninput="onLinkChange()"/><div class="afb" id="afb"><div class="afs" id="afs"></div><span id="afm">Extrayendo datos...</span></div></div>
       <div class="fg"><label class="fl">Dirección</label><input class="fi" id="f-addr" placeholder="123 Main St"/></div>
       <div class="fr"><div class="fg"><label class="fl">Ciudad</label><input class="fi" id="f-city" placeholder="Atlanta"/></div><div class="fg"><label class="fl">Código Postal</label><input class="fi" id="f-zip" placeholder="30309"/></div></div>
-      <div class="fr"><div class="fg"><label class="fl">Estatus</label><select class="fi" id="f-status"><option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option><option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option></select></div><div class="fg"><label class="fl">Agente</label><input class="fi" id="f-agent" placeholder="Nombre del agente"/></div></div>
+      <div class="fr"><div class="fg"><label class="fl">Estatus</label><select class="fi" id="f-status"><option>Nuevo Lead</option><option>Analizando</option><option>Oferta Lista</option><option>Bajo Contrato</option><option>Cerrado</option><option>Descartado</option></select></div><div class="fg"><label class="fl">Agente</label><input class="fi" id="f-agent" list="agents-datalist" placeholder="Nombre del agente" autocomplete="off"/><datalist id="agents-datalist"></datalist></div></div>
     </div>
     <div class="ps"><div class="pst">👤 Dueño / Vendedor</div>
       <div class="fr"><div class="fg"><label class="fl">Nombre</label><input class="fi" id="f-owner" placeholder="John Smith"/></div><div class="fg"><label class="fl">Teléfono</label><input class="fi" id="f-phone" placeholder="+1 (404)..."/></div></div>
@@ -159,19 +159,26 @@ select.fi{cursor:pointer;}textarea.fi{resize:vertical;}.fr{display:grid;grid-tem
 <div id="tc"></div>
 <script>
 const SBADGE={'nuevo lead':'b-new','analizando':'b-ana','oferta lista':'b-ofe','bajo contrato':'b-con','cerrado':'b-cer','descartado':'b-des'};
-let _all=[],_curId=null,_isOwner=false,_lt=null;
+let _all=[],_curId=null,_isOwner=false,_lt=null,_myName='',_agents=[];
 (async()=>{
   try{
     const s=await P714Auth.init();
     if(!s){location.href='/login/?next=/acquisitions/';return;}
     const p=P714Auth.getProfile();
     _isOwner=P714Auth.isOwner();
-    document.getElementById('s-av').textContent=(p?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    document.getElementById('s-name').textContent=p?.full_name||'User';
+    _myName=p?.full_name||p?.email?.split('@')[0]||'Agente';
+    document.getElementById('s-av').textContent=_myName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('s-name').textContent=_myName;
     document.getElementById('s-role').textContent=_isOwner?'Owner':'Agente';
-    document.getElementById('f-agent').value=p?.full_name||'';
     document.getElementById('save-btn').onclick=()=>_curId?savePanel():saveNew();
     document.getElementById('del-btn').onclick=deleteP;
+    // Load team members for agent dropdown
+    try{
+      const{data}=await P714Auth.getClient().from('profiles').select('full_name,email').order('full_name');
+      _agents=(data||[]).map(m=>m.full_name||m.email||'').filter(Boolean);
+      const dl=document.getElementById('agents-datalist');
+      if(dl)dl.innerHTML=_agents.map(a=>`<option value="${esc(a)}">`).join('');
+    }catch(_){}
     await load();
   }catch(e){console.error('Init:',e);toast('error','Error de inicio',e.message);}
 })();
@@ -238,7 +245,18 @@ function fillPanel(l){
 }
 function openPanel(id){const l=_all.find(x=>x.id===id);_curId=id;fillPanel(l);document.getElementById('p-title').textContent=(l&&l.property_address)||'Propiedad';document.getElementById('p-sub').textContent=`${(l&&l.city)||''} ${(l&&l.zip)||''} • ${(l&&l.status)||'Nuevo Lead'}`.trim();document.getElementById('del-btn').style.display=_isOwner?'':'none';document.getElementById('pbd').classList.add('open');document.getElementById('sp').classList.add('open');document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('f-addr').focus(),300);}
 function closePanel(){document.getElementById('pbd').classList.remove('open');document.getElementById('sp').classList.remove('open');document.body.style.overflow='';_curId=null;}
-function openNew(){_curId=null;fillPanel(null);const p=P714Auth.getProfile();document.getElementById('f-agent').value=p?.full_name||'';try{document.getElementById('f-fu').valueAsDate=new Date(Date.now()+3*86400000);}catch{}document.getElementById('p-title').textContent='Nueva Propiedad';document.getElementById('p-sub').textContent='Completa los datos disponibles — puedes guardar con campos vacíos';document.getElementById('del-btn').style.display='none';document.getElementById('pbd').classList.add('open');document.getElementById('sp').classList.add('open');document.body.style.overflow='hidden';setTimeout(()=>document.getElementById('f-link').focus(),300);}
+function openNew(){
+  _curId=null;fillPanel(null);
+  document.getElementById('f-agent').value=_myName||'';
+  try{document.getElementById('f-fu').valueAsDate=new Date(Date.now()+3*86400000);}catch{}
+  document.getElementById('p-title').textContent='Nueva Propiedad';
+  document.getElementById('p-sub').textContent='Solo pega el link de Zillow y guarda — puedes completar después';
+  document.getElementById('del-btn').style.display='none';
+  document.getElementById('pbd').classList.add('open');
+  document.getElementById('sp').classList.add('open');
+  document.body.style.overflow='hidden';
+  setTimeout(()=>document.getElementById('f-link').focus(),300);
+}
 function onLinkChange(){clearTimeout(_lt);const url=document.getElementById('f-link').value.trim();if(!url)return;try{const u=new URL(url),path=u.pathname;let m=path.match(/\/homedetails\/([^/]+)/);if(m){const slug=decodeURIComponent(m[1]).replace(/-/g,' ');
   // Extract zip (last 5-digit number)
   const zipM=slug.match(/\b(\d{5})\s*$/);
@@ -267,10 +285,128 @@ function onLinkChange(){clearTimeout(_lt);const url=document.getElementById('f-l
     document.getElementById('f-city').value=parts[parts.length-1]||'';
   }
   const afb=document.getElementById('afb');document.getElementById('afs').style.display='none';document.getElementById('afm').textContent='✔ Dirección extraída';afb.classList.add('show');setTimeout(()=>afb.classList.remove('show'),3000);}}catch{}}
-function getFormData(){const ask=parseFloat(document.getElementById('f-ask').value)||null;const arv=parseFloat(document.getElementById('f-arv').value)||null;const rep=parseFloat(document.getElementById('f-rep').value)||null;const mao=arv?Math.floor(arv*.7-(rep||0)):null;const pr=mao&&ask?mao-ask:null;return{property_address:document.getElementById('f-addr').value.trim()||null,city:document.getElementById('f-city').value.trim()||null,zip:document.getElementById('f-zip').value.trim()||null,listing_url:document.getElementById('f-link').value.trim()||null,status:document.getElementById('f-status').value||'Nuevo Lead',assigned_to:document.getElementById('f-agent').value.trim()||null,owner_name:document.getElementById('f-owner').value.trim()||null,name:document.getElementById('f-owner').value.trim()||null,phone:document.getElementById('f-phone').value.trim()||null,beds:parseFloat(document.getElementById('f-beds').value)||null,baths:parseFloat(document.getElementById('f-baths').value)||null,asking_price:ask,arv,repairs:rep,mao,initial_offer:mao,estimated_profit:pr,roi:pr&&ask?Math.round(pr/ask*100):null,comp1_address:document.getElementById('f-c1').value.trim()||null,comp1_distance:parseFloat(document.getElementById('f-d1').value)||null,comp2_address:document.getElementById('f-c2').value.trim()||null,comp2_distance:parseFloat(document.getElementById('f-d2').value)||null,comp3_address:document.getElementById('f-c3').value.trim()||null,comp3_distance:parseFloat(document.getElementById('f-d3').value)||null,notes:document.getElementById('f-notes').value.trim()||null,next_followup:document.getElementById('f-fu').value||null,state:'GA',updated_at:new Date().toISOString()};}
-async function savePanel(){setSt('saving');try{const{error}=await P714Auth.getClient().from('acquisitions_leads').update(getFormData()).eq('id',_curId);if(error)throw error;setSt('saved');toast('success','✓ Guardado','Propiedad actualizada correctamente');closePanel();await load();}catch(e){setSt('error');toast('error','Error al guardar',e.message);}}
-async function saveNew(){setSt('saving');const d=getFormData();if(!d.property_address)d.property_address='Nueva Propiedad';if(!d.name)d.name='Sin nombre';try{const u=P714Auth.getUser();const{error}=await P714Auth.getClient().from('acquisitions_leads').insert({...d,user_id:u.id,deal_type:'fix_flip',deal_score:0});if(error)throw error;setSt('saved');toast('success','✓ Propiedad creada','Ya aparece en tu lista');closePanel();await load();}catch(e){setSt('error');toast('error','Error al guardar',e.message);}}
-async function quickAdd(){try{const u=P714Auth.getUser(),p=P714Auth.getProfile();const{data,error}=await P714Auth.getClient().from('acquisitions_leads').insert({user_id:u.id,assigned_to:p?.full_name||'Agente',property_address:'Nueva Propiedad',status:'Nuevo Lead',state:'GA',deal_type:'fix_flip',deal_score:0}).select().single();if(error)throw error;await load();openPanel(data.id);}catch(e){toast('error','Error',e.message);}}
+function getFormData(){
+  const g=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const ask=parseFloat(g('f-ask'))||null;
+  const arv=parseFloat(g('f-arv'))||null;
+  const rep=parseFloat(g('f-rep'))||null;
+  const mao=arv?Math.floor(arv*.7-(rep||0)):null;
+  const pr=mao&&ask?mao-ask:null;
+  const owner=g('f-owner').trim()||null;
+  return{
+    property_address:g('f-addr').trim()||null,
+    city:g('f-city').trim()||null,
+    zip:g('f-zip').trim()||null,
+    listing_url:g('f-link').trim()||null,
+    status:g('f-status')||'Nuevo Lead',
+    assigned_to:g('f-agent').trim()||_myName||null,
+    owner_name:owner,
+    name:owner,
+    phone:g('f-phone').trim()||null,
+    beds:parseFloat(g('f-beds'))||null,
+    baths:parseFloat(g('f-baths'))||null,
+    asking_price:ask,arv,repairs:rep,mao,
+    initial_offer:mao,
+    estimated_profit:pr,
+    roi:pr&&ask?Math.round(pr/ask*100):null,
+    comp1_address:g('f-c1').trim()||null,
+    comp1_distance:parseFloat(g('f-d1'))||null,
+    comp2_address:g('f-c2').trim()||null,
+    comp2_distance:parseFloat(g('f-d2'))||null,
+    comp3_address:g('f-c3').trim()||null,
+    comp3_distance:parseFloat(g('f-d3'))||null,
+    notes:g('f-notes').trim()||null,
+    next_followup:g('f-fu')||null,
+    state:'GA',
+    updated_at:new Date().toISOString()
+  };
+}
+// Build safe DB payload — handles missing migration columns gracefully
+function _buildPayload(d,userId){
+  const base={
+    user_id:userId,
+    name:d.name||'Sin nombre',
+    property_address:d.property_address||'Nueva Propiedad',
+    city:d.city,state:d.state||'GA',zip:d.zip,
+    phone:d.phone,assigned_to:d.assigned_to,
+    status:d.status||'Nuevo Lead',
+    deal_type:'fix_flip',deal_score:0,
+    asking_price:d.asking_price,arv:d.arv,repairs:d.repairs,
+    mao:d.mao,estimated_profit:d.estimated_profit,roi:d.roi,
+    notes:d.notes,next_followup:d.next_followup,
+    updated_at:d.updated_at,
+    // Migration v2 columns (added automatically, fail-safe)
+    listing_url:d.listing_url,owner_name:d.owner_name,
+    beds:d.beds,baths:d.baths,initial_offer:d.initial_offer,
+    comp1_address:d.comp1_address,comp1_distance:d.comp1_distance,
+    comp2_address:d.comp2_address,comp2_distance:d.comp2_distance,
+    comp3_address:d.comp3_address,comp3_distance:d.comp3_distance,
+  };
+  // Remove undefined/null to let DB defaults apply on insert
+  Object.keys(base).forEach(k=>{if(base[k]==null)delete base[k];});
+  return base;
+}
+// Minimal payload — only guaranteed base-schema columns
+function _buildBasePayload(d,userId){
+  const o={
+    user_id:userId,
+    name:d.name||'Sin nombre',
+    property_address:d.property_address||'Nueva Propiedad',
+    state:d.state||'GA',status:d.status||'Nuevo Lead',
+    deal_type:'fix_flip',deal_score:0,
+  };
+  if(d.city)o.city=d.city;if(d.zip)o.zip=d.zip;if(d.phone)o.phone=d.phone;
+  if(d.assigned_to)o.assigned_to=d.assigned_to;if(d.notes)o.notes=d.notes;
+  if(d.asking_price)o.asking_price=d.asking_price;if(d.arv)o.arv=d.arv;
+  if(d.repairs)o.repairs=d.repairs;if(d.mao)o.mao=d.mao;
+  if(d.next_followup)o.next_followup=d.next_followup;
+  return o;
+}
+async function savePanel(){
+  setSt('saving');
+  const d=getFormData();
+  const u=P714Auth.getUser();
+  const payload=_buildPayload(d,u.id);
+  // For updates, keep name/property_address non-null
+  if(!payload.name)payload.name='Sin nombre';
+  if(!payload.property_address)payload.property_address='Nueva Propiedad';
+  try{
+    let{error}=await P714Auth.getClient().from('acquisitions_leads').update(payload).eq('id',_curId);
+    if(error&&(error.message||'').includes('does not exist')){
+      // Retry with base columns only (migration v2 not applied)
+      const base=_buildBasePayload(d,u.id);
+      ({error}=await P714Auth.getClient().from('acquisitions_leads').update(base).eq('id',_curId));
+    }
+    if(error)throw error;
+    setSt('saved');toast('success','✓ Guardado','Propiedad actualizada');closePanel();await load();
+  }catch(e){setSt('error');toast('error','Error al guardar',e.message);console.error('savePanel:',e);}
+}
+async function saveNew(){
+  setSt('saving');
+  const d=getFormData();
+  const u=P714Auth.getUser();
+  const payload=_buildPayload(d,u.id);
+  try{
+    let{error}=await P714Auth.getClient().from('acquisitions_leads').insert(payload);
+    if(error&&(error.message||'').includes('does not exist')){
+      // Retry with base columns only (migration v2 not applied)
+      const base=_buildBasePayload(d,u.id);
+      ({error}=await P714Auth.getClient().from('acquisitions_leads').insert(base));
+    }
+    if(error)throw error;
+    setSt('saved');toast('success','✓ Propiedad creada','Ya aparece en tu lista');closePanel();await load();
+  }catch(e){setSt('error');toast('error','Error al guardar',e.message);console.error('saveNew:',e);}
+}
+async function quickAdd(){
+  try{
+    const u=P714Auth.getUser();
+    const{data,error}=await P714Auth.getClient().from('acquisitions_leads')
+      .insert({user_id:u.id,assigned_to:_myName||'Agente',name:'Sin nombre',property_address:'Nueva Propiedad',status:'Nuevo Lead',state:'GA',deal_type:'fix_flip',deal_score:0})
+      .select().single();
+    if(error)throw error;
+    await load();openPanel(data.id);
+  }catch(e){toast('error','Error',e.message);}
+}
 async function deleteP(){if(!_curId||!confirm('¿Eliminar? No se puede deshacer.'))return;try{const{error}=await P714Auth.getClient().from('acquisitions_leads').delete().eq('id',_curId);if(error)throw error;closePanel();toast('success','Eliminado','');await load();}catch(e){toast('error','Error',e.message);}}
 function calcMao(){const a=parseFloat(document.getElementById('f-arv').value)||0;const r=parseFloat(document.getElementById('f-rep').value)||0;document.getElementById('f-mao').textContent=a?'$'+Math.floor(a*.7-r).toLocaleString('en-US'):'—';}
 function doExport(){const cols=['created_at','city','property_address','zip','listing_url','status','asking_price','arv','repairs','initial_offer','owner_name','beds','baths','assigned_to','comp1_address','comp1_distance','comp2_address','comp2_distance','comp3_address','comp3_distance','notes'];const h=['Fecha','Ciudad','Dirección','Código Postal','Link','Estatus','Precio Vendedor','ARV Estimado','Costo Reparación','Oferta Inicial','Dueño','Cuartos','Baños','Agente','Comparable 1','Distancia 1','Comparable 2','Distancia 2','Comparable 3','Distancia 3','Notas'];const rows=[h.join(','),..._all.map(l=>cols.map(c=>`"${(l[c]||'').toString().replace(/"/g,'""')}"`).join(','))];const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,﻿'+encodeURIComponent(rows.join('\n'));a.download='adquisiciones_p714.csv';a.click();toast('success','Exportado',`${_all.length} propiedades`);}
