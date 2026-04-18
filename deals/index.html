@@ -363,16 +363,20 @@ function openPanel(l){
   const sc=l.deal_score||0;
   const qc=getQualityCheck(l);
   const tags=getDealTags(l);
-  const confColor=sc>=70?'#16A34A':sc>=50?'#D97706':'#DC2626';
-  const confLabel=sc>=70?'ALTA ('+sc+'%)':sc>=50?'MEDIA ('+sc+'%)':'BAJA ('+sc+'%)';
-  const whyDeal=[];
-  if(Number(l.arv)>0&&Number(l.asking_price)>0&&margin!==null){
-    if(margin>=25)whyDeal.push('Precio significativamente por debajo del mercado');
-    if(Number(l.repairs||0)<Number(l.arv)*0.15)whyDeal.push('Bajo costo de reparación relativo al ARV');
+  const ai=l._ai||null; // populated after runFullAI()
+  const aiSc=ai?ai.confidence:sc;
+  const confColor=aiSc>=70?'#16A34A':aiSc>=50?'#D97706':'#DC2626';
+  const confLabel=aiSc>=70?'ALTA ('+aiSc+'%)':aiSc>=50?'MEDIA ('+aiSc+'%)':'BAJA ('+aiSc+'%)';
+  const whyDeal=ai&&ai.why_this_deal?.length?ai.why_this_deal:[];
+  if(!ai){
+    if(Number(l.arv)>0&&Number(l.asking_price)>0&&margin!==null){
+      if(margin>=25)whyDeal.push('Precio significativamente por debajo del mercado');
+      if(Number(l.repairs||0)<Number(l.arv)*0.15)whyDeal.push('Bajo costo de reparación relativo al ARV');
+    }
+    if(sc>=70)whyDeal.push('Score de alta confianza — análisis sólido');
+    if([l.comp1_address,l.comp2_address,l.comp3_address].filter(Boolean).length>=3)whyDeal.push('3 comparables validados ingresados');
+    if(whyDeal.length===0)whyDeal.push('Agrega ARV, reparaciones y comps para ver el análisis completo');
   }
-  if(sc>=70)whyDeal.push('Score de alta confianza — análisis sólido');
-  if([l.comp1_address,l.comp2_address,l.comp3_address].filter(Boolean).length>=3)whyDeal.push('3 comparables validados ingresados');
-  if(whyDeal.length===0)whyDeal.push('Agrega ARV, reparaciones y comps para ver el análisis completo');
 
   document.getElementById('dp-body').innerHTML=`
     <!-- Financials -->
@@ -416,13 +420,17 @@ function openPanel(l){
           </div>
           <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:16px;font-weight:800;color:${confColor}">${sc}</div>
         </div>
-        <div class="ai-dr"><span class="ai-dl">ROI — Flip</span><span class="ai-dv">${r!==null?r+'%':'—'}</span></div>
-        <div class="ai-dr"><span class="ai-dl">Margen Flip</span><span class="ai-dv">${margin!==null?margin+'%':'—'}</span></div>
-        <div class="ai-dr"><span class="ai-dl">Oferta Sugerida</span><span class="ai-dv" style="color:#4ADE80">${fm(l.mao||l.initial_offer)}</span></div>
-        <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0D9488">Why this deal?</div>
-        ${whyDeal.map(w=>`<div class="ai-bullet">${w}</div>`).join('')}
-        <button class="ai-cta" style="width:100%;padding:10px;background:#2563EB;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px" onclick="runFullAI('${l.id}')">
-          ${window.__P714_CONFIG__?.anthropicKey?'🤖 Correr Análisis IA Completo':'⚡ Ver Análisis (agrega API key para IA completa)'}
+        <div class="ai-dr"><span class="ai-dl">ROI — Flip</span><span class="ai-dv">${ai?.roi_flip!=null?ai.roi_flip+'%':r!==null?r+'%':'—'}</span></div>
+        <div class="ai-dr"><span class="ai-dl">Margen Flip</span><span class="ai-dv">${ai?.roi_rental!=null?'Rental: '+ai.roi_rental+'%':margin!==null?margin+'%':'—'}</span></div>
+        <div class="ai-dr"><span class="ai-dl">Oferta Sugerida</span><span class="ai-dv" style="color:#4ADE80">${ai?.suggested_offer?fm(ai.suggested_offer):fm(l.mao||l.initial_offer)}</span></div>
+        ${ai?.recommendation?`<div class="ai-dr"><span class="ai-dl">Recomendación</span><span class="ai-dv" style="color:${ai.recommendation.includes('PASS')?'#F87171':'#4ADE80'};font-weight:800">${ai.recommendation}</span></div>`:''}
+        ${ai?.summary?`<div style="margin:10px 0 6px;font-size:11px;color:#94A3B8;line-height:1.55">${ai.summary}</div>`:''}
+        <div style="margin:12px 0 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#0D9488">${ai?'✅ Análisis Claude':'Why this deal?'}</div>
+        ${whyDeal.map(w=>`<div class="ai-bullet">• ${w}</div>`).join('')}
+        ${ai?.risks?.length?`<div style="margin:10px 0 4px;font-size:10px;font-weight:700;color:#F87171;text-transform:uppercase;letter-spacing:.08em">⚠ Riesgos</div>${ai.risks.map(r=>`<div class="ai-bullet" style="color:#FCA5A5">• ${r}</div>`).join('')}`:''}
+        ${ai?.opportunities?.length?`<div style="margin:10px 0 4px;font-size:10px;font-weight:700;color:#4ADE80;text-transform:uppercase;letter-spacing:.08em">💡 Oportunidades</div>${ai.opportunities.map(o=>`<div class="ai-bullet" style="color:#86EFAC">• ${o}</div>`).join('')}`:''}
+        <button class="ai-cta" style="width:100%;padding:10px;background:${ai?'#0D9488':'#2563EB'};color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px" onclick="runFullAI('${l.id}')">
+          ${ai?'🔄 Re-analizar con IA':'🤖 Correr Análisis IA Completo'}
         </button>
       </div>
     </div>
@@ -543,28 +551,51 @@ function simulate(id){
 async function runFullAI(id){
   const l=_all.find(x=>x.id===id);
   if(!l)return;
-  const key=window.__P714_CONFIG__?.anthropicKey;
-  if(!key){toast('info','IA no configurada','Agrega tu Anthropic API key en js/config.js');return;}
+  const proxyUrl=(window.__P714_CONFIG__||{}).aiProxyUrl||'/api/ai';
+  // Update button state
+  const btn=document.querySelector(`[onclick="runFullAI('${id}')"]`);
+  if(btn){btn.disabled=true;btn.textContent='⏳ Analizando...';}
   toast('info','Analizando...','Claude Sonnet está procesando el deal');
   try{
-    const prompt=`You are a real estate investment analyst. Analyze this deal and respond ONLY in JSON:
+    const prompt=`You are a real estate investment analyst. Analyze this deal and respond ONLY in valid JSON (no markdown, no explanation):
 
-Property: ${l.property_address}, ${l.city} ${l.state}
-Asking Price: $${l.asking_price}
-ARV: $${l.arv}
-Repairs: $${l.repairs}
-MAO: $${l.mao||l.initial_offer}
-Score: ${l.deal_score}/100
-Comps: ${[l.comp1_address,l.comp2_address,l.comp3_address].filter(Boolean).join(', ')||'none'}
+Property: ${l.property_address||'N/A'}, ${l.city||''} ${l.state||'GA'}
+Asking Price: $${l.asking_price||0}
+ARV: $${l.arv||0}
+Repairs: $${l.repairs||0}
+MAO: $${l.mao||l.initial_offer||0}
+Score: ${l.deal_score||0}/100
+Comps: ${[l.comp1_address,l.comp2_address,l.comp3_address].filter(Boolean).join(', ')||'none provided'}
 
-JSON format:
-{"recommendation":"BUY (Flip)|BUY (Rental)|Wholesale|PASS","confidence":0-100,"roi_flip":number,"roi_rental":number,"suggested_offer":number,"risks":[],"opportunities":[],"why_this_deal":[],"summary":"2 sentences"}`;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:prompt}]})});
+Respond ONLY with this JSON (no extra text):
+{"recommendation":"BUY (Flip)|BUY (Rental)|Wholesale|PASS","confidence":0-100,"roi_flip":number,"roi_rental":number,"suggested_offer":number,"risks":["..."],"opportunities":["..."],"why_this_deal":["...","...","..."],"summary":"2 sentences max"}`;
+
+    const res=await fetch(proxyUrl,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:800,messages:[{role:'user',content:prompt}]})
+    });
+    if(!res.ok){const e=await res.text();throw new Error('HTTP '+res.status+': '+e);}
     const d=await res.json();
-    const ai=JSON.parse(d.content[0].text);
-    toast('success','Análisis IA completado',`${ai.recommendation} — Confianza: ${ai.confidence}%`);
+    const raw=(d.content&&d.content[0]&&d.content[0].text)||'';
+    // Strip markdown code fences if present
+    const jsonStr=raw.replace(/```json?\n?/g,'').replace(/```/g,'').trim();
+    const ai=JSON.parse(jsonStr);
+
+    // Save AI result to lead record
+    await P714Auth.getClient().from('acquisitions_leads').update({
+      deal_score: ai.confidence||l.deal_score,
+      updated_at: new Date().toISOString()
+    }).eq('id',id);
+
+    // Re-render panel with AI data
+    const idx=_all.findIndex(x=>x.id===id);
+    if(idx>=0)_all[idx]={..._all[idx],_ai:ai,deal_score:ai.confidence||_all[idx].deal_score};
+    openPanel(id);
+    toast('success','✅ Análisis completado',`${ai.recommendation} — Confianza: ${ai.confidence}%`);
   }catch(e){
-    toast('error','Error IA',e.message);
+    toast('error','Error en análisis IA',e.message);
+    if(btn){btn.disabled=false;btn.textContent='🤖 Correr Análisis IA Completo';}
   }
 }
 
