@@ -137,9 +137,30 @@ html,body{background:#F8FAFC;color:#0F172A;font-family:'Inter',-apple-system,san
 </div>
 <div id="tc"></div>
 <script>
-let _profile=null,_isOwner=false,_team=[];
+let _profile=null,_isOwner=false,_team=[],_adminSb=null;
 function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sb-ov').classList.toggle('open');}
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sb-ov').classList.remove('open');}
+
+// Admin client bypasses RLS — required to read ALL profiles
+function getAdminClient(){
+  if(_adminSb)return _adminSb;
+  const svcKey=(window.__P714_ADMIN_CONFIG__||{}).serviceRoleKey;
+  if(!svcKey)return P714Auth.getClient(); // fallback
+  _adminSb=supabase.createClient(window.__P714_CONFIG__.supabaseUrl,svcKey);
+  return _adminSb;
+}
+
+async function loadTeam(){
+  try{
+    const{data,error}=await getAdminClient().from('profiles').select('*').order('created_at');
+    if(error)throw error;
+    _team=data||[];
+  }catch(e){
+    // fallback to own client
+    const{data}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
+    _team=data||[];
+  }
+}
 
 (async()=>{
   try{
@@ -150,8 +171,7 @@ function closeSB(){document.getElementById('sidebar').classList.remove('open');d
     document.getElementById('s-av').textContent=(_profile?.full_name||'U').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('s-name').textContent=_profile?.full_name||'User';
     document.getElementById('s-role').textContent=_isOwner?'Owner':'Agente';
-    const{data}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
-    _team=data||[];
+    await loadTeam();
     showTab('equipo',document.querySelector('.sn-item'));
   }catch(e){console.error(e);}
 })();
@@ -240,8 +260,7 @@ async function createAgent(){
     toast('success',`✓ ${roleLabel} creado`,`${name} puede iniciar sesión ahora`);
     document.getElementById('ag-name').value='';document.getElementById('ag-email').value='';document.getElementById('ag-pass').value='';
     document.getElementById('add-agent-card').style.display='none';
-    const{data:t}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
-    _team=t||[];renderEquipo(document.getElementById('tab-content'));
+    await loadTeam();renderEquipo(document.getElementById('tab-content'));
   }catch(e){toast('error','Error al crear cuenta',e.message);}
 }
 
@@ -256,8 +275,7 @@ async function toggleRole(id,currentRole){
     const{error}=await adminSb.from('profiles').update({role:newRole}).eq('id',id);
     if(error)throw error;
     toast('success','✓ Rol actualizado',`Ahora es ${label}`);
-    const{data:t}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
-    _team=t||[];renderEquipo(document.getElementById('tab-content'));
+    await loadTeam();renderEquipo(document.getElementById('tab-content'));
   }catch(e){toast('error','Error',e.message);}
 }
 
@@ -272,10 +290,10 @@ async function resetPwd(email){
 async function deleteAgent(id,name){
   if(!confirm(`¿Eliminar a ${name}? Esta acción no se puede deshacer.`))return;
   try{
-    await P714Auth.getClient().from('profiles').delete().eq('id',id);
-    toast('success','Agente eliminado','');
-    const{data:t}=await P714Auth.getClient().from('profiles').select('*').order('created_at');
-    _team=t||[];renderEquipo(document.getElementById('tab-content'));
+    const{error}=await getAdminClient().from('profiles').delete().eq('id',id);
+    if(error)throw error;
+    toast('success','Miembro eliminado','');
+    await loadTeam();renderEquipo(document.getElementById('tab-content'));
   }catch(e){toast('error','Error',e.message);}
 }
 
